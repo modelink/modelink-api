@@ -7,7 +7,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import tk.mybatis.spring.annotation.MapperScan;
 
 @SpringBootApplication
-@MapperScan(basePackages = "com.modelink.usercenter.mapper")
+@MapperScan(basePackages = "com.modelink.**.mapper")
 public class ModelinkApiApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
@@ -18,4 +18,6 @@ public class ModelinkApiApplication extends SpringBootServletInitializer {
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder application) {
 		return application.sources(ModelinkApiApplication.class);
 	}
+
+
 }

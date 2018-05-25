@@ -1,11 +1,13 @@
 package com.modelink.common.vo;
 
+import com.modelink.common.enums.RetStatus;
+
 import java.io.Serializable;
 
 public class ResultVo<T> implements Serializable {
 
-    private int rtnCode;
-    private String rtnMsg;
+    private int rtnCode = RetStatus.Ok.getValue();
+    private String rtnMsg = RetStatus.Ok.getText();
     private T data;
 
     public int getRtnCode() {
