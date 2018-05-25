@@ -1,6 +1,7 @@
 package com.modelink.reservation.controller;
 
 import com.modelink.common.vo.ResultVo;
+import com.modelink.reservation.vo.ReserveParamVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -15,7 +16,7 @@ public class ReservationController {
      */
     @ResponseBody
     @RequestMapping("/toReserve")
-    public ResultVo toReserve(){
+    public ResultVo toReserve(ReserveParamVo reserveParamVo){
         ResultVo resultVo = new ResultVo();
 
 
@@ -23,8 +24,8 @@ public class ReservationController {
     }
 
     @ResponseBody
-    @RequestMapping("/usableReserveTime")
-    public ResultVo usableReserveTime(){
+    @RequestMapping("/reserveTimeList")
+    public ResultVo reserveTimeList(){
         ResultVo resultVo = new ResultVo();
 
 
