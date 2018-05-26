@@ -8,7 +8,7 @@ public class ResultVo<T> implements Serializable {
 
     private int rtnCode = RetStatus.Ok.getValue();
     private String rtnMsg = RetStatus.Ok.getText();
-    private T data;
+    private T rtnData;
 
     public int getRtnCode() {
         return rtnCode;
@@ -26,11 +26,11 @@ public class ResultVo<T> implements Serializable {
         this.rtnMsg = rtnMsg;
     }
 
-    public T getData() {
-        return data;
+    public T getRtnData() {
+        return rtnData;
     }
 
-    public void setData(T data) {
-        this.data = data;
+    public void setRtnData(T rtnData) {
+        this.rtnData = rtnData;
     }
 }
