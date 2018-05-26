@@ -24,16 +24,13 @@
 		<java.version>1.8</java.version>
 
 		<fastjson.version>1.2.22</fastjson.version>
+		<httpClient.version>4.5.2</httpClient.version>
 	</properties>
 
 	<dependencies>
 		<!--<dependency>-->
 			<!--<groupId>org.springframework.boot</groupId>-->
 			<!--<artifactId>spring-boot-starter-data-redis</artifactId>-->
-		<!--</dependency>-->
-		<!--<dependency>-->
-			<!--<groupId>org.springframework.boot</groupId>-->
-			<!--<artifactId>spring-boot-starter-jdbc</artifactId>-->
 		<!--</dependency>-->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -93,7 +90,7 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>4.5.2</version>
+			<version>${httpClient.version}</version>
 		</dependency>
 		<!--fastjson -->
 		<dependency>
@@ -108,7 +105,41 @@
 		</dependency>
 	</dependencies>
 
+	<profiles>
+		<profile>
+			<id>develop</id>
+			<properties>
+				<env>develop</env>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+		<profile>
+			<id>sandbox</id>
+			<properties>
+				<env>sandbox</env>
+			</properties>
+		</profile>
+		<profile>
+			<id>online</id>
+			<properties>
+				<env>online</env>
+			</properties>
+		</profile>
+	</profiles>
+
 	<build>
+		<finalName>modelink-${env}</finalName>
+		<resources>
+			<resource>
+				<directory>configation/${env}</directory>
+				<includes>
+					<include>**/*</include>
+				</includes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>

@@ -14,9 +14,9 @@ public class Reservation {
     /** 预约渠道（如小米、华夏） **/
     private Long channel;
     /** 渠道入口类型（0-默认） **/
-    private int sourceType;
+    private Integer sourceType = 0;
     /** 数据状态（0-正常; 1-无效; 2-其他） **/
-    private int status;
+    private Integer status;
     /** 创建时间 **/
     private Date createTime;
     /** 更新时间 **/
@@ -62,19 +62,19 @@ public class Reservation {
         this.channel = channel;
     }
 
-    public int getSourceType() {
+    public Integer getSourceType() {
         return sourceType;
     }
 
-    public void setSourceType(int sourceType) {
+    public void setSourceType(Integer sourceType) {
         this.sourceType = sourceType;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
