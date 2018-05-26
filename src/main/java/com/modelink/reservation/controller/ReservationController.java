@@ -78,7 +78,7 @@ public class ReservationController {
             responseData.put("totalReserveNum", reserveNum);
             responseData.put("reserveTimeList", reserveDateVoList);
 
-            resultVo.setData(responseData);
+            resultVo.setRtnData(responseData);
         } catch (Exception e) {
             logger.error("[reservationController|toReserve]预约时间和人数查询异常。", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
@@ -96,7 +96,7 @@ public class ReservationController {
         reservation.setChannel(reserveHeaderVo.getChannel());
         try {
             int reserveNum = reservationService.countByParam(reservation);
-            resultVo.setData(reserveNum);
+            resultVo.setRtnData(reserveNum);
         } catch (Exception e) {
             logger.error("[reservationController|toReserve]预约人数查询异常。", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
