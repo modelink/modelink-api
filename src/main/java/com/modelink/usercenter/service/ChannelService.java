@@ -14,7 +14,7 @@ public interface ChannelService {
      * @param appKey
      * @return
      */
-    public Channel findByAppKey(String appKey);
+    public Channel findByAppKey(int appKey);
 
     /**
      * 获取渠道列表

@@ -1,21 +1,23 @@
 package com.modelink.usercenter.bean;
 
+import javax.persistence.Id;
 import java.util.Date;
 
 public class Channel {
 
-    private String appKey;
+    @Id
+    private int appKey;
     private String appSecret;
     private String name;
     private int status;
     private Date createTime;
     private Date updateTime;
 
-    public String getAppKey() {
+    public int getAppKey() {
         return appKey;
     }
 
-    public void setAppKey(String appKey) {
+    public void setAppKey(int appKey) {
         this.appKey = appKey;
     }
 
