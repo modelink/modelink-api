@@ -12,7 +12,7 @@ public class Reservation {
     /** 预约时间 **/
     private String contactTime;
     /** 预约渠道（如小米、华夏） **/
-    private int channel;
+    private Long channel;
     /** 渠道入口类型（0-默认） **/
     private int sourceType;
     /** 数据状态（0-正常; 1-无效; 2-其他） **/
@@ -54,11 +54,11 @@ public class Reservation {
         this.contactTime = contactTime;
     }
 
-    public int getChannel() {
+    public Long getChannel() {
         return channel;
     }
 
-    public void setChannel(int channel) {
+    public void setChannel(Long channel) {
         this.channel = channel;
     }
 

@@ -1,4 +1,4 @@
-package com.modelink.common;
+package com.modelink.common.utils;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;

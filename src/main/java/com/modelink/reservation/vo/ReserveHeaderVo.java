@@ -7,17 +7,17 @@ import java.io.Serializable;
  */
 public class ReserveHeaderVo implements Serializable {
 
-    private String appKey;
+    private Long appKey;
     private String sign;
     private String nonceStr;
-    private int timestamp;
-    private int channel;
+    private Long timestamp;
+    private Long channel;
 
-    public String getAppKey() {
+    public Long getAppKey() {
         return appKey;
     }
 
-    public void setAppKey(String appKey) {
+    public void setAppKey(Long appKey) {
         this.appKey = appKey;
     }
 
@@ -37,19 +37,19 @@ public class ReserveHeaderVo implements Serializable {
         this.nonceStr = nonceStr;
     }
 
-    public int getTimestamp() {
+    public Long getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(int timestamp) {
+    public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
     }
 
-    public int getChannel() {
+    public Long getChannel() {
         return channel;
     }
 
-    public void setChannel(int channel) {
+    public void setChannel(Long channel) {
         this.channel = channel;
     }
 }

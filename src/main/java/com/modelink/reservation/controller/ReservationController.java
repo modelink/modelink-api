@@ -1,7 +1,7 @@
 package com.modelink.reservation.controller;
 
 import com.alibaba.fastjson.JSONObject;
-import com.modelink.common.DateUtils;
+import com.modelink.common.utils.DateUtils;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.Reservation;
@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -41,12 +42,13 @@ public class ReservationController {
      */
     @ResponseBody
     @RequestMapping("/toReserve")
-    public ResultVo toReserve(ReserveParamVo reserveParamVo){
+    public ResultVo toReserve(HttpServletRequest request, ReserveParamVo reserveParamVo){
         ResultVo resultVo = new ResultVo();
         Reservation reservation = new Reservation();
         try {
             BeanUtils.copyProperties(reserveParamVo, reservation);
             reservation.setStatus(ReservationStatusEnum.CREATED.getValue());
+            reservation.setChannel((Long)request.getAttribute("channel"));
             int num = reservationService.insert(reservation);
             if(num > 0){
                 resultVo.setRtnCode(RetStatus.Ok.getValue());
@@ -65,11 +67,11 @@ public class ReservationController {
 
     @ResponseBody
     @RequestMapping("/reserveTimeAndNum")
-    public ResultVo reserveTimeAndNum(ReserveHeaderVo reserveHeaderVo){
+    public ResultVo reserveTimeAndNum(HttpServletRequest request, ReserveHeaderVo reserveHeaderVo){
         ResultVo resultVo = new ResultVo();
 
         Reservation reservation = new Reservation();
-        reservation.setChannel(reserveHeaderVo.getChannel());
+        reservation.setChannel((Long)request.getAttribute("channel"));
         try {
             int reserveNum = reservationService.countByParam(reservation);
             List<ReserveDateVo> reserveDateVoList = reserveTimeList();
@@ -89,11 +91,11 @@ public class ReservationController {
 
     @ResponseBody
     @RequestMapping("/totalReserveNum")
-    public ResultVo totalReserveNum(ReserveHeaderVo reserveHeaderVo){
+    public ResultVo totalReserveNum(HttpServletRequest request, ReserveHeaderVo reserveHeaderVo){
         ResultVo resultVo = new ResultVo();
 
         Reservation reservation = new Reservation();
-        reservation.setChannel(reserveHeaderVo.getChannel());
+        reservation.setChannel((Long)request.getAttribute("channel"));
         try {
             int reserveNum = reservationService.countByParam(reservation);
             resultVo.setRtnData(reserveNum);
