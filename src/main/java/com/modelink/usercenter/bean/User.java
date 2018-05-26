@@ -8,7 +8,7 @@ public class User implements Serializable {
 
     /** 用户ID **/
     @Id
-    private String id;
+    private Long id;
     /** 手机号 **/
     private String mobile;
     /** 用户名 **/
@@ -28,11 +28,11 @@ public class User implements Serializable {
     /** 更新时间 **/
     private Date updateTime;
 
-    public String getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

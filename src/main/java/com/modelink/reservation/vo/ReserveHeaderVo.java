@@ -9,6 +9,9 @@ public class ReserveHeaderVo implements Serializable {
 
     private String appKey;
     private String sign;
+    private String nonceStr;
+    private int timestamp;
+    private int channel;
 
     public String getAppKey() {
         return appKey;
@@ -24,5 +27,29 @@ public class ReserveHeaderVo implements Serializable {
 
     public void setSign(String sign) {
         this.sign = sign;
+    }
+
+    public String getNonceStr() {
+        return nonceStr;
+    }
+
+    public void setNonceStr(String nonceStr) {
+        this.nonceStr = nonceStr;
+    }
+
+    public int getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(int timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public int getChannel() {
+        return channel;
+    }
+
+    public void setChannel(int channel) {
+        this.channel = channel;
     }
 }

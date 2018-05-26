@@ -13,7 +13,7 @@ public class Reservation {
     private String contactTime;
     /** 预约渠道（如小米、华夏） **/
     private int channel;
-    /** 渠道入口类型 **/
+    /** 渠道入口类型（0-默认） **/
     private int sourceType;
     /** 数据状态（0-正常; 1-无效; 2-其他） **/
     private int status;

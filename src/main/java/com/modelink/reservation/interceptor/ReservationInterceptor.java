@@ -60,7 +60,7 @@ public class ReservationInterceptor implements HandlerInterceptor {
             return false;
         }
 
-        Channel channel = channelService.findByAppKey(Integer.parseInt(appKey));
+        Channel channel = channelService.findByAppKey(Long.parseLong(appKey));
         if(StringUtils.isEmpty(channel)){
             resultVo.setRtnCode(RetStatus.Fail.getValue());
             resultVo.setRtnMsg("参数appKey渠道不存在");
@@ -68,6 +68,8 @@ public class ReservationInterceptor implements HandlerInterceptor {
             printWriter.append(JSON.toJSONString(resultVo));
             return false;
         }
+        // 自动增加渠道参数
+        httpServletRequest.setAttribute("channel", channel.getId());
         logger.info("[reservationInterceptor|preHandle]签名校验开始。reqSign={}, respSign={}", reqSign, channel.getAppSecret());
 
 

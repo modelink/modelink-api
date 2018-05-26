@@ -21,7 +21,7 @@ public class ChannelServiceImpl implements ChannelService {
      * @return
      */
     @Override
-    public Channel findByAppKey(int appKey) {
+    public Channel findByAppKey(Long appKey) {
         Channel channel = new Channel();
         channel.setAppKey(appKey);
         return channelMapper.selectOne(channel);

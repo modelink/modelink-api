@@ -6,18 +6,27 @@ import java.util.Date;
 public class Channel {
 
     @Id
-    private int appKey;
+    private Long id;
+    private Long appKey;
     private String appSecret;
     private String name;
-    private int status;
+    private Integer status;
     private Date createTime;
     private Date updateTime;
 
-    public int getAppKey() {
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getAppKey() {
         return appKey;
     }
 
-    public void setAppKey(int appKey) {
+    public void setAppKey(Long appKey) {
         this.appKey = appKey;
     }
 
@@ -37,11 +46,11 @@ public class Channel {
         this.name = name;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

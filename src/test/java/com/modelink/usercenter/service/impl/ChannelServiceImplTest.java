@@ -18,13 +18,13 @@ public class ChannelServiceImplTest {
 
     @Test
     public void findByAppKey() throws Exception {
-        System.out.println(channelService.findByAppKey(10001));
+        System.out.println(channelService.findByAppKey(10001L));
     }
 
     @Test
     public void findList() throws Exception {
         Channel channel = new Channel();
-        channel.setAppKey(10001);
+        channel.setAppKey(10001L);
         System.out.println(channelService.findList(channel).size());
     }
 
