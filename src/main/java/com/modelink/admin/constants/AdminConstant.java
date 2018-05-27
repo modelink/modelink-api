@@ -6,5 +6,5 @@ package com.modelink.admin.constants;
 public class AdminConstant {
 
     /** 管理员session名称 **/
-    public static final String ADMIN_SESSION_NAME = "admin-session-name";
+    public static final String ADMIN_SESSION_NAME = "admin_session_name";
 }
