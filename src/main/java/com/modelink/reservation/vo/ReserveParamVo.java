@@ -6,6 +6,7 @@ public class ReserveParamVo extends ReserveHeaderVo {
     private String contactName;
     private String contactTime;
     private String contactMobile;
+    private int sourceType;
 
     public String getContactName() {
         return contactName;
@@ -29,5 +30,13 @@ public class ReserveParamVo extends ReserveHeaderVo {
 
     public void setContactMobile(String contactMobile) {
         this.contactMobile = contactMobile;
+    }
+
+    public int getSourceType() {
+        return sourceType;
+    }
+
+    public void setSourceType(int sourceType) {
+        this.sourceType = sourceType;
     }
 }
