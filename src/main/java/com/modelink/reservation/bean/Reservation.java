@@ -1,5 +1,7 @@
 package com.modelink.reservation.bean;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.util.Date;
 
 public class Reservation {
@@ -15,10 +17,16 @@ public class Reservation {
     private Long channel;
     /** 渠道入口类型（0-默认） **/
     private Integer sourceType = 0;
-    /** 数据状态（0-正常; 1-无效; 2-其他） **/
+    /** 数据状态
+     *CREATED(0, "已预约"),
+     FINISHING(1, "沟通中"),
+     FINISHED_SUCC(2, "已沟通_成功"),
+     FINISHED_FAIL(3, "已沟通_失败");**/
     private Integer status;
     /** 创建时间 **/
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     /** 更新时间 **/
     private Date updateTime;
 

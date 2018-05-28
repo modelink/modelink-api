@@ -1,5 +1,6 @@
 package com.modelink.common.utils;
 
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -54,6 +55,24 @@ public class DateUtils {
         //通过格式化输出日期
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(date);
+    }
+
+    /**
+     * 格式化日期
+     * @param dateString
+     * @param pattern
+     * @return
+     */
+    public static Date formatDate(String dateString, String pattern){
+        //通过格式化输出日期
+        Date date = null;
+        try {
+            DateFormat dateFormat = new SimpleDateFormat(pattern);
+            date = dateFormat.parse(dateString);
+        } catch (Exception e) {
+            date = null;
+        }
+        return date;
     }
 
     /**

@@ -1,5 +1,7 @@
 package com.modelink.reservation.service;
 
+import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.ReservationParamPagerVo;
 import com.modelink.reservation.bean.Reservation;
 
 import java.util.List;
@@ -29,4 +31,11 @@ public interface ReservationService {
      * @return
      */
     public List<Reservation> findListByParam(Reservation reservation);
+
+    /**
+     * 查询符合条件的记录列表（分页查询）
+     * @param paramPagerVo
+     * @return
+     */
+    public PageInfo<Reservation> findPagerByParam(ReservationParamPagerVo paramPagerVo);
 }

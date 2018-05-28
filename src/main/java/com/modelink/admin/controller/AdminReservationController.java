@@ -1,5 +1,7 @@
 package com.modelink.admin.controller;
 
+import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.ReservationParamPagerVo;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.service.ReservationService;
@@ -8,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 @Controller
 @RequestMapping("/admin/reservation")
@@ -24,13 +25,11 @@ public class AdminReservationController {
 
     @ResponseBody
     @RequestMapping("/list")
-    public Object list(){
-        Reservation reservation = new Reservation();
-        List<Reservation> reservationList = reservationService.findListByParam(reservation);
-
+    public LayuiResultPagerVo<Reservation> list(ReservationParamPagerVo paramPagerVo){
+        PageInfo<Reservation> pageInfo = reservationService.findPagerByParam(paramPagerVo);
         LayuiResultPagerVo<Reservation> layuiResultPagerVo = new LayuiResultPagerVo();
-        layuiResultPagerVo.setTotalCount(reservationList.size());
-        layuiResultPagerVo.setRtnList(reservationList);
+        layuiResultPagerVo.setTotalCount(pageInfo.getSize());
+        layuiResultPagerVo.setRtnList(pageInfo.getList());
         return layuiResultPagerVo;
     }
 }

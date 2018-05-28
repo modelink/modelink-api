@@ -3,7 +3,7 @@
       th:replace="admin/layout/layout"><!-- layout文件路径-->
 
 <div th:fragment="content">
-    <form class="layui-form layui-form-pane" action="">
+    <form class="layui-form layui-form-pane" action="/admin/reservation/list">
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">选择时间</label>
@@ -18,8 +18,8 @@
                 </div>
             </div>
             <div class="layui-inline">
-                    <a class="layui-btn">查询</a>
-                    <a class="layui-btn layui-btn-primary">重置</a>
+                <button class="layui-btn" lay-submit="" lay-filter="search-btn">查询</button>
+                <a class="layui-btn layui-btn-primary">重置</a>
             </div>
         </div>
     </form>
@@ -27,7 +27,6 @@
     <table class="layui-hide" id="reserve-table-grid"></table>
 
     <script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
-    <script th:src="@{/static/js/admin/reservation/reserve.js}" type="text/javascript"></script>
     <script>
         layui.config({
             base: '/static/js/admin/reservation/' //你的模块目录
