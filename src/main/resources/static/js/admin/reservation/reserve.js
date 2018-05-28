@@ -4,6 +4,11 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
     var table = layui.table;
     var laydate = layui.laydate;
 
+    //重置事件
+    $(".reset-btn").on("click", function () {
+        $("#chooseDate").val("");
+        $("#contactMobile").val("");
+    });
     //搜索表单提交
     form.on('submit(search-btn)', function(data){
         console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
