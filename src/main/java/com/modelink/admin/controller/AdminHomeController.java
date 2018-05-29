@@ -9,6 +9,7 @@ import com.modelink.common.enums.RetStatus;
 import com.modelink.common.vo.ResultVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -52,6 +53,12 @@ public class AdminHomeController {
         if(!admin.getPassword().equals(adminLoginParamVo.getPassword())){
             resultVo.setRtnCode(RetStatus.Fail.getValue());
             resultVo.setRtnMsg("用户名密码错误");
+            return resultVo;
+        }
+        String captcha = (String)request.getSession().getAttribute("KAPTCHA_SESSION_KEY");
+        if(StringUtils.isEmpty(captcha) || !captcha.equalsIgnoreCase(adminLoginParamVo.getCaptcha())){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg("验证码输入错误");
             return resultVo;
         }
 

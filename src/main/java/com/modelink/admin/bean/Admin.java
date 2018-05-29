@@ -1,6 +1,8 @@
 package com.modelink.admin.bean;
 
+import javax.persistence.Transient;
 import java.util.Date;
+import java.util.List;
 
 public class Admin {
 
@@ -12,6 +14,7 @@ public class Admin {
     private int status;
     private Date createTime;
     private Date updateTime;
+    private List<Long> roleIdList;
 
     public Long getId() {
         return id;
@@ -75,5 +78,13 @@ public class Admin {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
+    }
+
+    public List<Long> getRoleIdList() {
+        return roleIdList;
+    }
+
+    public void setRoleIdList(List<Long> roleIdList) {
+        this.roleIdList = roleIdList;
     }
 }
