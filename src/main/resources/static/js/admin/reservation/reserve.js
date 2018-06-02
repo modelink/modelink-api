@@ -22,6 +22,11 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
             }});
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     });
+    //搜索表单提交
+    form.on('submit(download-btn)', function(data){
+        data.form.action = "/admin/reservation/download";
+        data.form.submit();
+    });
     //选择日期
     laydate.render({
         elem: '#chooseDate',

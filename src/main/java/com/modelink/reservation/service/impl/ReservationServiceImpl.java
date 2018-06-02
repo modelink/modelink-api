@@ -44,12 +44,24 @@ public class ReservationServiceImpl implements ReservationService {
     /**
      * 查询符合条件的记录列表
      *
-     * @param reservation
+     * @param paramPagerVo
      * @return
      */
     @Override
-    public List<Reservation> findListByParam(Reservation reservation) {
-        return reservationMapper.select(reservation);
+    public List<Reservation> findListByParam(ReservationParamPagerVo paramPagerVo) {
+        Example example = new Example(Reservation.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
+            String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
+            criteria.andLessThan("createTime", chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
+        }
+        if(!StringUtils.isEmpty(paramPagerVo.getContactMobile())) {
+            criteria.andEqualTo("contactMobile", paramPagerVo.getContactMobile());
+        }
+
+        List<Reservation> reservationList = reservationMapper.selectByExample(example);
+        return reservationList;
     }
 
     /**
@@ -72,7 +84,7 @@ public class ReservationServiceImpl implements ReservationService {
         if(!StringUtils.isEmpty(paramPagerVo.getContactMobile())) {
             criteria.andEqualTo("contactMobile", paramPagerVo.getContactMobile());
         }
-
+        example.setOrderByClause("create_time desc");
         List<Reservation> reservationList = reservationMapper.selectByExample(example);
         PageInfo<Reservation> pageInfo = new PageInfo<>(reservationList);
         return pageInfo;

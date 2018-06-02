@@ -27,10 +27,10 @@ public interface ReservationService {
 
     /**
      * 查询符合条件的记录列表
-     * @param reservation
+     * @param paramPagerVo
      * @return
      */
-    public List<Reservation> findListByParam(Reservation reservation);
+    public List<Reservation> findListByParam(ReservationParamPagerVo paramPagerVo);
 
     /**
      * 查询符合条件的记录列表（分页查询）
