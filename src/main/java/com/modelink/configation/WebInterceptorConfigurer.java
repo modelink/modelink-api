@@ -3,6 +3,8 @@ package com.modelink.configation;
 import com.google.code.kaptcha.servlet.KaptchaServlet;
 import com.modelink.admin.interceptor.AdminInterceptor;
 import com.modelink.reservation.interceptor.ReservationInterceptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.web.servlet.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,10 +12,14 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import java.util.Enumeration;
 
 @Configuration
 public class WebInterceptorConfigurer extends WebMvcConfigurationSupport {
+
+    private static Logger logger = LoggerFactory.getLogger(WebInterceptorConfigurer.class);
 
     @Bean
     AdminInterceptor adminInterceptor() {
@@ -42,6 +48,17 @@ public class WebInterceptorConfigurer extends WebMvcConfigurationSupport {
 
     @Bean
     public ServletRegistrationBean servletRegistrationBean() throws ServletException {
+        ServletContext servletContext = this.getServletContext();
+        Enumeration<String> enumeration = servletContext.getInitParameterNames();
+
+        String initParameterName, initParameterValue;
+        while (enumeration.hasMoreElements()) {
+            initParameterName = enumeration.nextElement();
+            initParameterValue = servletContext.getInitParameter(initParameterName);
+            logger.info("[webInterceptorConfigurer]获取servlet初始化参数。initParameterName={}, initParameterValue={}",
+                    initParameterName, initParameterValue);
+        }
+
         return new ServletRegistrationBean(new KaptchaServlet(),"/common/captcha-image.jpg");
     }
 

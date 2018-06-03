@@ -74,4 +74,7 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
             dataName: 'rtnList' //数据列表的字段名称，默认：data
         }
     });
+
+
+    exports('reserve', {});
 });

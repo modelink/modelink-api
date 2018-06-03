@@ -28,7 +28,7 @@
     <table class="layui-hide" id="reserve-table-grid"></table>
 
     <script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
-    <script>
+    <script th:inline="javascript">
         layui.config({
             base: '/static/js/admin/reservation/' //你的模块目录
         }).use('reserve'); //加载入口

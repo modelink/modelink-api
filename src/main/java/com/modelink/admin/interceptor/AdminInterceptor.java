@@ -36,7 +36,8 @@ public class AdminInterceptor implements HandlerInterceptor {
             parameterValue = httpServletRequest.getParameter(parameterName);
             parameterMap.put(parameterName, parameterValue);
         }
-        logger.info("[adminInterceptor|preHandle]获取请求参数。parameterMap={}", parameterMap);
+        String requestUrl = httpServletRequest.getRequestURI();
+        logger.info("[adminInterceptor|preHandle]获取请求参数。requestUrl={}, parameterMap={}", requestUrl, parameterMap);
 
         // 校验用户是否登录
         AdminVo adminVo = (AdminVo)httpServletRequest.getSession().getAttribute(ADMIN_SESSION_NAME);

@@ -5,12 +5,15 @@ import java.util.Date;
 /**
  * 后台资源，对应一个一个菜单
  */
-public class Resource {
+public class Permission {
 
     private Long id;
     private String name;
-    /** 资源类型（1-菜单；2-功能）**/
+    /** 资源类型（1-菜单；2-按钮）**/
     private Integer type;
+    private String value;
+    private String description;
+    private Boolean available = true;
 
     private Date createTime;
     private Date updateTime;
@@ -37,6 +40,30 @@ public class Resource {
 
     public void setType(Integer type) {
         this.type = type;
+    }
+
+    public String getValue() {
+        return value;
+    }
+
+    public void setValue(String value) {
+        this.value = value;
+    }
+
+    public Boolean getAvailable() {
+        return available;
+    }
+
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getCreateTime() {

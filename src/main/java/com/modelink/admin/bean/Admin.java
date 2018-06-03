@@ -1,20 +1,19 @@
 package com.modelink.admin.bean;
 
-import javax.persistence.Transient;
+import javax.persistence.Id;
 import java.util.Date;
-import java.util.List;
 
 public class Admin {
-
+    @Id
     private Long id;
     private String userName;
     private String mobile;
     private String nickName;
     private String password;
-    private int status;
+    private Integer status;
     private Date createTime;
     private Date updateTime;
-    private List<Long> roleIdList;
+    private String roleIds;
 
     public Long getId() {
         return id;
@@ -56,11 +55,11 @@ public class Admin {
         this.password = password;
     }
 
-    public int getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(int status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 
@@ -80,11 +79,11 @@ public class Admin {
         this.updateTime = updateTime;
     }
 
-    public List<Long> getRoleIdList() {
-        return roleIdList;
+    public String getRoleIds() {
+        return roleIds;
     }
 
-    public void setRoleIdList(List<Long> roleIdList) {
-        this.roleIdList = roleIdList;
+    public void setRoleIds(String roleIds) {
+        this.roleIds = roleIds;
     }
 }

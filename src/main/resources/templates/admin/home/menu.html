@@ -6,9 +6,17 @@
         <!-- 左侧导航区域 -->
         <ul class="layui-nav layui-nav-tree"  lay-filter="test">
             <li class="layui-nav-item layui-nav-itemed">
-                <a class="" href="javascript:;">功能列表</a>
+                <a class="" href="javascript:;">
+                    <i class="layui-icon layui-icon-home"></i>
+                    <cite style="margin-left: 5px;">主要功能</cite>
+                </a>
                 <dl class="layui-nav-child">
-                    <dd><a href="/admin/reservation">预约列表</a></dd>
+                    <dd th:each="permission: ${session.admin_session_name.permissionList}">
+                        <a th:href="@{${permission.value}}">
+                            <!--<i class="layui-icon layui-icon-home"></i>-->
+                            <cite style="margin-left: 25px;" th:text="${permission.name}"></cite>
+                        </a>
+                    </dd>
                 </dl>
             </li>
             <!--

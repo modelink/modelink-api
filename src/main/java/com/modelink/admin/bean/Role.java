@@ -1,15 +1,15 @@
 package com.modelink.admin.bean;
 
-import javax.persistence.Transient;
 import java.util.Date;
-import java.util.List;
 
 public class Role {
 
     private Long id;
     private String name;
-    @Transient
-    private List<Long> resourceIdList;
+
+    private String description;
+    private String permissionIds;
+    private Boolean available = true;
 
     private Date createTime;
     private Date updateTime;
@@ -30,12 +30,28 @@ public class Role {
         this.name = name;
     }
 
-    public List<Long> getResourceIdList() {
-        return resourceIdList;
+    public Boolean getAvailable() {
+        return available;
     }
 
-    public void setResourceIdList(List<Long> resourceIdList) {
-        this.resourceIdList = resourceIdList;
+    public void setAvailable(Boolean available) {
+        this.available = available;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getPermissionIds() {
+        return permissionIds;
+    }
+
+    public void setPermissionIds(String permissionIds) {
+        this.permissionIds = permissionIds;
     }
 
     public Date getCreateTime() {

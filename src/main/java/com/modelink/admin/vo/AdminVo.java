@@ -1,11 +1,16 @@
 package com.modelink.admin.vo;
 
+import com.modelink.admin.bean.Permission;
+
+import java.util.List;
+
 public class AdminVo {
 
     private Long id;
     private String userName;
     private String mobile;
     private String nickName;
+    private List<Permission> permissionList;
 
     public void setId(Long id) {
         this.id = id;
@@ -35,4 +40,15 @@ public class AdminVo {
         this.nickName = nickName;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public List<Permission> getPermissionList() {
+        return permissionList;
+    }
+
+    public void setPermissionList(List<Permission> permissionList) {
+        this.permissionList = permissionList;
+    }
 }

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="admin/layout/layout"><!-- layout文件路径-->
 
 <div id="header">
-    <div class="layui-logo">北京数驰科技管理系统</div>
+    <div class="layui-logo">数驰科技管理系统</div>
     <!-- 头部区域（可配合layui已有的水平导航） -->
 
     <!--
@@ -28,8 +28,7 @@
                 <label th:text="${session.admin_session_name.userName}"></label>
             </a>
             <dl class="layui-nav-child">
-                <dd><a href="">基本资料</a></dd>
-                <dd><a href="">安全设置</a></dd>
+                <dd><a href="/admin/resetPassword">设置密码</a></dd>
             </dl>
         </li>
         <li class="layui-nav-item"><a href="/admin/logout">退出登录</a></li>
