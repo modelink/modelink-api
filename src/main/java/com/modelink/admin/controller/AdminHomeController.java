@@ -26,6 +26,11 @@ public class AdminHomeController {
     @Resource
     private AdminService adminService;
 
+    @RequestMapping
+    public String index(){
+        return "/admin/layout/layout";
+    }
+
     @RequestMapping("/home")
     public String home(){
         return "/admin/home/home";
@@ -35,7 +40,7 @@ public class AdminHomeController {
     public String login(HttpServletRequest request) {
         AdminVo adminVo = (AdminVo)request.getSession().getAttribute(AdminConstant.ADMIN_SESSION_NAME);
         if(adminVo != null){
-            return "redirect:/admin/home";
+            return "redirect:/admin";
         }else {
             return "/admin/login/login";
         }

@@ -13,7 +13,8 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
             },
             success: function (data) {
                 if(data.rtnCode === 200){
-                    window.location.href = "/admin/login";
+                    parent.layer.closeAll();
+                    parent.window.location.reload();
                 }else{
                     layer.msg(data.rtnMsg, {offset: '50px'});
                 }
