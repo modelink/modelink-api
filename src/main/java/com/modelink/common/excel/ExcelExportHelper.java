@@ -1,6 +1,5 @@
 package com.modelink.common.excel;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -14,13 +13,53 @@ import java.io.FileOutputStream;
 import java.util.List;
 
 /**
- * Excel 简单工具类
+ * Excel 导出文件助手
  */
-public class ExcelUtils {
+public class ExcelExportHelper {
 
-    public static Logger logger = LoggerFactory.getLogger(ExcelUtils.class);
+    public static Logger logger = LoggerFactory.getLogger(ExcelExportHelper.class);
 
+    /**
+     * 生成 Excel 数据流至网页下载流 Response
+     * @param excelConfigation
+     * @param response
+     * @throws Exception
+     */
     public static void exportExcel2Response(ExcelConfigation excelConfigation, HttpServletResponse response) throws Exception {
+
+        XSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
+        // 将Excel放入响应头里面
+        String fileName;
+        ServletOutputStream outStream = null;
+        try {
+            fileName = new String(excelConfigation.getFileName().getBytes("UTF-8"), "ISO-8859-1");
+            response.reset();
+            response.setContentType("application/x-msdownload");
+            response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+            outStream = response.getOutputStream();
+            workbook.write(outStream);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            outStream.close();
+        }
+    }
+
+    /**
+     * 生成 Excel 本地文件
+     * @param excelConfigation
+     * @param fileName
+     * @throws Exception
+     */
+    public static void exportExcel2File(ExcelConfigation excelConfigation, String fileName) throws Exception {
+        XSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
+        /*** 这里是问题的关键，将这个工作簿写入到一个流中就可以输出相应的名字，这里需要写路径就ok了。 **/
+        FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+        workbook.write(fileOutputStream);
+        fileOutputStream.close();
+    }
+
+    private static XSSFWorkbook buildExcelWorkbook (ExcelConfigation excelConfigation) throws Exception {
         // 创建Excel的工作书册 Workbook,对应到一个excel文档
         XSSFWorkbook workbook = new XSSFWorkbook();
 
@@ -123,49 +162,7 @@ public class ExcelUtils {
                 rowIndex++;
             }
         }
-
-        // 将Excel放入响应头里面
-        String fileName;
-        ServletOutputStream outStream = null;
-        try {
-            fileName = new String(excelConfigation.getFileName().getBytes("UTF-8"), "ISO-8859-1");
-            response.reset();
-            response.setContentType("application/x-msdownload");
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
-            outStream = response.getOutputStream();
-            workbook.write(outStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            outStream.close();
-        }
+        return workbook;
     }
 
-
-    /** 生成Excel结果（本地文件，网页下载文件） **/
-    public static void createExcelResult(HSSFWorkbook wb,
-                                         HttpServletResponse response) throws Exception {
-        /*** 这里是问题的关键，将这个工作簿写入到一个流中就可以输出相应的名字，这里需要写路径就ok了。 **/
-        FileOutputStream fileOut = new FileOutputStream("D:/workbook.xls");
-        wb.write(fileOut);
-        fileOut.close();
-
-        /** 第二种是输出到也面中的excel名称 **/
-        String fileName = "栏目统计表";
-
-        response.reset();
-        response.setContentType("application/x-msdownload");
-        response.setHeader("Content-Disposition", "attachment; filename="
-                + new String(fileName.getBytes("gb2312"), "ISO-8859-1") + ".xls");
-        ServletOutputStream outStream = null;
-
-        try {
-            outStream = response.getOutputStream();
-            wb.write(outStream);
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            outStream.close();
-        }
-    }
 }

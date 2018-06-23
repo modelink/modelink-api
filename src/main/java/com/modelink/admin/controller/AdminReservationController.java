@@ -3,7 +3,7 @@ package com.modelink.admin.controller;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.ReservationParamPagerVo;
 import com.modelink.common.excel.ExcelConfigation;
-import com.modelink.common.excel.ExcelUtils;
+import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.reservation.bean.Reservation;
@@ -69,6 +69,6 @@ public class AdminReservationController {
         }
 
         ExcelConfigation excelConfigation = ExcelConfigation.newInstance(fileName, columnNameList, dataList);
-        ExcelUtils.exportExcel2Response(excelConfigation, response);
+        ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
 }
