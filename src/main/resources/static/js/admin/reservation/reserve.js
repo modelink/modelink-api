@@ -37,7 +37,8 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
         elem: '#reserve-table-grid',
         url: '/admin/reservation/list',
         cols: [
-            [{checkbox: true, fixed: true},
+            [
+                {checkbox: true, fixed: true},
                 {field: 'id', title: 'ID', width: 80, sort: false, align: 'center', fixed: true},
                 {field: 'contactName', title: '预约姓名', align: 'center'},
                 {field: 'contactTime', title: '预约时间', align: 'center'},

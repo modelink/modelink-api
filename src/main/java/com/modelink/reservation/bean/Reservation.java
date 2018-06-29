@@ -2,10 +2,12 @@ package com.modelink.reservation.bean;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import javax.persistence.Id;
 import java.util.Date;
 
 public class Reservation {
 
+    @Id
     private Long id;
     /** 预约姓名 **/
     private String contactName;
@@ -26,8 +28,8 @@ public class Reservation {
     /** 创建时间 **/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     /** 更新时间 **/
+    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date updateTime;
 
     public Long getId() {
