@@ -1,7 +1,7 @@
 package com.modelink.usercenter.service.impl;
 
-import com.modelink.usercenter.bean.Channel;
-import com.modelink.usercenter.service.ChannelService;
+import com.modelink.usercenter.bean.Merchant;
+import com.modelink.usercenter.service.MerchantService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,21 +11,21 @@ import javax.annotation.Resource;
 
 @SpringBootTest
 @RunWith(SpringRunner.class)
-public class ChannelServiceImplTest {
+public class MerchantServiceImplTest {
 
     @Resource
-    private ChannelService channelService;
+    private MerchantService merchantService;
 
     @Test
     public void findByAppKey() throws Exception {
-        System.out.println(channelService.findByAppKey(10001L));
+        System.out.println(merchantService.findByAppKey(10001L));
     }
 
     @Test
     public void findList() throws Exception {
-        Channel channel = new Channel();
-        channel.setAppKey(10001L);
-        System.out.println(channelService.findList(channel).size());
+        Merchant merchant = new Merchant();
+        merchant.setAppKey(10001L);
+        System.out.println(merchantService.findList(merchant).size());
     }
 
 }

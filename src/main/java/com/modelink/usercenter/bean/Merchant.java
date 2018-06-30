@@ -3,7 +3,7 @@ package com.modelink.usercenter.bean;
 import javax.persistence.Id;
 import java.util.Date;
 
-public class Channel {
+public class Merchant {
 
     @Id
     private Long id;

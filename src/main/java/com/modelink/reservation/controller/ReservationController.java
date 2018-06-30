@@ -10,7 +10,7 @@ import com.modelink.reservation.service.ReservationService;
 import com.modelink.reservation.vo.ReserveDateVo;
 import com.modelink.reservation.vo.ReserveHeaderVo;
 import com.modelink.reservation.vo.ReserveParamVo;
-import com.modelink.usercenter.service.ChannelService;
+import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -32,7 +32,7 @@ public class ReservationController {
     public static Logger logger = LoggerFactory.getLogger(ReservationController.class);
 
     @Resource
-    private ChannelService channelService;
+    private MerchantService merchantService;
     @Resource
     private ReservationService reservationService;
 
@@ -48,7 +48,7 @@ public class ReservationController {
         try {
             BeanUtils.copyProperties(reserveParamVo, reservation);
             reservation.setStatus(ReservationStatusEnum.CREATED.getValue());
-            reservation.setChannel((Long)request.getAttribute("channel"));
+            reservation.setChannel((Long)request.getAttribute("merchant"));
             int num = reservationService.insert(reservation);
             if(num > 0){
                 resultVo.setRtnCode(RetStatus.Ok.getValue());

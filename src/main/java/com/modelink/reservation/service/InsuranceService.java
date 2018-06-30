@@ -1,7 +1,7 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.ReservationParamPagerVo;
+import com.modelink.admin.vo.InsuranceParamPagerVo;
 import com.modelink.reservation.bean.Insurance;
 
 import java.util.List;
@@ -30,12 +30,12 @@ public interface InsuranceService {
      * @param paramPagerVo
      * @return
      */
-    public List<Insurance> findListByParam(ReservationParamPagerVo paramPagerVo);
+    public List<Insurance> findListByParam(InsuranceParamPagerVo paramPagerVo);
 
     /**
      * 查询符合条件的记录列表（分页查询）
      * @param paramPagerVo
      * @return
      */
-    public PageInfo<Insurance> findPagerByParam(ReservationParamPagerVo paramPagerVo);
+    public PageInfo<Insurance> findPagerByParam(InsuranceParamPagerVo paramPagerVo);
 }

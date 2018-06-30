@@ -20,20 +20,20 @@ public class Insurance {
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date birthday;
     /** 投保人年龄 **/
-    private int age;
+    private Integer age;
     /** 投保人手机号 **/
     private String mobile;
     /** 投保人地址 **/
     private String address;
     /** 投保人省份 **/
-    private int province;
+    private Integer province;
     /** 投保人城市 **/
-    private int city;
+    private Integer city;
     /** 预约时间 **/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date contactTime;
-    /** 预约渠道（如小米、华夏） **/
-    private Long channel;
+    /** 预约商户（如小米、华夏） **/
+    private Long merchantId;
     /** 平台类型（微信、PC、WAP、转介绍） **/
     private Integer platform;
     /** 数据类型（自然流量、SEM） **/
@@ -115,11 +115,11 @@ public class Insurance {
         this.birthday = birthday;
     }
 
-    public int getAge() {
+    public Integer getAge() {
         return age;
     }
 
-    public void setAge(int age) {
+    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -139,23 +139,21 @@ public class Insurance {
         this.address = address;
     }
 
-    public int getProvince() {
+    public Integer getProvince() {
         return province;
     }
 
-    public void setProvince(int province) {
+    public void setProvince(Integer province) {
         this.province = province;
     }
 
-    public int getCity() {
+    public Integer getCity() {
         return city;
     }
 
-    public void setCity(int city) {
+    public void setCity(Integer city) {
         this.city = city;
     }
-
-    /** 投保人省份 **/
 
     public Date getContactTime() {
         return contactTime;
@@ -165,12 +163,12 @@ public class Insurance {
         this.contactTime = contactTime;
     }
 
-    public Long getChannel() {
-        return channel;
+    public Long getMerchantId() {
+        return merchantId;
     }
 
-    public void setChannel(Long channel) {
-        this.channel = channel;
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
     public Integer getPlatform() {

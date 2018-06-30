@@ -1,7 +1,7 @@
 package com.modelink.admin.interceptor;
 
 import com.modelink.admin.vo.AdminVo;
-import com.modelink.usercenter.service.ChannelService;
+import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -22,7 +22,7 @@ public class AdminInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(AdminInterceptor.class);
 
     @Resource
-    private ChannelService channelService;
+    private MerchantService merchantService;
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {

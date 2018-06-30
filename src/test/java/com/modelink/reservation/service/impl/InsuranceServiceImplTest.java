@@ -19,6 +19,9 @@ public class InsuranceServiceImplTest {
     @Test
     public void insert() throws Exception {
         Insurance insurance = new Insurance();
+        insurance.setName("赵钱孙");
+        insurance.setMobile("15110100577");
+        insurance.setAddress("不知名学院");
         insuranceService.insert(insurance);
     }
 

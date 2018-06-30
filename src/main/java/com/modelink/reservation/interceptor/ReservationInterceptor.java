@@ -4,8 +4,8 @@ import com.alibaba.fastjson.JSON;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.utils.SignUtils;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.usercenter.bean.Channel;
-import com.modelink.usercenter.service.ChannelService;
+import com.modelink.usercenter.bean.Merchant;
+import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -28,7 +28,7 @@ public class ReservationInterceptor implements HandlerInterceptor {
     private static final Logger logger = LoggerFactory.getLogger(ReservationInterceptor.class);
 
     @Resource
-    private ChannelService channelService;
+    private MerchantService merchantService;
 
     @Override
     public boolean preHandle(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, Object o) throws Exception {
@@ -65,8 +65,8 @@ public class ReservationInterceptor implements HandlerInterceptor {
                 printWriter.append(JSON.toJSONString(resultVo));
                 return false;
             }
-            Channel channel = channelService.findByAppKey(Long.parseLong(appKey));
-            if (StringUtils.isEmpty(channel)) {
+            Merchant merchant = merchantService.findByAppKey(Long.parseLong(appKey));
+            if (StringUtils.isEmpty(merchant)) {
                 resultVo.setRtnCode(RetStatus.Fail.getValue());
                 resultVo.setRtnMsg("参数appKey不正确");
                 printWriter = formResponseJson(httpServletResponse, resultVo);
@@ -74,9 +74,9 @@ public class ReservationInterceptor implements HandlerInterceptor {
                 return false;
             }
             // 自动增加渠道参数
-            httpServletRequest.setAttribute("channel", channel.getId());
+            httpServletRequest.setAttribute("merchant", merchant.getId());
             // 校验签名是否正确
-            String respSign = SignUtils.generateSignature(parameterMap, channel.getAppSecret());
+            String respSign = SignUtils.generateSignature(parameterMap, merchant.getAppSecret());
             logger.info("[reservationInterceptor|preHandle]签名校验开始。reqSign={}, respSign={}", reqSign, respSign);
             if (!reqSign.equalsIgnoreCase(respSign)) {
                 resultVo.setRtnCode(RetStatus.Fail.getValue());

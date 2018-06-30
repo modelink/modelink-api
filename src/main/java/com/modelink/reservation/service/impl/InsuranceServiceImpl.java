@@ -1,11 +1,15 @@
 package com.modelink.reservation.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.ReservationParamPagerVo;
+import com.modelink.admin.vo.InsuranceParamPagerVo;
 import com.modelink.reservation.bean.Insurance;
+import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.mapper.InsuranceMapper;
 import com.modelink.reservation.service.InsuranceService;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -45,8 +49,20 @@ public class InsuranceServiceImpl implements InsuranceService {
      * @return
      */
     @Override
-    public List<Insurance> findListByParam(ReservationParamPagerVo paramPagerVo) {
-        return null;
+    public List<Insurance> findListByParam(InsuranceParamPagerVo paramPagerVo) {
+        Example example = new Example(Insurance.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
+            String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
+            criteria.andLessThan("createTime", chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
+        }
+        if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
+            criteria.andEqualTo("mobile", paramPagerVo.getMobile());
+        }
+
+        List<Insurance> insuranceList = insuranceMapper.selectByExample(example);
+        return insuranceList;
     }
 
     /**
@@ -56,7 +72,22 @@ public class InsuranceServiceImpl implements InsuranceService {
      * @return
      */
     @Override
-    public PageInfo<Insurance> findPagerByParam(ReservationParamPagerVo paramPagerVo) {
-        return null;
+    public PageInfo<Insurance> findPagerByParam(InsuranceParamPagerVo paramPagerVo) {
+        PageHelper.startPage(paramPagerVo.getPageNo(), paramPagerVo.getPageSize());
+
+        Example example = new Example(Reservation.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
+            String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
+            criteria.andLessThan("createTime", chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
+        }
+        if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
+            criteria.andEqualTo("mobile", paramPagerVo.getMobile());
+        }
+        example.setOrderByClause("create_time desc");
+        List<Insurance> insuranceList = insuranceMapper.selectByExample(example);
+        PageInfo<Insurance> pageInfo = new PageInfo<>(insuranceList);
+        return pageInfo;
     }
 }

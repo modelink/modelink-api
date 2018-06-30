@@ -12,10 +12,10 @@ CREATE TABLE `insurance` (
   `city` int(11) NOT NULL DEFAULT '0' COMMENT '城市ID',
 
   `contact_time` timestamp NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '预约时间',
-  `arrange_ime` timestamp NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '预约时间',
-  `channel` bigint(20) NOT NULL DEFAULT '0' COMMENT '预约渠道（如小米、华夏）',
+  `arrange_time` timestamp NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '预约时间',
+  `merchant_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '预约商户（如小米、华夏）',
   `platform` int(11) NOT NULL DEFAULT '0' COMMENT '预约平台（微信、PC、WAP、转介绍）',
-  `date_type` int(11) NOT NULL DEFAULT '0' COMMENT '数据来源（SEM、自然流量）',
+  `data_type` int(11) NOT NULL DEFAULT '0' COMMENT '数据来源（SEM、自然流量）',
   `source_type` int(11) NOT NULL DEFAULT '0' COMMENT '入口类型',
   
   `org_name` varchar(20) NOT NULL DEFAULT '' COMMENT '机构名称',
