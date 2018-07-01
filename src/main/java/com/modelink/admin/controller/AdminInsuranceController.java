@@ -8,11 +8,13 @@ import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.PlatformEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelConfigation;
+import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.excel.ExcelImportHelper;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.Insurance;
+import com.modelink.reservation.enums.ResourceTypeEnum;
 import com.modelink.reservation.service.InsuranceService;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.MerchantService;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -221,5 +224,36 @@ public class AdminInsuranceController {
         }
 
         return resultVo;
+    }
+
+    @RequestMapping("/exportExcel")
+    public void download(InsuranceParamPagerVo paramPagerVo, HttpServletResponse response) throws Exception {
+        // 创建文件名称
+        String fileName = "投保明细列表_" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+        // 创建Excel表格列名称
+        List<String> columnNameList = new ArrayList<>();
+        columnNameList.add("投保人姓名");
+        columnNameList.add("投保人电话");
+        columnNameList.add("预约时间");
+        columnNameList.add("预约渠道");
+        columnNameList.add("预约入口");
+        columnNameList.add("创建时间");
+        // 创建Excel 数据
+        List<String> rowValueList;
+        List<List<String>> dataList = new ArrayList<>();
+        List<Insurance> insuranceList = insuranceService.findListByParam(paramPagerVo);
+        for(Insurance insurance : insuranceList){
+            rowValueList = new ArrayList<>();
+            rowValueList.add(insurance.getName());
+            rowValueList.add(insurance.getMobile());
+            rowValueList.add(DateUtils.formatDate(insurance.getContactTime(), "yyyy-MM-dd"));
+            rowValueList.add("小米渠道");
+            rowValueList.add(ResourceTypeEnum.getTextByValue(insurance.getSourceType()));
+            rowValueList.add(DateUtils.formatDate(insurance.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            dataList.add(rowValueList);
+        }
+
+        ExcelConfigation excelConfigation = ExcelConfigation.newInstance(fileName, columnNameList, dataList);
+        ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
 }

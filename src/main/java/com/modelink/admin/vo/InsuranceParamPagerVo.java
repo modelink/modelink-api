@@ -6,6 +6,7 @@ public class InsuranceParamPagerVo extends PagerVo {
 
     private String chooseDate;
     private String mobile;
+    private String columnFieldIds;
 
     public String getChooseDate() {
         return chooseDate;
