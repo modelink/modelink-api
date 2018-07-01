@@ -1,15 +1,13 @@
-package com.modelink.reservation.bean;
+package com.modelink.admin.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class Insurance implements Serializable {
+public class InsuranceVo implements Serializable{
 
-    @Id
     private Long id;
     /** 保单编号 **/
     private String insuranceNo;
@@ -26,21 +24,17 @@ public class Insurance implements Serializable {
     private String mobile;
     /** 投保人地址 **/
     private String address;
-    /** 投保人省份 **/
-    private Integer province;
-    /** 投保人城市 **/
-    private Integer city;
     /** 预约时间 **/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date contactTime;
     /** 预约商户（如小米、华夏） **/
-    private Long merchantId;
+    private String merchantName;
     /** 平台类型（微信、PC、WAP、转介绍） **/
-    private Integer platform;
+    private String platformName;
     /** 数据类型（自然流量、SEM） **/
-    private Integer dataType;
+    private String dataTypeName;
     /** 渠道入口类型（0-默认） **/
-    private Integer sourceType = 0;
+    private String sourceName;
     /** 下发时间 **/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date arrangeTime;
@@ -57,12 +51,12 @@ public class Insurance implements Serializable {
     /** 拨打状态 **/
     private String callStatus;
     /** 是否问题数据 **/
-    private boolean problem;
+    private String problem;
     /** 成单日期 **/
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
     private Date finishTime;
     /** 缴费方式 **/
-    private Integer payType;
+    private String payTypeName;
     /** 保险额度 **/
     private BigDecimal insuranceAmount;
     /** 保险费用 **/
@@ -142,22 +136,6 @@ public class Insurance implements Serializable {
         this.address = address;
     }
 
-    public Integer getProvince() {
-        return province;
-    }
-
-    public void setProvince(Integer province) {
-        this.province = province;
-    }
-
-    public Integer getCity() {
-        return city;
-    }
-
-    public void setCity(Integer city) {
-        this.city = city;
-    }
-
     public Date getContactTime() {
         return contactTime;
     }
@@ -166,36 +144,36 @@ public class Insurance implements Serializable {
         this.contactTime = contactTime;
     }
 
-    public Long getMerchantId() {
-        return merchantId;
+    public String getMerchantName() {
+        return merchantName;
     }
 
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
-    public Integer getPlatform() {
-        return platform;
+    public String getPlatformName() {
+        return platformName;
     }
 
-    public void setPlatform(Integer platform) {
-        this.platform = platform;
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
     }
 
-    public Integer getDataType() {
-        return dataType;
+    public String getDataTypeName() {
+        return dataTypeName;
     }
 
-    public void setDataType(Integer dataType) {
-        this.dataType = dataType;
+    public void setDataTypeName(String dataTypeName) {
+        this.dataTypeName = dataTypeName;
     }
 
-    public Integer getSourceType() {
-        return sourceType;
+    public String getSourceName() {
+        return sourceName;
     }
 
-    public void setSourceType(Integer sourceType) {
-        this.sourceType = sourceType;
+    public void setSourceName(String sourceName) {
+        this.sourceName = sourceName;
     }
 
     public Date getArrangeTime() {
@@ -254,11 +232,11 @@ public class Insurance implements Serializable {
         this.callStatus = callStatus;
     }
 
-    public boolean isProblem() {
+    public String getProblem() {
         return problem;
     }
 
-    public void setProblem(boolean problem) {
+    public void setProblem(String problem) {
         this.problem = problem;
     }
 
@@ -270,12 +248,12 @@ public class Insurance implements Serializable {
         this.finishTime = finishTime;
     }
 
-    public Integer getPayType() {
-        return payType;
+    public String getPayTypeName() {
+        return payTypeName;
     }
 
-    public void setPayType(Integer payType) {
-        this.payType = payType;
+    public void setPayTypeName(String payTypeName) {
+        this.payTypeName = payTypeName;
     }
 
     public BigDecimal getInsuranceAmount() {
@@ -292,6 +270,14 @@ public class Insurance implements Serializable {
 
     public void setInsuranceFee(BigDecimal insuranceFee) {
         this.insuranceFee = insuranceFee;
+    }
+
+    public Integer getInsuranceCount() {
+        return insuranceCount;
+    }
+
+    public void setInsuranceCount(Integer insuranceCount) {
+        this.insuranceCount = insuranceCount;
     }
 
     public String getRemark() {
@@ -316,13 +302,5 @@ public class Insurance implements Serializable {
 
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Integer getInsuranceCount() {
-        return insuranceCount;
-    }
-
-    public void setInsuranceCount(Integer insuranceCount) {
-        this.insuranceCount = insuranceCount;
     }
 }

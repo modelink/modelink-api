@@ -13,8 +13,9 @@
         #columnField {
             width: 150px;
             height: 450px;
-            border: solid 1px green;
+            border: solid 1px #009688;
             background-color: white;
+            margin-top: 2px;
             display: none;
             position: absolute;
             overflow-y: auto;
@@ -39,7 +40,6 @@
                 </div>
             </div>
             <div class="layui-inline">
-                <a class="layui-btn" lay-submit lay-filter="download-btn">导入数据</a>
                 <button class="layui-btn" lay-submit lay-filter="search-btn">查询</button>
                 <a class="layui-btn layui-btn-primary reset-btn">重置</a>
             </div>
@@ -47,24 +47,17 @@
     </form>
 
     <div class="layui-btn-group table-toobar">
-        <li class="layui-nav-item layui-btn" data-type="setColumnField">
-            <p>设置列属性</p>
-            <dl class="layui-nav-child">
-                <dd><a href="">选项1</a></dd>
-                <dd><a href="">选项2</a></dd>
-                <dd><a href="">选项3</a></dd>
-            </dl>
-        </li>
-
-        <li class="layui-btn" data-type="importExcel">获取选中数目</li>
+        <li class="layui-nav-item layui-btn" data-type="setColumnField"><p>设置列属性</p></li>
+        <li class="layui-btn" id="importExcel" data-type="importExcel"><i class="layui-icon"></i>导入文件</li>
         <li class="layui-btn" data-type="exportExcel">验证是否全选</li>
     </div>
-    <div class="layui-form layui-form-pane" id="columnField">
-    </div>
+    <div class="layui-form layui-form-pane" id="columnField"></div>
     <table class="layui-hide" id="insurance-table-grid"></table>
 
 
-
+    <div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="upload-progress" style="display:none">
+        <div class="layui-progress-bar layui-bg-red" lay-percent="0%"></div>
+    </div>
     <script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
     <script th:inline="javascript">
         layui.config({

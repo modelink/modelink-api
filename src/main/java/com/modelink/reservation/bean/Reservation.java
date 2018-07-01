@@ -3,9 +3,10 @@ package com.modelink.reservation.bean;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import javax.persistence.Id;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Reservation {
+public class Reservation implements Serializable {
 
     @Id
     private Long id;

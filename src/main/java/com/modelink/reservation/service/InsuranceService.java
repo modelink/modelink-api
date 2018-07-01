@@ -26,6 +26,13 @@ public interface InsuranceService {
     public int countByParam(Insurance insurance);
 
     /**
+     * 查询符合条件的记录
+     * @param insurance
+     * @return
+     */
+    public Insurance findOneByParam(Insurance insurance);
+
+    /**
      * 查询符合条件的记录列表
      * @param paramPagerVo
      * @return

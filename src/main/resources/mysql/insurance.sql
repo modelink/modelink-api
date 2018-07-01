@@ -27,6 +27,7 @@ CREATE TABLE `insurance` (
   `problem` TINYINT(1) NOT NULL DEFAULT FALSE COMMENT '是否问题数据',
 
   `pay_type` int(11) NOT NULL DEFAULT '0' COMMENT '缴费方式（年交、月交）',
+  `insurance_count` int(11) NOT NULL DEFAULT '0' COMMENT '投保数量',
   `insurance_amount` DECIMAL NOT NULL DEFAULT '0' COMMENT '保险额度',
   `insurance_fee` DECIMAL NOT NULL DEFAULT '0' COMMENT '保费',
   `finish_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '成单日期',
@@ -36,3 +37,6 @@ CREATE TABLE `insurance` (
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='承保记录表';
+
+INSERT INTO `insurance` VALUES (1,'NO322944994','张三','15110100000','男',14,'2004-12-09 16:00:00','北京市',201,201,'2018-06-29 16:00:00','2018-06-29 16:00:00',1,1,1,1,'客服机构','客服A','1','2','3','1',0,1, 1,10000,10,'2018-06-29 16:00:00','成交','2018-06-29 16:00:00','2018-06-29 16:00:00');
+

@@ -1,8 +1,10 @@
-layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
+layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], function (exports) {
     var $ = layui.jquery;
     var form = layui.form;
     var table = layui.table;
     var laydate = layui.laydate;
+    var upload = layui.upload;
+    var element = layui.element;
 
     Insurance.$ = $;
 
@@ -30,27 +32,57 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
         if(!isChecked && $.inArray(fieldValue, Insurance.fieldList)){
             Insurance.fieldList.splice($.inArray(fieldValue, Insurance.fieldList), 1);
         }
-        console.log(Insurance.fieldList);
         Insurance.renderTable(table);
     });
 
+    // 初始化上传组件
+    upload.render({
+        elem: '#importExcel',
+        url: '/admin/insurance/importExcel',
+        accept: 'file',
+        acceptMime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
+        exts: 'xls|xlsx',
+        before: function () {
+            var progressHtml = '<div id="upload-message"></div>'
+                + '<div class="layui-progress layui-progress-big" lay-filter="upload-progress">'
+                + '<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>'
+                + '</div>';
+            Insurance.progressIndex = layer.open({
+                title: ['上传文件', 'text-align: center; padding-left: 80px;'],
+                content: progressHtml,
+                btnAlign: 'c',
+                area: '500px',
+                closeBtn: 0,
+                yes: function(index, layero){
+                    if($("#upload-message").html() == "上传完成"){
+                        layer.close(index);
+                    }else{
+                        return false;
+                    }
+                }
+            });
+            $("#upload-message").html("正在上传文件……");
+            element.progress("upload-progress", 0 + "%");
+        },
+        done: function(response){
+            $("#upload-message").html("上传完成");
+            element.progress("upload-progress", 100 + "%");
+        }
+    });
     /** 设置表头事件处理逻辑 **/
     var active = {
-        setColumnField: function(){ //获取选中数据
+        setColumnField: function(){
             if($("#columnField").is(':visible')) {
                 $("#columnField").hide();
             }else{
                 $("#columnField").show();
             }
         },
-        importExcel: function(){ //获取选中数目
-            var checkStatus = table.checkStatus('idTest')
-                ,data = checkStatus.data;
-            layer.msg('选中了：'+ data.length + ' 个');
+        importExcel: function(){
+
         },
-        exportExcel: function(){ //验证是否全选
-            var checkStatus = table.checkStatus('idTest');
-            layer.msg(checkStatus.isAll ? '全选': '未全选')
+        exportExcel: function(){
+
         }
     };
     $('.table-toobar .layui-btn').on('click', function(){
@@ -63,7 +95,7 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
     //重置事件
     $(".reset-btn").on("click", function () {
         $("#chooseDate").val("");
-        $("#contactMobile").val("");
+        $("#mobile").val("");
     });
     //搜索表单提交
     form.on('submit(search-btn)', function(data){
@@ -95,6 +127,7 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
 var Insurance = {
     $: null,
     table: null,
+    progressIndex: null,
     fieldList: [
         '',
         'id',
@@ -104,7 +137,7 @@ var Insurance = {
         'age',
 
         'contactTime',
-        'merchantId',
+        'merchantName',
 
         'callStatus',
         'problem',
@@ -126,10 +159,10 @@ var Insurance = {
 
         {field: 'contactTime', title: '预约时间', minWidth: 120, align: 'center'},
         {field: 'arrangeTime', title: '下发时间', minWidth: 120, align: 'center'},
-        {field: 'merchantId', title: '合作商户', minWidth: 100, align: 'center'},
-        {field: 'platform', title: '渠道归属', minWidth: 100, align: 'center'},
-        {field: 'dataType', title: '渠道明细', minWidth: 100, align: 'center'},
-        {field: 'sourceType', title: '入口类型', minWidth: 100, align: 'center'},
+        {field: 'merchantName', title: '合作商户', minWidth: 100, align: 'center'},
+        {field: 'platformName', title: '渠道归属', minWidth: 100, align: 'center'},
+        {field: 'dataTypeName', title: '渠道明细', minWidth: 100, align: 'center'},
+        {field: 'sourceTypeName', title: '入口类型', minWidth: 100, align: 'center'},
 
         {field: 'orgName', title: '机构名称', minWidth: 100, align: 'center'},
         {field: 'tsrName', title: 'TSR姓名', minWidth: 100, align: 'center'},
@@ -139,7 +172,7 @@ var Insurance = {
         {field: 'callStatus', title: '拨打状态', minWidth: 100, align: 'center'},
         {field: 'problem', title: '问题数据', minWidth: 100, align: 'center'},
 
-        {field: 'payType', title: '缴费类型', minWidth: 100, align: 'center'},
+        {field: 'payTypeName', title: '缴费类型', minWidth: 100, align: 'center'},
         {field: 'insuranceAmount', title: '保额', minWidth: 100, align: 'center'},
         {field: 'insuranceFee', title: '保费', minWidth: 100, align: 'center'},
         {field: 'finishTime', title: '成单日期', minWidth: 120, align: 'center'},
@@ -156,11 +189,14 @@ var Insurance = {
                 columnList.push(columnItem);
             }
         }
-
+        console.log(columnList);
         if(Insurance.table){
-            table.render({
+            Insurance.table.reload({
+                cols: [[{field: 'id', title: 'ID', width: 50, sort: false, align: 'center', fixed: true}]],
+            });
+            Insurance.table.reload({
                 cols: [ columnList ],
-            })
+            });
             return;
         }
         Insurance.table = table.render({

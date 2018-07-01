@@ -36,7 +36,12 @@ public class WebInterceptorConfigurer extends WebMvcConfigurationSupport {
         // addPathPatterns 用于添加拦截规则
         // excludePathPatterns 用户排除拦截
         registry.addInterceptor(adminInterceptor()).addPathPatterns("/admin/**")
-                .excludePathPatterns("/admin/register", "/admin/login", "/admin/doLogin");
+                .excludePathPatterns(
+                        "/admin/register",
+                        "/admin/login",
+                        "/admin/doLogin",
+                        "/admin/insurance/importExcel"
+                );
         registry.addInterceptor(reservationInterceptor()).addPathPatterns("/reservation/**");
         super.addInterceptors(registry);
     }

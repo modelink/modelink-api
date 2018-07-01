@@ -4,7 +4,6 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.InsuranceParamPagerVo;
 import com.modelink.reservation.bean.Insurance;
-import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.mapper.InsuranceMapper;
 import com.modelink.reservation.service.InsuranceService;
 import org.springframework.stereotype.Service;
@@ -43,6 +42,19 @@ public class InsuranceServiceImpl implements InsuranceService {
     }
 
     /**
+     * 查询符合条件的记录
+     * @param insurance
+     * @return
+     */
+    public Insurance findOneByParam(Insurance insurance) {
+        List<Insurance> insuranceList = insuranceMapper.select(insurance);
+        if(insuranceList != null && insuranceList.size() > 0){
+            return insuranceList.get(0);
+        }
+        return null;
+    }
+
+    /**
      * 查询符合条件的记录列表
      *
      * @param paramPagerVo
@@ -75,7 +87,7 @@ public class InsuranceServiceImpl implements InsuranceService {
     public PageInfo<Insurance> findPagerByParam(InsuranceParamPagerVo paramPagerVo) {
         PageHelper.startPage(paramPagerVo.getPageNo(), paramPagerVo.getPageSize());
 
-        Example example = new Example(Reservation.class);
+        Example example = new Example(Insurance.class);
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");

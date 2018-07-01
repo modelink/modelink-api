@@ -1,28 +1,25 @@
 package com.modelink.common.enums;
 
 /**
- * 平台枚举
+ * 缴费类型枚举
  */
-public enum PlatformEnum {
+public enum InsurancePayTypeEnum {
 
-    PC(100, "PC"),
-    WAP(200, "WAP"),
-    WEIXIN(300, "微信"),
-    XIAOMI(400, "小米"),
-    RECOMMEND(900, "介绍");
+    月缴(1, "月缴"),
+    年缴(2, "年缴");
 
     private int value;
     private String text;
 
-    private PlatformEnum(int value, String text){
+    private InsurancePayTypeEnum(int value, String text){
         this.value = value;
         this.text = text;
     }
 
     public static String getTextByValue(int value) {
-        for(PlatformEnum platformEnum : PlatformEnum.values()){
-            if(platformEnum.getValue() == value){
-                return platformEnum.getText();
+        for(InsurancePayTypeEnum enumItem : InsurancePayTypeEnum.values()){
+            if(enumItem.getValue() == value){
+                return enumItem.getText();
             }
         }
         return "";
