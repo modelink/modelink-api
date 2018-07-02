@@ -5,8 +5,8 @@ package com.modelink.common.enums;
  */
 public enum InsurancePayTypeEnum {
 
-    月缴(1, "月缴"),
-    年缴(2, "年缴");
+    月缴(1, "月交"),
+    年缴(2, "年交");
 
     private int value;
     private String text;

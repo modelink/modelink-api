@@ -148,7 +148,7 @@ var Insurance = {
         'finishTime'
     ],
     column: [
-        {field: 'id', title: 'ID', width: 50, sort: false, align: 'center', fixed: true},
+        {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
         {field: 'insuranceNo', title: '保单编号', minWidth: 100, align: 'center'},
         {field: 'name', title: '投保人姓名', minWidth: 120, align: 'center'},
         {field: 'mobile', title: '投保人电话', minWidth: 120, align: 'center'},

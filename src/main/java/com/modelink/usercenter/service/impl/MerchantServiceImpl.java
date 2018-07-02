@@ -15,7 +15,31 @@ public class MerchantServiceImpl implements MerchantService {
     private MerchantMapper merchantMapper;
 
     /**
-     * 根据 appKey 查询渠道信息
+     * 根据 appKey 查询合作商信息
+     *
+     * @param id
+     * @return
+     */
+    @Override
+    public Merchant findById(Long id) {
+        return merchantMapper.selectByPrimaryKey(id);
+    }
+
+    /**
+     * 根据 name 查询合作商信息
+     *
+     * @param name
+     * @return
+     */
+    @Override
+    public Merchant findByName(String name) {
+        Merchant merchant = new Merchant();
+        merchant.setName(name);
+        return merchantMapper.selectOne(merchant);
+    }
+
+    /**
+     * 根据 appKey 查询合作商信息
      *
      * @param appKey
      * @return
@@ -28,7 +52,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     /**
-     * 获取渠道列表
+     * 获取合作商列表
      *
      * @param merchant
      * @return

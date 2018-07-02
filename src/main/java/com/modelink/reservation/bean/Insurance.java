@@ -36,9 +36,9 @@ public class Insurance implements Serializable {
     /** 预约商户（如小米、华夏） **/
     private Long merchantId;
     /** 平台类型（微信、PC、WAP、转介绍） **/
-    private Integer platform;
+    private String platform;
     /** 数据类型（自然流量、SEM） **/
-    private Integer dataType;
+    private String dataType;
     /** 渠道入口类型（0-默认） **/
     private Integer sourceType = 0;
     /** 下发时间 **/
@@ -174,19 +174,19 @@ public class Insurance implements Serializable {
         this.merchantId = merchantId;
     }
 
-    public Integer getPlatform() {
+    public String getPlatform() {
         return platform;
     }
 
-    public void setPlatform(Integer platform) {
+    public void setPlatform(String platform) {
         this.platform = platform;
     }
 
-    public Integer getDataType() {
+    public String getDataType() {
         return dataType;
     }
 
-    public void setDataType(Integer dataType) {
+    public void setDataType(String dataType) {
         this.dataType = dataType;
     }
 

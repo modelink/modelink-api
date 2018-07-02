@@ -1,11 +1,10 @@
 package com.modelink.admin.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.InsuranceParamPagerVo;
 import com.modelink.admin.vo.InsuranceVo;
-import com.modelink.common.enums.InsuranceDataTypeEnum;
 import com.modelink.common.enums.InsurancePayTypeEnum;
-import com.modelink.common.enums.PlatformEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelConfigation;
 import com.modelink.common.excel.ExcelExportHelper;
@@ -41,6 +40,8 @@ public class AdminInsuranceController {
 
     public static Logger logger = LoggerFactory.getLogger(AdminInsuranceController.class);
 
+    public static String dateFormat = "yyyy年M年d日";
+
     @Resource
     private MerchantService merchantService;
 
@@ -68,19 +69,19 @@ public class AdminInsuranceController {
         List<InsuranceVo> insuranceVoList = new ArrayList<>();
         List<Insurance> insuranceList = pageInfo.getList();
         for(Insurance insurance : insuranceList){
-            merchant = merchantService.findByAppKey(insurance.getMerchantId());
+            merchant = merchantService.findById(insurance.getMerchantId());
             insuranceVo = new InsuranceVo();
             BeanUtils.copyProperties(insurance, insuranceVo);
             // 字段格式化
             insuranceVo.setAddress("");
-            insuranceVo.setDataTypeName(InsuranceDataTypeEnum.getTextByValue(insurance.getDataType()));
+            insuranceVo.setDataTypeName(insurance.getDataType());
             insuranceVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            insuranceVo.setPlatformName(PlatformEnum.getTextByValue(insurance.getPlatform()));
+            insuranceVo.setPlatformName(insurance.getPlatform());
             insuranceVo.setPayTypeName(InsurancePayTypeEnum.getTextByValue(insurance.getPayType()));
             insuranceVoList.add(insuranceVo);
         }
 
-        layuiResultPagerVo.setTotalCount(pageInfo.getSize());
+        layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(insuranceVoList);
         return layuiResultPagerVo;
     }
@@ -115,7 +116,6 @@ public class AdminInsuranceController {
         // 校验Excel数据是否符合规定
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
-        List<Insurance> insuranceList = new ArrayList<>();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
             if(dataItem.size() < 23){
@@ -151,6 +151,8 @@ public class AdminInsuranceController {
 
         // 数据入库
         Insurance insurance;
+        Merchant merchant;
+        String insuranceFee, insuranceAmount, insuranceCount;
         Date contactTime, arrangeTime, finishTime, birthday;
         for(List<String> dataItem : dataList){
 
@@ -165,7 +167,7 @@ public class AdminInsuranceController {
                 continue;
             }
 
-            contactTime = DateUtils.formatDate(dataItem.get(1), "yyyy/M/d");
+            contactTime = DateUtils.formatDate(dataItem.get(1), dateFormat);
             // 重复数据校验
             insurance = new Insurance();
             insurance.setContactTime(contactTime);
@@ -177,17 +179,22 @@ public class AdminInsuranceController {
 
             // 保存数据
             insurance = new Insurance();
-            insurance.setMerchantId(1L);
+            // 合作商
+            merchant = merchantService.findByName(dataItem.get(0));
+            insurance.setMerchantId(merchant == null ? 0L : merchant.getId());
             // 预约日期
             insurance.setContactTime(contactTime);
             // 渠道归属
-            insurance.setPlatform(PlatformEnum.getValueByText(dataItem.get(2)));
+            insurance.setPlatform(dataItem.get(2));
             // 渠道明细
-            insurance.setDataType(InsuranceDataTypeEnum.getValueByText(dataItem.get(3)));
+            insurance.setDataType(dataItem.get(3));
             // 投保人电话
             insurance.setMobile(dataItem.get(4));
             // 下发日期
-            arrangeTime = DateUtils.formatDate(dataItem.get(5), "yyyy/M/d");
+            arrangeTime = null;
+            if(StringUtils.hasText(dataItem.get(5))){
+                arrangeTime = DateUtils.formatDate(dataItem.get(5), dateFormat);
+            }
             insurance.setArrangeTime(arrangeTime);
             // 机构名称
             insurance.setOrgName(dataItem.get(6));
@@ -202,30 +209,44 @@ public class AdminInsuranceController {
             // 拨打状态
             insurance.setCallStatus(dataItem.get(11));
             // 问题数据
-            insurance.setProblem("shi".equals(dataItem.get(12)));
+            insurance.setProblem("是".equals(dataItem.get(12)));
             // 成单时间
-            finishTime = DateUtils.formatDate(dataItem.get(13), "yyyy/M/d");
+            finishTime = null;
+            if(StringUtils.hasText(dataItem.get(13))){
+                finishTime = DateUtils.formatDate(dataItem.get(13), dateFormat);
+            }
             insurance.setFinishTime(finishTime);
-            // 缴费类型
-            insurance.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(14)));
-            // 保额
-            insurance.setInsuranceAmount(new BigDecimal(dataItem.get(15)));
-            // 件数
-            insurance.setInsuranceCount(Integer.parseInt(dataItem.get(16)));
-            // 保费
-            insurance.setInsuranceFee(new BigDecimal(dataItem.get(17)));
             // 投保人性别
-            insurance.setGender(dataItem.get(18));
+            insurance.setGender(dataItem.get(14));
             // 投保人生日
-            birthday = DateUtils.formatDate(dataItem.get(19), "yyyy/M/d");
+            birthday = null;
+            if(StringUtils.hasText(dataItem.get(15))) {
+                birthday = DateUtils.formatDate(dataItem.get(15), dateFormat);
+            }
             insurance.setBirthday(birthday);
             // 投保人年龄
-            insurance.setAge(Integer.parseInt(dataItem.get(20)));
+            // insurance.setAge(Integer.parseInt(dataItem.get(16)));
             // 投保人地址
-            insurance.setAddress(dataItem.get(21));
+            insurance.setAddress(dataItem.get(17));
+            // 缴费类型
+            insurance.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(18)));
+            // 保额
+            insuranceAmount = dataItem.get(19);
+            insurance.setInsuranceAmount(StringUtils.hasText(insuranceAmount) ? new BigDecimal(insuranceAmount) : new BigDecimal("0"));
+            // 件数
+            insuranceCount = dataItem.get(20);
+            insurance.setInsuranceCount(StringUtils.hasText(insuranceCount) ? Integer.parseInt(insuranceCount) : 0);
+            // 保费
+            insuranceFee = dataItem.get(21);
+            insurance.setInsuranceFee(StringUtils.hasText(insuranceFee) ? new BigDecimal(insuranceFee) : new BigDecimal("0"));
             // 保单编号
             insurance.setInsuranceNo(dataItem.get(22));
-            insuranceService.insert(insurance);
+            try {
+                insuranceService.insert(insurance);
+            } catch (Exception e) {
+                logger.error("[adminInsuranceController|importExcel]保存数据发生异常。insurance={}", JSON.toJSONString(insurance), e);
+            }
+
         }
 
         return resultVo;
@@ -260,5 +281,9 @@ public class AdminInsuranceController {
 
         ExcelConfigation excelConfigation = ExcelConfigation.newInstance(fileName, columnNameList, dataList);
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
+    }
+
+    public static void main(String[] args) {
+        System.out.println(new BigDecimal("3878.25"));
     }
 }
