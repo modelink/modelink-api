@@ -1,5 +1,7 @@
 package com.modelink.common.excel;
 
+import com.modelink.common.utils.DateUtils;
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,6 +60,8 @@ public class ExcelImportHelper {
                 cell = row.getCell(j);
                 if(cell == null){
                     cellContent = "";
+                }else if(cell.getCellTypeEnum() == CellType.NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
+                    cellContent = DateUtils.formatDate(cell.getDateCellValue(), "yyyy-MM-dd");
                 }else{
                     cell.setCellType(CellType.STRING);
                     cellContent = cell.getStringCellValue();

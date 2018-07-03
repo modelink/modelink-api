@@ -1,5 +1,8 @@
 package com.modelink.common.utils;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,6 +12,8 @@ import java.util.Date;
  * 时间工具类
  */
 public class DateUtils {
+
+    public static Logger logger = LoggerFactory.getLogger(DateUtils.class);
 
     /**
      * 在指定日期上增加 offsetValue 时间，并以 pattern 的形式格式化
@@ -70,6 +75,7 @@ public class DateUtils {
             DateFormat dateFormat = new SimpleDateFormat(pattern);
             date = dateFormat.parse(dateString);
         } catch (Exception e) {
+            logger.error("[dateUtils|formatDate]日期转换失败。dateString={}", dateString, e);
             date = null;
         }
         return date;
@@ -90,5 +96,28 @@ public class DateUtils {
             week = 0;
         }
         return weekDays[week];
+    }
+
+    public static int getAgeByBirthday(Date birthday) {
+        int age = 0;
+        try {
+            Calendar now = Calendar.getInstance();
+            now.setTime(new Date());// 当前时间
+
+            Calendar birth = Calendar.getInstance();
+            birth.setTime(birthday);
+
+            if (birth.after(now)) {//如果传入的时间，在当前时间的后面，返回0岁
+                age = 0;
+            } else {
+                age = now.get(Calendar.YEAR) - birth.get(Calendar.YEAR);
+                if (now.get(Calendar.DAY_OF_YEAR) > birth.get(Calendar.DAY_OF_YEAR)) {
+                    age += 1;
+                }
+            }
+            return age;
+        } catch (Exception e) {//兼容性更强,异常后返回数据
+            return 0;
+        }
     }
 }

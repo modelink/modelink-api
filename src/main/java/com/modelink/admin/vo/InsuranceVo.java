@@ -16,8 +16,7 @@ public class InsuranceVo implements Serializable{
     /** 投保人性别 **/
     private String gender;
     /** 投保人生日 **/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    private Date birthday;
+    private String birthday;
     /** 投保人年龄 **/
     private Integer age;
     /** 投保人手机号 **/
@@ -25,8 +24,7 @@ public class InsuranceVo implements Serializable{
     /** 投保人地址 **/
     private String address;
     /** 预约时间 **/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    private Date contactTime;
+    private String contactTime;
     /** 预约商户（如小米、华夏） **/
     private String merchantName;
     /** 平台类型（微信、PC、WAP、转介绍） **/
@@ -36,8 +34,7 @@ public class InsuranceVo implements Serializable{
     /** 渠道入口类型（0-默认） **/
     private String sourceName;
     /** 下发时间 **/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    private Date arrangeTime;
+    private String arrangeTime;
     /** 机构名称 **/
     private String orgName;
     /** 客服名称 **/
@@ -53,8 +50,7 @@ public class InsuranceVo implements Serializable{
     /** 是否问题数据 **/
     private String problem;
     /** 成单日期 **/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd")
-    private Date finishTime;
+    private String finishTime;
     /** 缴费方式 **/
     private String payTypeName;
     /** 保险额度 **/
@@ -104,14 +100,6 @@ public class InsuranceVo implements Serializable{
         this.gender = gender;
     }
 
-    public Date getBirthday() {
-        return birthday;
-    }
-
-    public void setBirthday(Date birthday) {
-        this.birthday = birthday;
-    }
-
     public Integer getAge() {
         return age;
     }
@@ -134,14 +122,6 @@ public class InsuranceVo implements Serializable{
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public Date getContactTime() {
-        return contactTime;
-    }
-
-    public void setContactTime(Date contactTime) {
-        this.contactTime = contactTime;
     }
 
     public String getMerchantName() {
@@ -174,14 +154,6 @@ public class InsuranceVo implements Serializable{
 
     public void setSourceName(String sourceName) {
         this.sourceName = sourceName;
-    }
-
-    public Date getArrangeTime() {
-        return arrangeTime;
-    }
-
-    public void setArrangeTime(Date arrangeTime) {
-        this.arrangeTime = arrangeTime;
     }
 
     public String getOrgName() {
@@ -240,11 +212,35 @@ public class InsuranceVo implements Serializable{
         this.problem = problem;
     }
 
-    public Date getFinishTime() {
+    public String getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(String birthday) {
+        this.birthday = birthday;
+    }
+
+    public String getContactTime() {
+        return contactTime;
+    }
+
+    public void setContactTime(String contactTime) {
+        this.contactTime = contactTime;
+    }
+
+    public String getArrangeTime() {
+        return arrangeTime;
+    }
+
+    public void setArrangeTime(String arrangeTime) {
+        this.arrangeTime = arrangeTime;
+    }
+
+    public String getFinishTime() {
         return finishTime;
     }
 
-    public void setFinishTime(Date finishTime) {
+    public void setFinishTime(String finishTime) {
         this.finishTime = finishTime;
     }
 

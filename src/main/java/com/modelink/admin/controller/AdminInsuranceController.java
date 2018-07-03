@@ -40,7 +40,9 @@ public class AdminInsuranceController {
 
     public static Logger logger = LoggerFactory.getLogger(AdminInsuranceController.class);
 
-    public static String dateFormat = "yyyy年M年d日";
+    public static String yyyyMMddFormat = "yyyy-MM-dd";
+    public static String yyyyMMddHHmmssFormat = "yyyy-MM-dd HH:mm:ss";
+    public static String dateContant = "2000-01-01 00:00:00";
 
     @Resource
     private MerchantService merchantService;
@@ -66,6 +68,7 @@ public class AdminInsuranceController {
 
         Merchant merchant;
         InsuranceVo insuranceVo;
+        String birthday, contactTime, finishTime, arrangeTime;
         List<InsuranceVo> insuranceVoList = new ArrayList<>();
         List<Insurance> insuranceList = pageInfo.getList();
         for(Insurance insurance : insuranceList){
@@ -74,6 +77,36 @@ public class AdminInsuranceController {
             BeanUtils.copyProperties(insurance, insuranceVo);
             // 字段格式化
             insuranceVo.setAddress("");
+
+            birthday = DateUtils.formatDate(insurance.getBirthday(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(birthday)){
+                insuranceVo.setBirthday("");
+            }else{
+                birthday = DateUtils.formatDate(insurance.getBirthday(), yyyyMMddFormat);
+                insuranceVo.setBirthday(birthday);
+            }
+            contactTime = DateUtils.formatDate(insurance.getContactTime(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(contactTime)){
+                insuranceVo.setContactTime("");
+            }else{
+                contactTime = DateUtils.formatDate(insurance.getContactTime(), yyyyMMddFormat);
+                insuranceVo.setContactTime(contactTime);
+            }
+            finishTime = DateUtils.formatDate(insurance.getFinishTime(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(finishTime)){
+                insuranceVo.setFinishTime("");
+            }else{
+                finishTime = DateUtils.formatDate(insurance.getFinishTime(), yyyyMMddFormat);
+                insuranceVo.setFinishTime(finishTime);
+            }
+            arrangeTime = DateUtils.formatDate(insurance.getArrangeTime(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(arrangeTime)){
+                insuranceVo.setArrangeTime("");
+            }else{
+                arrangeTime = DateUtils.formatDate(insurance.getArrangeTime(), yyyyMMddFormat);
+                insuranceVo.setArrangeTime(arrangeTime);
+            }
+
             insuranceVo.setDataTypeName(insurance.getDataType());
             insuranceVo.setMerchantName(merchant == null ? "" : merchant.getName());
             insuranceVo.setPlatformName(insurance.getPlatform());
@@ -167,7 +200,7 @@ public class AdminInsuranceController {
                 continue;
             }
 
-            contactTime = DateUtils.formatDate(dataItem.get(1), dateFormat);
+            contactTime = DateUtils.formatDate(dataItem.get(1), yyyyMMddFormat);
             // 重复数据校验
             insurance = new Insurance();
             insurance.setContactTime(contactTime);
@@ -193,7 +226,7 @@ public class AdminInsuranceController {
             // 下发日期
             arrangeTime = null;
             if(StringUtils.hasText(dataItem.get(5))){
-                arrangeTime = DateUtils.formatDate(dataItem.get(5), dateFormat);
+                arrangeTime = DateUtils.formatDate(dataItem.get(5), yyyyMMddFormat);
             }
             insurance.setArrangeTime(arrangeTime);
             // 机构名称
@@ -213,7 +246,7 @@ public class AdminInsuranceController {
             // 成单时间
             finishTime = null;
             if(StringUtils.hasText(dataItem.get(13))){
-                finishTime = DateUtils.formatDate(dataItem.get(13), dateFormat);
+                finishTime = DateUtils.formatDate(dataItem.get(13), yyyyMMddFormat);
             }
             insurance.setFinishTime(finishTime);
             // 投保人性别
@@ -221,11 +254,15 @@ public class AdminInsuranceController {
             // 投保人生日
             birthday = null;
             if(StringUtils.hasText(dataItem.get(15))) {
-                birthday = DateUtils.formatDate(dataItem.get(15), dateFormat);
+                birthday = DateUtils.formatDate(dataItem.get(15), yyyyMMddFormat);
             }
             insurance.setBirthday(birthday);
             // 投保人年龄
-            // insurance.setAge(Integer.parseInt(dataItem.get(16)));
+            if(birthday != null){
+                insurance.setAge(DateUtils.getAgeByBirthday(birthday));
+            }else{
+                insurance.setAge(0);
+            }
             // 投保人地址
             insurance.setAddress(dataItem.get(17));
             // 缴费类型
@@ -283,7 +320,4 @@ public class AdminInsuranceController {
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
 
-    public static void main(String[] args) {
-        System.out.println(new BigDecimal("3878.25"));
-    }
 }

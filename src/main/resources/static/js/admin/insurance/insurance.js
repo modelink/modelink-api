@@ -43,7 +43,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         acceptMime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
         exts: 'xls|xlsx',
         before: function () {
-            var progressHtml = '<div id="upload-message"></div>'
+            var progressHtml = '<div id="upload-message" data-upload-status="no"></div>'
                 + '<div class="layui-progress layui-progress-big" lay-filter="upload-progress">'
                 + '<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>'
                 + '</div>';
@@ -54,10 +54,18 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 area: '500px',
                 closeBtn: 0,
                 yes: function(index, layero){
-                    if($("#upload-message").html() == "上传完成"){
+                    var isUpload = $("#upload-message").attr("data-upload-status");
+                    if(isUpload === "yes"){
                         layer.close(index);
+                        table.reload('insurance-table-reload',{
+                            page: { curr: 1 },
+                            where: {
+                                chooseDate: $("#chooseDate").val(),
+                                mobile: $("#mobile").val()
+                            }
+                        });
                     }else{
-                        return false;
+                        $("#upload-message").html("<p color='red'>正在上传文件……</p>");
                     }
                 }
             });
@@ -66,6 +74,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         },
         done: function(response){
             $("#upload-message").html("上传完成");
+            $("#upload-message").attr("data-upload-status", "yes");
             element.progress("upload-progress", 100 + "%");
         }
     });
@@ -131,16 +140,15 @@ var Insurance = {
     fieldList: [
         '',
         'id',
+        'merchantName',
+        'platformName',
+        'dataTypeName',
         'insuranceNo',
-        'name',
         'mobile',
         'age',
 
         'contactTime',
         'merchantName',
-
-        'callStatus',
-        'problem',
 
         'payType',
         'insuranceAmount',
