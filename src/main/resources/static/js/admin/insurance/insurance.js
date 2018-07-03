@@ -103,14 +103,14 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
         console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
         table.reload('insurance-table-reload',{
-            page: { pageNo: 1 },
+            page: { curr: 1 },
             where: {
                 chooseDate: data.field.chooseDate,
                 mobile: data.field.mobile
             }});
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     });
-    //搜索表单提交
+    //下载表单提交
     form.on('submit(download-btn)', function(data){
         data.form.action = "/admin/insurance/download";
         data.form.submit();

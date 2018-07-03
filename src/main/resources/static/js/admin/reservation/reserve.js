@@ -15,7 +15,7 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
         console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
         console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
         table.reload('reserve-table-reload',{
-            page: { pageNo: 1 },
+            page: { curr: 1 },
             where: {
                 chooseDate: data.field.chooseDate,
                 contactMobile: data.field.contactMobile
