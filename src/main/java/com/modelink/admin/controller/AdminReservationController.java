@@ -36,7 +36,7 @@ public class AdminReservationController {
     public LayuiResultPagerVo<Reservation> list(ReservationParamPagerVo paramPagerVo) {
         PageInfo<Reservation> pageInfo = reservationService.findPagerByParam(paramPagerVo);
         LayuiResultPagerVo<Reservation> layuiResultPagerVo = new LayuiResultPagerVo();
-        layuiResultPagerVo.setTotalCount(pageInfo.getSize());
+        layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(pageInfo.getList());
         return layuiResultPagerVo;
     }

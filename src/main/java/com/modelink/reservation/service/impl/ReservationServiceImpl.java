@@ -84,7 +84,7 @@ public class ReservationServiceImpl implements ReservationService {
         if(!StringUtils.isEmpty(paramPagerVo.getContactMobile())) {
             criteria.andEqualTo("contactMobile", paramPagerVo.getContactMobile());
         }
-        example.setOrderByClause("create_time desc");
+        example.setOrderByClause("id desc");
         List<Reservation> reservationList = reservationMapper.selectByExample(example);
         PageInfo<Reservation> pageInfo = new PageInfo<>(reservationList);
         return pageInfo;
