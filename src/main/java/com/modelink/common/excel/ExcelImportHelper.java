@@ -5,11 +5,13 @@ import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Excel 导入文件助手
@@ -18,7 +20,7 @@ public class ExcelImportHelper {
 
     public static Logger logger = LoggerFactory.getLogger(ExcelImportHelper.class);
 
-    public static List<List<String>> importExcel(ExcelConfigation configation, InputStream inputStream) throws Exception {
+    public static List<List<String>> importExcel(ExcelImportConfigation configation, InputStream inputStream) throws Exception {
         Sheet sheet;
         Workbook workBook;
         List<List<String>> rtnList = new ArrayList<List<String>>();
@@ -46,22 +48,25 @@ public class ExcelImportHelper {
         StringBuilder sb = null;
         List<String> rowData = null;
 
-        int startRowNum = (configation.getStartRowNum() == ExcelConfigation.DEFAULT_INT ? 0 : configation.getStartRowNum());
-        int startColNum = (configation.getStartColNum() == ExcelConfigation.DEFAULT_INT ? 0 : configation.getStartColNum());
+        int startRowNum = (configation.getStartRowNum() == ExcelImportConfigation.DEFAULT_INT ? 0 : configation.getStartRowNum());
+        int startColNum = (configation.getStartColNum() == ExcelImportConfigation.DEFAULT_INT ? 0 : configation.getStartColNum());
         sheet = workBook.getSheetAt(0);// 获取第一个工作簿(Sheet)的内容【注意根据实际需要进行修改】
         rowLength = sheet.getPhysicalNumberOfRows(); // 总行数
-        rowLength = (configation.getTotalRowNum() == ExcelConfigation.DEFAULT_INT ? rowLength : configation.getTotalRowNum() + startRowNum);
+        rowLength = (configation.getTotalRowNum() == ExcelImportConfigation.DEFAULT_INT ? rowLength : configation.getTotalRowNum() + startRowNum);
+        Map<Integer, String> fieldFormatMap;
         for (int i = startRowNum; i < rowLength; i++) {
             rowData = new ArrayList<String>();
             row = sheet.getRow(i);
             colLength = row.getLastCellNum();
-            colLength = (configation.getTotalColNum() == ExcelConfigation.DEFAULT_INT ? colLength : configation.getTotalColNum() + startColNum);
+            colLength = (configation.getTotalColNum() == ExcelImportConfigation.DEFAULT_INT ? colLength : configation.getTotalColNum() + startColNum);
             for (int j = startColNum; j < colLength; j++) {
                 cell = row.getCell(j);
                 if(cell == null){
                     cellContent = "";
                 }else if(cell.getCellTypeEnum() == CellType.NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
-                    cellContent = DateUtils.formatDate(cell.getDateCellValue(), "yyyy-MM-dd");
+//                    cellContent = DateUtils.formatDate(cell.getDateCellValue(), "yyyy-MM-dd");
+                    fieldFormatMap = configation.getFieldFormatMap();
+                    cellContent = DateUtils.formatDate(cell.getDateCellValue(), StringUtils.hasText(fieldFormatMap.get(j)) ? fieldFormatMap.get(j) : "yyyy-MM-dd");
                 }else{
                     cell.setCellType(CellType.STRING);
                     cellContent = cell.getStringCellValue();

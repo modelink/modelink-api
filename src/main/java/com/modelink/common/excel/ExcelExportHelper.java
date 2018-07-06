@@ -25,7 +25,7 @@ public class ExcelExportHelper {
      * @param response
      * @throws Exception
      */
-    public static void exportExcel2Response(ExcelConfigation excelConfigation, HttpServletResponse response) throws Exception {
+    public static void exportExcel2Response(ExcelExportConfigation excelConfigation, HttpServletResponse response) throws Exception {
 
         XSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
         // 将Excel放入响应头里面
@@ -51,7 +51,7 @@ public class ExcelExportHelper {
      * @param fileName
      * @throws Exception
      */
-    public static void exportExcel2File(ExcelConfigation excelConfigation, String fileName) throws Exception {
+    public static void exportExcel2File(ExcelExportConfigation excelConfigation, String fileName) throws Exception {
         XSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
         /*** 这里是问题的关键，将这个工作簿写入到一个流中就可以输出相应的名字，这里需要写路径就ok了。 **/
         FileOutputStream fileOutputStream = new FileOutputStream(fileName);
@@ -59,7 +59,7 @@ public class ExcelExportHelper {
         fileOutputStream.close();
     }
 
-    private static XSSFWorkbook buildExcelWorkbook (ExcelConfigation excelConfigation) throws Exception {
+    private static XSSFWorkbook buildExcelWorkbook (ExcelExportConfigation excelConfigation) throws Exception {
         // 创建Excel的工作书册 Workbook,对应到一个excel文档
         XSSFWorkbook workbook = new XSSFWorkbook();
 

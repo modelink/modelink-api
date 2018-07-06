@@ -6,8 +6,9 @@ import com.modelink.admin.vo.InsuranceParamPagerVo;
 import com.modelink.admin.vo.InsuranceVo;
 import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.RetStatus;
-import com.modelink.common.excel.ExcelConfigation;
+import com.modelink.common.excel.ExcelExportConfigation;
 import com.modelink.common.excel.ExcelExportHelper;
+import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
@@ -30,9 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Controller
 @RequestMapping("/admin/insurance")
@@ -124,9 +123,9 @@ public class AdminInsuranceController {
     public ResultVo importExcel(@RequestParam MultipartFile file){
         ResultVo resultVo = new ResultVo();
         List<List<String>> dataList;
-        ExcelConfigation configation = new ExcelConfigation();
+        ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
-            configation = new ExcelConfigation();
+            configation = new ExcelImportConfigation();
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
@@ -316,7 +315,7 @@ public class AdminInsuranceController {
             dataList.add(rowValueList);
         }
 
-        ExcelConfigation excelConfigation = ExcelConfigation.newInstance(fileName, columnNameList, dataList);
+        ExcelExportConfigation excelConfigation = ExcelExportConfigation.newInstance(fileName, columnNameList, dataList);
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
 

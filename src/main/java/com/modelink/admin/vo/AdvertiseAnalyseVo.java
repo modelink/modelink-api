@@ -1,23 +1,21 @@
-package com.modelink.reservation.bean;
+package com.modelink.admin.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Id;
-import java.math.BigDecimal;
+import java.io.Serializable;
 import java.util.Date;
 
-public class AdvertiseAnalyse {
+public class AdvertiseAnalyseVo implements Serializable{
 
-    @Id
     private Long id;
     /** 预约商户（如小米、华夏） **/
-    private Long merchantId;
+    private String merchantName;
     /** 平台类型（微信、PC、WAP、转介绍） **/
-    private String platform;
+    private String platformName;
     /** 数据类型（自然流量、SEM） **/
-    private String dataType;
+    private String dataTypeName;
     /** 统计时间 **/
-    private Date statTime;
+    private String statTime;
     /** 展现量 **/
     private Integer viewCount;
     /** 点击量 **/
@@ -29,11 +27,11 @@ public class AdvertiseAnalyse {
     /** 到达用户量 **/
     private Integer arriveUserCount;
     /** 到达率 **/
-    private BigDecimal arriveRate;
+    private String arriveRate;
     /** 二跳量 **/
     private Integer againCount;
     /** 二跳率 **/
-    private BigDecimal againRate;
+    private String againRate;
     /** 平均停留时间 **/
     private String averageStayTime;
     /** 转化量 **/
@@ -43,9 +41,9 @@ public class AdvertiseAnalyse {
     /** 回归转化量 **/
     private Integer backTransformCount;
     /** 转化成本 **/
-    private BigDecimal transformCost;
+    private String transformCost;
     /** 保险费用 **/
-    private BigDecimal insuranceFee;
+    private String insuranceFee;
     /** 状态 **/
     private Integer status;
     /** 备注信息 **/
@@ -65,36 +63,28 @@ public class AdvertiseAnalyse {
         this.id = id;
     }
 
-    public Long getMerchantId() {
-        return merchantId;
+    public String getMerchantName() {
+        return merchantName;
     }
 
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
-    public String getPlatform() {
-        return platform;
+    public String getPlatformName() {
+        return platformName;
     }
 
-    public void setPlatform(String platform) {
-        this.platform = platform;
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
     }
 
-    public String getDataType() {
-        return dataType;
+    public String getDataTypeName() {
+        return dataTypeName;
     }
 
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
-
-    public Date getStatTime() {
-        return statTime;
-    }
-
-    public void setStatTime(Date statTime) {
-        this.statTime = statTime;
+    public void setDataTypeName(String dataTypeName) {
+        this.dataTypeName = dataTypeName;
     }
 
     public Integer getViewCount() {
@@ -137,28 +127,44 @@ public class AdvertiseAnalyse {
         this.arriveUserCount = arriveUserCount;
     }
 
+    public String getStatTime() {
+        return statTime;
+    }
+
+    public void setStatTime(String statTime) {
+        this.statTime = statTime;
+    }
+
+    public String getArriveRate() {
+        return arriveRate;
+    }
+
+    public void setArriveRate(String arriveRate) {
+        this.arriveRate = arriveRate;
+    }
+
+    public String getAgainRate() {
+        return againRate;
+    }
+
+    public void setAgainRate(String againRate) {
+        this.againRate = againRate;
+    }
+
+    public void setTransformCost(String transformCost) {
+        this.transformCost = transformCost;
+    }
+
+    public void setInsuranceFee(String insuranceFee) {
+        this.insuranceFee = insuranceFee;
+    }
+
     public Integer getAgainCount() {
         return againCount;
     }
 
     public void setAgainCount(Integer againCount) {
         this.againCount = againCount;
-    }
-
-    public BigDecimal getArriveRate() {
-        return arriveRate;
-    }
-
-    public void setArriveRate(BigDecimal arriveRate) {
-        this.arriveRate = arriveRate;
-    }
-
-    public BigDecimal getAgainRate() {
-        return againRate;
-    }
-
-    public void setAgainRate(BigDecimal againRate) {
-        this.againRate = againRate;
     }
 
     public String getAverageStayTime() {
@@ -193,28 +199,12 @@ public class AdvertiseAnalyse {
         this.backTransformCount = backTransformCount;
     }
 
-    public BigDecimal getTransformCost() {
+    public String getTransformCost() {
         return transformCost;
     }
 
-    public void setTransformCost(BigDecimal transformCost) {
-        this.transformCost = transformCost;
-    }
-
-    public BigDecimal getInsuranceFee() {
+    public String getInsuranceFee() {
         return insuranceFee;
-    }
-
-    public void setInsuranceFee(BigDecimal insuranceFee) {
-        this.insuranceFee = insuranceFee;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
     }
 
     public Integer getStatus() {
@@ -223,6 +213,14 @@ public class AdvertiseAnalyse {
 
     public void setStatus(Integer status) {
         this.status = status;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(String remark) {
+        this.remark = remark;
     }
 
     public Date getCreateTime() {

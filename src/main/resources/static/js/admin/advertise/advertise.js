@@ -6,15 +6,15 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     var upload = layui.upload;
     var element = layui.element;
 
-    Insurance.$ = $;
+    Advertise.$ = $;
 
     /** 生成选择列属性的div **/
     var columnItem;
     var chooseColumnHtml = "";
-    for(var index in Insurance.column){
+    for(var index in Advertise.column){
         var checked = "";
-        columnItem = Insurance.column[index];
-        if($.inArray(columnItem.field, Insurance.fieldList) > 0){
+        columnItem = Advertise.column[index];
+        if($.inArray(columnItem.field, Advertise.fieldList) > 0){
             checked = "checked";
         }
         chooseColumnHtml += '<input type="checkbox" value="' + columnItem.field + '" title="' + columnItem.title + '" ' + checked + '>';
@@ -22,23 +22,23 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     $("#columnField").html(chooseColumnHtml);
     form.render();
 
-    Insurance.renderTable(table);
+    Advertise.renderTable(table);
     form.on('checkbox', function(data){
         var isChecked = data.elem.checked;
         var fieldValue = data.elem.value;
-        if(isChecked && $.inArray(fieldValue, Insurance.fieldList) < 0){
-            Insurance.fieldList.push(fieldValue);
+        if(isChecked && $.inArray(fieldValue, Advertise.fieldList) < 0){
+            Advertise.fieldList.push(fieldValue);
         }
-        if(!isChecked && $.inArray(fieldValue, Insurance.fieldList)){
-            Insurance.fieldList.splice($.inArray(fieldValue, Insurance.fieldList), 1);
+        if(!isChecked && $.inArray(fieldValue, Advertise.fieldList)){
+            Advertise.fieldList.splice($.inArray(fieldValue, Advertise.fieldList), 1);
         }
-        Insurance.renderTable(table);
+        Advertise.renderTable(table);
     });
 
     // 初始化上传组件
     upload.render({
         elem: '#importExcel',
-        url: '/admin/insurance/importExcel',
+        url: '/admin/advertise/importExcel',
         accept: 'file',
         acceptMime: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel',
         exts: 'xls|xlsx',
@@ -47,7 +47,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 + '<div class="layui-progress layui-progress-big" lay-filter="upload-progress">'
                 + '<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>'
                 + '</div>';
-            Insurance.progressIndex = layer.open({
+            Advertise.progressIndex = layer.open({
                 title: ['上传文件', 'text-align: center; padding-left: 80px;'],
                 content: progressHtml,
                 btnAlign: 'c',
@@ -57,11 +57,10 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                     var isUpload = $("#upload-message").attr("data-upload-status");
                     if(isUpload === "yes"){
                         layer.close(index);
-                        table.reload('insurance-table-reload',{
+                        table.reload('advertise-table-reload',{
                             page: { curr: 1 },
                             where: {
-                                chooseDate: $("#chooseDate").val(),
-                                mobile: $("#mobile").val()
+                                chooseDate: $("#chooseDate").val()
                             }
                         });
                     }else{
@@ -73,7 +72,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
             element.progress("upload-progress", 0 + "%");
         },
         done: function(response){
-            if(response.rtnCode == 200) {
+            if(response.rtnCode == 200){
                 $("#upload-message").html("上传完成");
                 $("#upload-message").attr("data-upload-status", "yes");
                 element.progress("upload-progress", 100 + "%");
@@ -110,14 +109,13 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     //重置事件
     $(".reset-btn").on("click", function () {
         $("#chooseDate").val("");
-        $("#mobile").val("");
     });
     //搜索表单提交
     form.on('submit(search-btn)', function(data){
         console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
         console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
         console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
-        table.reload('insurance-table-reload',{
+        table.reload('advertise-table-reload',{
             page: { curr: 1 },
             where: {
                 chooseDate: data.field.chooseDate,
@@ -127,7 +125,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     });
     //下载表单提交
     form.on('submit(download-btn)', function(data){
-        data.form.action = "/admin/insurance/download";
+        data.form.action = "/admin/advertise/download";
         data.form.submit();
     });
     //选择日期
@@ -136,87 +134,81 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         range: true
     });
 
-    exports('insurance', {});
+    exports('advertise', {});
 });
 
-var Insurance = {
+var Advertise = {
     $: null,
     table: null,
     progressIndex: null,
     fieldList: [
         '',
         'id',
+        'statTime',
         'merchantName',
         'platformName',
         'dataTypeName',
-        'insuranceNo',
-        'mobile',
-        'age',
 
-        'contactTime',
-        'merchantName',
+        'viewCount',
+        'clickCount',
+        'browseCount',
 
-        'payType',
-        'insuranceAmount',
-        'insuranceFee',
-        'finishTime'
+        'arriveCount',
+        'arriveUserCount',
+
+        'transformCount',
+        'transformCost',
+        'insuranceFee'
     ],
     column: [
         {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
-        {field: 'insuranceNo', title: '保单编号', minWidth: 100, align: 'center'},
-        {field: 'name', title: '投保人姓名', minWidth: 120, align: 'center'},
-        {field: 'mobile', title: '投保人电话', minWidth: 120, align: 'center'},
-        {field: 'gender', title: '投保人性别', minWidth: 100, align: 'center'},
-        {field: 'age', title: '投保人年龄', minWidth: 100, align: 'center'},
-        {field: 'birthday', title: '投保人生日', minWidth: 120, align: 'center'},
-        {field: 'address', title: '投保人地址', minWidth: 150, align: 'center'},
-
-        {field: 'contactTime', title: '预约时间', minWidth: 120, align: 'center'},
-        {field: 'arrangeTime', title: '下发时间', minWidth: 120, align: 'center'},
-        {field: 'merchantName', title: '合作商户', minWidth: 100, align: 'center'},
+        {field: 'merchantName', title: '项目', minWidth: 120, align: 'center'},
+        {field: 'statTime', title: '日期', minWidth: 120, align: 'center'},
         {field: 'platformName', title: '渠道归属', minWidth: 100, align: 'center'},
         {field: 'dataTypeName', title: '渠道明细', minWidth: 100, align: 'center'},
-        {field: 'sourceTypeName', title: '入口类型', minWidth: 100, align: 'center'},
 
-        {field: 'orgName', title: '机构名称', minWidth: 100, align: 'center'},
-        {field: 'tsrName', title: 'TSR姓名', minWidth: 100, align: 'center'},
-        {field: 'firstCall', title: '第1天拨打', minWidth: 100, align: 'center'},
-        {field: 'secondCall', title: '第2天拨打', minWidth: 100, align: 'center'},
-        {field: 'threeCall', title: '第3天拨打', minWidth: 100, align: 'center'},
-        {field: 'callStatus', title: '拨打状态', minWidth: 100, align: 'center'},
-        {field: 'problem', title: '问题数据', minWidth: 100, align: 'center'},
+        {field: 'viewCount', title: '展现量', minWidth: 120, align: 'center'},
+        {field: 'clickCount', title: '点击量', minWidth: 100, align: 'center'},
+        {field: 'browseCount', title: '浏览量', minWidth: 100, align: 'center'},
+        {field: 'arriveCount', title: '到达量', minWidth: 120, align: 'center'},
+        {field: 'arriveUserCount', title: '到达用户', minWidth: 150, align: 'center'},
 
-        {field: 'payTypeName', title: '缴费类型', minWidth: 100, align: 'center'},
-        {field: 'insuranceAmount', title: '保额', minWidth: 100, align: 'center'},
-        {field: 'insuranceFee', title: '保费', minWidth: 100, align: 'center'},
-        {field: 'finishTime', title: '成单日期', minWidth: 120, align: 'center'},
-        {field: 'remark', title: '备注', minWidth: 100, align: 'center'},
+        {field: 'arriveRate', title: '到达率', minWidth: 120, align: 'center'},
+        {field: 'againCount', title: '二跳量', minWidth: 120, align: 'center'},
+        {field: 'againRate', title: '二跳率', minWidth: 100, align: 'center'},
+        {field: 'averageStayTime', title: '平均停留时间', minWidth: 120, align: 'center'},
+        {field: 'transformCount', title: '转化总量', minWidth: 100, align: 'center'},
+        {field: 'directTransformCount', title: '直接转化量', minWidth: 100, align: 'center'},
+
+        {field: 'backTransformCount', title: '回归转化量', minWidth: 100, align: 'center'},
+        {field: 'transformCost', title: '转化成本', minWidth: 100, align: 'center'},
+        {field: 'insuranceFee', title: '产生保费', minWidth: 100, align: 'center'},
 
         {field: 'createTime', title: '创建时间', minWidth: 180, align: 'center'},
         {field: 'updateTime', title: '更新时间', minWidth: 180, align: 'center'}
     ],
     renderTable: function (table) {
         var columnList = [];
-        for(var index = 0; index < Insurance.column.length; index ++ ){
-            var columnItem = Insurance.column[index];
-            if(Insurance.$.inArray(columnItem.field, Insurance.fieldList) > 0) {
+        for(var index = 0; index < Advertise.column.length; index ++ ){
+            var columnItem = Advertise.column[index];
+            if(Advertise.$.inArray(columnItem.field, Advertise.fieldList) > 0) {
                 columnList.push(columnItem);
             }
         }
         console.log(columnList);
-        if(Insurance.table){
-            Insurance.table.reload({
+        if(Advertise.table){
+            Advertise.table.reload({
                 cols: [[{field: 'id', title: 'ID', width: 50, sort: false, align: 'center', fixed: true}]],
             });
-            Insurance.table.reload({
+            Advertise.table.reload({
                 cols: [ columnList ],
             });
             return;
         }
-        Insurance.table = table.render({
-            id: 'insurance-table-reload',
-            elem: '#insurance-table-grid',
-            url: '/admin/insurance/list',
+        Advertise.table = table.render({
+            id: 'advertise-table-reload',
+            elem: '#advertise-table-grid',
+            url: '/admin/advertise/list',
             cols: [ columnList ],
             page: true,
             request: {
