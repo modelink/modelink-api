@@ -57,6 +57,9 @@ public class DateUtils {
      * @return
      */
     public static String formatDate(Date date, String pattern){
+        if(date == null){
+            return "";
+        }
         //通过格式化输出日期
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(date);

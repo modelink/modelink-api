@@ -78,7 +78,7 @@ public class AdminAdvertiseController {
             advertiseAnalyseVo.setStatTime(DateUtils.formatDate(advertiseAnalyse.getStatTime(), "yyyy-MM-dd"));
             advertiseAnalyseVo.setArriveRate(advertiseAnalyse.getArriveRate().multiply(new BigDecimal(100)) + "%");
             advertiseAnalyseVo.setAgainRate(advertiseAnalyse.getAgainRate().multiply(new BigDecimal(100)).toPlainString() + "%");
-            advertiseAnalyseVo.setTransformCost(advertiseAnalyse.getTransformCost().toPlainString() + "%");
+            advertiseAnalyseVo.setTransformCost(advertiseAnalyse.getTransformCost().toPlainString());
             advertiseAnalyseVo.setInsuranceFee(advertiseAnalyse.getInsuranceFee().toPlainString());
             advertiseAnalyseVoList.add(advertiseAnalyseVo);
         }
