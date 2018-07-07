@@ -15,4 +15,11 @@ public class AdvertiseParamPagerVo extends PagerVo {
         this.chooseDate = chooseDate;
     }
 
+    public String getColumnFieldIds() {
+        return columnFieldIds;
+    }
+
+    public void setColumnFieldIds(String columnFieldIds) {
+        this.columnFieldIds = columnFieldIds;
+    }
 }

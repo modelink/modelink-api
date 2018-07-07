@@ -4,17 +4,18 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.InsuranceParamPagerVo;
 import com.modelink.admin.vo.InsuranceVo;
+import com.modelink.common.annotation.ExportField;
 import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelExportConfigation;
 import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
+import com.modelink.common.utils.ClassReflectUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.Insurance;
-import com.modelink.reservation.enums.ResourceTypeEnum;
 import com.modelink.reservation.service.InsuranceService;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.MerchantService;
@@ -31,7 +32,9 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping("/admin/insurance")
@@ -65,53 +68,8 @@ public class AdminInsuranceController {
         PageInfo<Insurance> pageInfo = insuranceService.findPagerByParam(paramPagerVo);
         LayuiResultPagerVo<InsuranceVo> layuiResultPagerVo = new LayuiResultPagerVo();
 
-        Merchant merchant;
-        InsuranceVo insuranceVo;
-        String birthday, contactTime, finishTime, arrangeTime;
-        List<InsuranceVo> insuranceVoList = new ArrayList<>();
         List<Insurance> insuranceList = pageInfo.getList();
-        for(Insurance insurance : insuranceList){
-            merchant = merchantService.findById(insurance.getMerchantId());
-            insuranceVo = new InsuranceVo();
-            BeanUtils.copyProperties(insurance, insuranceVo);
-            // 字段格式化
-            insuranceVo.setAddress("");
-
-            birthday = DateUtils.formatDate(insurance.getBirthday(), yyyyMMddHHmmssFormat);
-            if(dateContant.equals(birthday)){
-                insuranceVo.setBirthday("");
-            }else{
-                birthday = DateUtils.formatDate(insurance.getBirthday(), yyyyMMddFormat);
-                insuranceVo.setBirthday(birthday);
-            }
-            contactTime = DateUtils.formatDate(insurance.getContactTime(), yyyyMMddHHmmssFormat);
-            if(dateContant.equals(contactTime)){
-                insuranceVo.setContactTime("");
-            }else{
-                contactTime = DateUtils.formatDate(insurance.getContactTime(), yyyyMMddFormat);
-                insuranceVo.setContactTime(contactTime);
-            }
-            finishTime = DateUtils.formatDate(insurance.getFinishTime(), yyyyMMddHHmmssFormat);
-            if(dateContant.equals(finishTime)){
-                insuranceVo.setFinishTime("");
-            }else{
-                finishTime = DateUtils.formatDate(insurance.getFinishTime(), yyyyMMddFormat);
-                insuranceVo.setFinishTime(finishTime);
-            }
-            arrangeTime = DateUtils.formatDate(insurance.getArrangeTime(), yyyyMMddHHmmssFormat);
-            if(dateContant.equals(arrangeTime)){
-                insuranceVo.setArrangeTime("");
-            }else{
-                arrangeTime = DateUtils.formatDate(insurance.getArrangeTime(), yyyyMMddFormat);
-                insuranceVo.setArrangeTime(arrangeTime);
-            }
-
-            insuranceVo.setDataTypeName(insurance.getDataType());
-            insuranceVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            insuranceVo.setPlatformName(insurance.getPlatform());
-            insuranceVo.setPayTypeName(InsurancePayTypeEnum.getTextByValue(insurance.getPayType()));
-            insuranceVoList.add(insuranceVo);
-        }
+        List<InsuranceVo> insuranceVoList = transformBean2VoList(insuranceList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(insuranceVoList);
@@ -291,32 +249,99 @@ public class AdminInsuranceController {
     @RequestMapping("/exportExcel")
     public void download(InsuranceParamPagerVo paramPagerVo, HttpServletResponse response) throws Exception {
         // 创建文件名称
-        String fileName = "投保明细列表_" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+        String fileName = "效果数据列表_" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+
         // 创建Excel表格列名称
+        ExportField exportField;
+        String[] fieldIds = new String[]{};
         List<String> columnNameList = new ArrayList<>();
-        columnNameList.add("投保人姓名");
-        columnNameList.add("投保人电话");
-        columnNameList.add("预约时间");
-        columnNameList.add("预约渠道");
-        columnNameList.add("预约入口");
-        columnNameList.add("创建时间");
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())){
+            fieldIds = paramPagerVo.getColumnFieldIds().split(",");
+            for(String fieldId : fieldIds){
+                if(StringUtils.hasText(fieldId)){
+                    exportField = ClassReflectUtils.getAnnotationByFieldName(fieldId, InsuranceVo.class);
+                    columnNameList.add(exportField.value());
+                }
+            }
+        }
+
+        // 转换到VO列表
+        List<Insurance> insuranceList = insuranceService.findListByParam(paramPagerVo);
+        List<InsuranceVo> insuranceVoList = transformBean2VoList(insuranceList);
+
         // 创建Excel 数据
+        Object fieldValue;
         List<String> rowValueList;
         List<List<String>> dataList = new ArrayList<>();
-        List<Insurance> insuranceList = insuranceService.findListByParam(paramPagerVo);
-        for(Insurance insurance : insuranceList){
+        for(InsuranceVo insuranceVo : insuranceVoList){
             rowValueList = new ArrayList<>();
-            rowValueList.add(insurance.getName());
-            rowValueList.add(insurance.getMobile());
-            rowValueList.add(DateUtils.formatDate(insurance.getContactTime(), "yyyy-MM-dd"));
-            rowValueList.add("小米渠道");
-            rowValueList.add(ResourceTypeEnum.getTextByValue(insurance.getSourceType()));
-            rowValueList.add(DateUtils.formatDate(insurance.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            for(String fieldId : fieldIds){
+                if(StringUtils.hasText(fieldId)) {
+                    fieldValue = ClassReflectUtils.getValueByFieldName(fieldId, insuranceVo, InsuranceVo.class);
+                    rowValueList.add(fieldValue == null ? "" : fieldValue.toString());
+                }
+            }
             dataList.add(rowValueList);
         }
 
         ExcelExportConfigation excelConfigation = ExcelExportConfigation.newInstance(fileName, columnNameList, dataList);
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
+    }
+
+
+    private List<InsuranceVo> transformBean2VoList(List<Insurance> insuranceList){
+        Merchant merchant;
+        InsuranceVo insuranceVo;
+        String birthday, contactTime, finishTime, arrangeTime;
+        List<InsuranceVo> insuranceVoList = new ArrayList<>();
+        for(Insurance insurance : insuranceList){
+            merchant = merchantService.findById(insurance.getMerchantId());
+            insuranceVo = new InsuranceVo();
+            BeanUtils.copyProperties(insurance, insuranceVo);
+            // 字段格式化
+            insuranceVo.setAddress("");
+
+            birthday = DateUtils.formatDate(insurance.getBirthday(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(birthday)){
+                insuranceVo.setBirthday("");
+            }else{
+                birthday = DateUtils.formatDate(insurance.getBirthday(), yyyyMMddFormat);
+                insuranceVo.setBirthday(birthday);
+            }
+            contactTime = DateUtils.formatDate(insurance.getContactTime(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(contactTime)){
+                insuranceVo.setContactTime("");
+            }else{
+                contactTime = DateUtils.formatDate(insurance.getContactTime(), yyyyMMddFormat);
+                insuranceVo.setContactTime(contactTime);
+            }
+            finishTime = DateUtils.formatDate(insurance.getFinishTime(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(finishTime)){
+                insuranceVo.setFinishTime("");
+            }else{
+                finishTime = DateUtils.formatDate(insurance.getFinishTime(), yyyyMMddFormat);
+                insuranceVo.setFinishTime(finishTime);
+            }
+            arrangeTime = DateUtils.formatDate(insurance.getArrangeTime(), yyyyMMddHHmmssFormat);
+            if(dateContant.equals(arrangeTime)){
+                insuranceVo.setArrangeTime("");
+            }else{
+                arrangeTime = DateUtils.formatDate(insurance.getArrangeTime(), yyyyMMddFormat);
+                insuranceVo.setArrangeTime(arrangeTime);
+            }
+
+            insuranceVo.setDataTypeName(insurance.getDataType());
+            insuranceVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            insuranceVo.setPlatformName(insurance.getPlatform());
+            insuranceVo.setPayTypeName(InsurancePayTypeEnum.getTextByValue(insurance.getPayType()));
+            insuranceVo.setSourceTypeName(String.valueOf(insurance.getSourceType()));
+
+            insuranceVo.setCreateTime(DateUtils.formatDate(insurance.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            insuranceVo.setUpdateTime(DateUtils.formatDate(insurance.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+
+            insuranceVoList.add(insuranceVo);
+        }
+        return insuranceVoList;
     }
 
 }

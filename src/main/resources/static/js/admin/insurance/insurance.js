@@ -97,7 +97,12 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 
         },
         exportExcel: function(){
-
+            var columnFieldIds = "";
+            for(var index = 0; index < Insurance.fieldList.length; index ++ ){
+                columnFieldIds += (Insurance.fieldList[index] + ",")
+            }
+            $("#columnFieldIds").val(columnFieldIds);
+            $("#insurance-form").attr("action", "/admin/insurance/exportExcel").submit();
         }
     };
     $('.table-toobar .layui-btn').on('click', function(){
@@ -125,11 +130,6 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
             }});
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     });
-    //下载表单提交
-    form.on('submit(download-btn)', function(data){
-        data.form.action = "/admin/insurance/download";
-        data.form.submit();
-    });
     //选择日期
     laydate.render({
         elem: '#chooseDate',
@@ -156,14 +156,13 @@ var Insurance = {
         'contactTime',
         'merchantName',
 
-        'payType',
+        'payTypeName',
         'insuranceAmount',
         'insuranceFee',
         'finishTime'
     ],
     column: [
         {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
-        {field: 'insuranceNo', title: '保单编号', minWidth: 100, align: 'center'},
         {field: 'name', title: '投保人姓名', minWidth: 120, align: 'center'},
         {field: 'mobile', title: '投保人电话', minWidth: 120, align: 'center'},
         {field: 'gender', title: '投保人性别', minWidth: 100, align: 'center'},
@@ -187,6 +186,7 @@ var Insurance = {
         {field: 'problem', title: '问题数据', minWidth: 100, align: 'center'},
 
         {field: 'payTypeName', title: '缴费类型', minWidth: 100, align: 'center'},
+        {field: 'insuranceNo', title: '保单编号', minWidth: 100, align: 'center'},
         {field: 'insuranceAmount', title: '保额', minWidth: 100, align: 'center'},
         {field: 'insuranceFee', title: '保费', minWidth: 100, align: 'center'},
         {field: 'finishTime', title: '成单日期', minWidth: 120, align: 'center'},

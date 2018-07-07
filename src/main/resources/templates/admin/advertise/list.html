@@ -25,7 +25,7 @@
 </head>
 <body>
 <div class="x-body layui-anim layui-anim-up">
-    <form class="layui-form layui-form-pane">
+    <form class="layui-form layui-form-pane" id="advertise-form">
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">选择时间</label>
@@ -33,6 +33,7 @@
                     <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
                 </div>
             </div>
+            <input type="hidden" id="columnFieldIds" name="columnFieldIds">
             <div class="layui-inline">
                 <button class="layui-btn" lay-submit lay-filter="search-btn">查询</button>
                 <a class="layui-btn layui-btn-primary reset-btn">重置</a>
@@ -43,7 +44,7 @@
     <div class="layui-btn-group table-toobar">
         <li class="layui-nav-item layui-btn" data-type="setColumnField"><p>设置列属性</p></li>
         <li class="layui-btn" id="importExcel"><i class="layui-icon"></i>导入文件</li>
-        <li class="layui-btn" id="exportExcel">导出文件</li>
+        <li class="layui-btn" id="exportExcel" data-type="exportExcel">导出文件</li>
     </div>
     <div class="layui-form layui-form-pane" id="columnField"></div>
     <table class="layui-hide" id="advertise-table-grid"></table>

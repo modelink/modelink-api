@@ -23,4 +23,12 @@ public class InsuranceParamPagerVo extends PagerVo {
     public void setMobile(String mobile) {
         this.mobile = mobile;
     }
+
+    public String getColumnFieldIds() {
+        return columnFieldIds;
+    }
+
+    public void setColumnFieldIds(String columnFieldIds) {
+        this.columnFieldIds = columnFieldIds;
+    }
 }

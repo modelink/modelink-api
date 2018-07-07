@@ -83,9 +83,11 @@ public class ExcelExportHelper {
 
             sheet = workbook.createSheet(sheetName);
             // 设置excel每列宽度
-            sheet.setColumnWidth(0, 6000);
-            sheet.setColumnWidth(1, 6000);
-            sheet.setColumnWidth(2, 4000);
+            columnIndex = 0;
+            for (String columnName : sheetItem.getColumnNameList()) {
+                sheet.setColumnWidth(columnIndex, 6000);
+                columnIndex ++;
+            }
 
             // 创建字体样式
             headerFont = workbook.createFont();
@@ -122,7 +124,7 @@ public class ExcelExportHelper {
                 cell.setCellStyle(headerStyle);
                 cell.setCellValue(columnName);
 
-                columnIndex++;
+                columnIndex ++;
             }
             rowIndex ++;
 

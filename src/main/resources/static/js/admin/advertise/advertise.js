@@ -96,7 +96,12 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 
         },
         exportExcel: function(){
-
+            var columnFieldIds = "";
+            for(var index = 0; index < Advertise.fieldList.length; index ++ ){
+                columnFieldIds += (Advertise.fieldList[index] + ",")
+            }
+            $("#columnFieldIds").val(columnFieldIds);
+            $("#advertise-form").attr("action", "/admin/advertise/exportExcel").submit();
         }
     };
     $('.table-toobar .layui-btn').on('click', function(){
@@ -122,11 +127,6 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 mobile: data.field.mobile
             }});
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
-    });
-    //下载表单提交
-    form.on('submit(download-btn)', function(data){
-        data.form.action = "/admin/advertise/download";
-        data.form.submit();
     });
     //选择日期
     laydate.render({

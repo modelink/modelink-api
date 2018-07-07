@@ -1,59 +1,79 @@
 package com.modelink.admin.vo;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.modelink.common.annotation.ExportField;
 
 import java.io.Serializable;
-import java.util.Date;
 
 public class AdvertiseAnalyseVo implements Serializable{
 
+    @ExportField(value="ID")
     private Long id;
     /** 预约商户（如小米、华夏） **/
+    @ExportField(value="项目")
     private String merchantName;
     /** 平台类型（微信、PC、WAP、转介绍） **/
+    @ExportField(value="渠道归属")
     private String platformName;
     /** 数据类型（自然流量、SEM） **/
+    @ExportField(value="渠道明细")
     private String dataTypeName;
     /** 统计时间 **/
+    @ExportField(value="日期")
     private String statTime;
     /** 展现量 **/
+    @ExportField(value="展现量")
     private Integer viewCount;
     /** 点击量 **/
+    @ExportField(value="点击量")
     private Integer clickCount;
     /** 浏览量 **/
+    @ExportField(value="浏览量")
     private Integer browseCount;
     /** 到达量 **/
+    @ExportField(value="到达量")
     private Integer arriveCount;
     /** 到达用户量 **/
+    @ExportField(value="到达用户量")
     private Integer arriveUserCount;
     /** 到达率 **/
+    @ExportField(value="到达率")
     private String arriveRate;
     /** 二跳量 **/
+    @ExportField(value="二跳量")
     private Integer againCount;
     /** 二跳率 **/
+    @ExportField(value="二跳率")
     private String againRate;
     /** 平均停留时间 **/
+    @ExportField(value="平均停留时间")
     private String averageStayTime;
     /** 转化量 **/
+    @ExportField(value="转化量")
     private Integer transformCount;
     /** 直接转化量 **/
+    @ExportField(value="直接转化量")
     private Integer directTransformCount;
     /** 回归转化量 **/
+    @ExportField(value="回归转化量")
     private Integer backTransformCount;
     /** 转化成本 **/
+    @ExportField(value="转化成本")
     private String transformCost;
     /** 保险费用 **/
+    @ExportField(value="保险费用")
     private String insuranceFee;
     /** 状态 **/
+    @ExportField(value="状态")
     private Integer status;
     /** 备注信息 **/
+    @ExportField(value="备注信息")
     private String remark;
     /** 创建时间 **/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date createTime;
+    @ExportField(value="创建时间")
+    private String createTime;
     /** 更新时间 **/
-    @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date updateTime;
+    @ExportField(value="更新时间")
+    private String updateTime;
 
     public Long getId() {
         return id;
@@ -223,19 +243,19 @@ public class AdvertiseAnalyseVo implements Serializable{
         this.remark = remark;
     }
 
-    public Date getCreateTime() {
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
     }
 }

@@ -4,11 +4,13 @@ import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.AdvertiseAnalyseVo;
 import com.modelink.admin.vo.AdvertiseParamPagerVo;
+import com.modelink.common.annotation.ExportField;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelExportConfigation;
 import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
+import com.modelink.common.utils.ClassReflectUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
@@ -63,25 +65,8 @@ public class AdminAdvertiseController {
         PageInfo<AdvertiseAnalyse> pageInfo = advertiseAnalyseService.findPagerByParam(paramPagerVo);
         LayuiResultPagerVo<AdvertiseAnalyseVo> layuiResultPagerVo = new LayuiResultPagerVo();
 
-        Merchant merchant;
-        AdvertiseAnalyseVo advertiseAnalyseVo;
-        List<AdvertiseAnalyseVo> advertiseAnalyseVoList = new ArrayList<>();
         List<AdvertiseAnalyse> advertiseAnalyseList = pageInfo.getList();
-        for(AdvertiseAnalyse advertiseAnalyse : advertiseAnalyseList){
-            merchant = merchantService.findById(advertiseAnalyse.getMerchantId());
-            advertiseAnalyseVo = new AdvertiseAnalyseVo();
-            BeanUtils.copyProperties(advertiseAnalyse, advertiseAnalyseVo);
-            advertiseAnalyseVo.setDataTypeName(advertiseAnalyse.getDataType());
-            advertiseAnalyseVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            advertiseAnalyseVo.setPlatformName(advertiseAnalyse.getPlatform());
-
-            advertiseAnalyseVo.setStatTime(DateUtils.formatDate(advertiseAnalyse.getStatTime(), "yyyy-MM-dd"));
-            advertiseAnalyseVo.setArriveRate(advertiseAnalyse.getArriveRate().multiply(new BigDecimal(100)) + "%");
-            advertiseAnalyseVo.setAgainRate(advertiseAnalyse.getAgainRate().multiply(new BigDecimal(100)).toPlainString() + "%");
-            advertiseAnalyseVo.setTransformCost(advertiseAnalyse.getTransformCost().toPlainString());
-            advertiseAnalyseVo.setInsuranceFee(advertiseAnalyse.getInsuranceFee().toPlainString());
-            advertiseAnalyseVoList.add(advertiseAnalyseVo);
-        }
+        List<AdvertiseAnalyseVo> advertiseAnalyseVoList = transformBean2VoList(advertiseAnalyseList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -229,24 +214,38 @@ public class AdminAdvertiseController {
     @RequestMapping("/exportExcel")
     public void download(AdvertiseParamPagerVo paramPagerVo, HttpServletResponse response) throws Exception {
         // 创建文件名称
-        String fileName = "投保明细列表_" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+        String fileName = "广告数据列表_" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+
         // 创建Excel表格列名称
+        ExportField exportField;
+        String[] fieldIds = new String[]{};
         List<String> columnNameList = new ArrayList<>();
-        columnNameList.add("投保人姓名");
-        columnNameList.add("投保人电话");
-        columnNameList.add("预约时间");
-        columnNameList.add("预约渠道");
-        columnNameList.add("预约入口");
-        columnNameList.add("创建时间");
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())){
+            fieldIds = paramPagerVo.getColumnFieldIds().split(",");
+            for(String fieldId : fieldIds){
+                if(StringUtils.hasText(fieldId)){
+                    exportField = ClassReflectUtils.getAnnotationByFieldName(fieldId, AdvertiseAnalyseVo.class);
+                    columnNameList.add(exportField.value());
+                }
+            }
+        }
+
+        // 转换到VO列表
+        List<AdvertiseAnalyse> advertiseAnalyseList = advertiseAnalyseService.findListByParam(paramPagerVo);
+        List<AdvertiseAnalyseVo> advertiseAnalyseVoList = transformBean2VoList(advertiseAnalyseList);
+
         // 创建Excel 数据
+        Object fieldValue;
         List<String> rowValueList;
         List<List<String>> dataList = new ArrayList<>();
-        List<AdvertiseAnalyse> advertiseAnalyseList = advertiseAnalyseService.findListByParam(paramPagerVo);
-        for(AdvertiseAnalyse advertiseAnalyse : advertiseAnalyseList){
+        for(AdvertiseAnalyseVo advertiseAnalyseVo : advertiseAnalyseVoList){
             rowValueList = new ArrayList<>();
-            rowValueList.add(DateUtils.formatDate(advertiseAnalyse.getStatTime(), "yyyy-MM-dd"));
-            rowValueList.add("小米渠道");
-            rowValueList.add(DateUtils.formatDate(advertiseAnalyse.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            for(String fieldId : fieldIds){
+                if(StringUtils.hasText(fieldId)) {
+                    fieldValue = ClassReflectUtils.getValueByFieldName(fieldId, advertiseAnalyseVo, AdvertiseAnalyseVo.class);
+                    rowValueList.add(fieldValue == null ? "" : fieldValue.toString());
+                }
+            }
             dataList.add(rowValueList);
         }
 
@@ -265,6 +264,30 @@ public class AdminAdvertiseController {
             return new BigDecimal(varchar);
         }
         return new BigDecimal("0.00");
+    }
+    private List<AdvertiseAnalyseVo> transformBean2VoList(List<AdvertiseAnalyse> advertiseAnalyseList){
+        Merchant merchant;
+        AdvertiseAnalyseVo advertiseAnalyseVo;
+        List<AdvertiseAnalyseVo> advertiseAnalyseVoList = new ArrayList<>();
+        for(AdvertiseAnalyse advertiseAnalyse : advertiseAnalyseList){
+            merchant = merchantService.findById(advertiseAnalyse.getMerchantId());
+            advertiseAnalyseVo = new AdvertiseAnalyseVo();
+            BeanUtils.copyProperties(advertiseAnalyse, advertiseAnalyseVo);
+            advertiseAnalyseVo.setDataTypeName(advertiseAnalyse.getDataType());
+            advertiseAnalyseVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            advertiseAnalyseVo.setPlatformName(advertiseAnalyse.getPlatform());
+
+            advertiseAnalyseVo.setStatTime(DateUtils.formatDate(advertiseAnalyse.getStatTime(), "yyyy-MM-dd"));
+            advertiseAnalyseVo.setArriveRate(advertiseAnalyse.getArriveRate().multiply(new BigDecimal(100)) + "%");
+            advertiseAnalyseVo.setAgainRate(advertiseAnalyse.getAgainRate().multiply(new BigDecimal(100)).toPlainString() + "%");
+            advertiseAnalyseVo.setTransformCost(advertiseAnalyse.getTransformCost().toPlainString());
+            advertiseAnalyseVo.setInsuranceFee(advertiseAnalyse.getInsuranceFee().toPlainString());
+
+            advertiseAnalyseVo.setCreateTime(DateUtils.formatDate(advertiseAnalyse.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            advertiseAnalyseVo.setUpdateTime(DateUtils.formatDate(advertiseAnalyse.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            advertiseAnalyseVoList.add(advertiseAnalyseVo);
+        }
+        return advertiseAnalyseVoList;
     }
 
 }
