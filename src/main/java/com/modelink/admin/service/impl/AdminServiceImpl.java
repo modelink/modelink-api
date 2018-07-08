@@ -14,8 +14,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class AdminServiceImpl implements AdminService {
@@ -121,6 +120,63 @@ public class AdminServiceImpl implements AdminService {
         permissionCriteria.andEqualTo("available", true);
         permissionList = permissionMapper.selectByExample(permissionExample);
 
+        Permission parentPermission;
+        List<Permission> menuList = new ArrayList<>();
+        for(Permission permission : permissionList){
+            parentPermission = recursionSearchMenu(permission);
+            menuList.add(parentPermission);
+        }
+
+        permissionList = recursionMergeMenu(menuList);
         return permissionList;
     }
+
+    // 递归找到父级菜单
+    private Permission recursionSearchMenu(Permission permission){
+        if(permission.getParentId() == 0){
+            return permission;
+        }
+        Permission parentPermission = permissionMapper.selectByPrimaryKey(permission.getParentId());
+        if(parentPermission == null){
+            return permission;
+        }
+        // 将自身放到父级菜单中
+        List<Permission> permissionList = parentPermission.getPermissionList();
+        if(permissionList == null){
+            permissionList = new ArrayList<>();
+        }
+        permissionList.add(permission);
+        parentPermission.setPermissionList(permissionList);
+
+        if(parentPermission.getParentId() == 0){
+            return parentPermission;
+        }
+        return recursionSearchMenu(parentPermission);
+    }
+
+    // 递归合并子菜单
+    private List<Permission> recursionMergeMenu(List<Permission> permissionList){
+        Map<Long, Permission> permissionMap = new HashMap<>();
+        List<Permission> resultList = new ArrayList<>();
+
+        Permission childPermission;
+        for(Permission permission : permissionList){
+
+            childPermission = permissionMap.get(permission.getId());
+            if(childPermission == null){
+                childPermission = permission;
+            }else if(permission.getPermissionList() != null) {
+                childPermission.getPermissionList().addAll(permission.getPermissionList());
+            }
+            permissionMap.put(permission.getId(), childPermission);
+        }
+        Iterator<Long> iterator = permissionMap.keySet().iterator();
+        while(iterator.hasNext()){
+            childPermission = permissionMap.get(iterator.next());
+            childPermission.setPermissionList(recursionMergeMenu(childPermission.getPermissionList()));
+            resultList.add(childPermission);
+        }
+        return resultList;
+    }
+
 }

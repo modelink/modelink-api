@@ -18,18 +18,18 @@ public enum AreaTypeEnum {
     }
 
     public static String getTextByValue(int value) {
-        for(AreaTypeEnum platformEnum : AreaTypeEnum.values()){
-            if(platformEnum.getValue() == value){
-                return platformEnum.getText();
+        for(AreaTypeEnum enumItem : AreaTypeEnum.values()){
+            if(enumItem.getValue() == value){
+                return enumItem.getText();
             }
         }
         return "";
     }
 
     public static int getValueByText(String text) {
-        for(AreaTypeEnum platformEnum : AreaTypeEnum.values()){
-            if(platformEnum.getText().equals(text)){
-                return platformEnum.getValue();
+        for(AreaTypeEnum enumItem : AreaTypeEnum.values()){
+            if(enumItem.getText().equals(text)){
+                return enumItem.getValue();
             }
         }
         return 0;

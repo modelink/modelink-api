@@ -26,9 +26,9 @@ public enum InsuranceDataTypeEnum {
     }
 
     public static int getValueByText(String text) {
-        for(PlatformEnum platformEnum : PlatformEnum.values()){
-            if(platformEnum.getText().equals(text)){
-                return platformEnum.getValue();
+        for(InsuranceDataTypeEnum enumItem : InsuranceDataTypeEnum.values()){
+            if(enumItem.getText().equals(text)){
+                return enumItem.getValue();
             }
         }
         return 0;

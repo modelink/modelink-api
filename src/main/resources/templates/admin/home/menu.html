@@ -214,17 +214,17 @@
         <!-- 左侧导航区域 -->
         <div id="side-nav">
             <ul id="nav">
-                <li>
-                    <a href="javascript:;">
+                <li th:each="permission: ${session.admin_session_name.permissionList}">
+                    <a th:_href="${permission.value}">
                         <i class="iconfont">&#xe723;</i>
-                        <cite>主要功能</cite>
+                        <cite th:text="${permission.name}"></cite>
                         <i class="iconfont nav_right">&#xe697;</i>
                     </a>
                     <ul class="sub-menu">
-                        <li th:each="permission: ${session.admin_session_name.permissionList}">
-                            <a th:_href="${permission.value}">
+                        <li th:each="childMenu: ${permission.permissionList}">
+                            <a th:_href="${childMenu.value}">
                                 <i class="iconfont">&#xe6a7;</i>
-                                <cite th:text="${permission.name}">会员列表</cite>
+                                <cite th:text="${childMenu.name}"></cite>
                             </a>
                         </li>
                     </ul>
