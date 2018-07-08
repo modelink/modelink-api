@@ -122,12 +122,11 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
         console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
         console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
-        table.reload('insurance-table-reload',{
-            page: { curr: 1 },
-            where: {
-                chooseDate: data.field.chooseDate,
-                mobile: data.field.mobile
-            }});
+
+        Insurance.queryTable({
+            chooseDate: data.field.chooseDate,
+            mobile: data.field.mobile
+        });
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     });
     //选择日期
@@ -195,7 +194,7 @@ var Insurance = {
         {field: 'createTime', title: '创建时间', minWidth: 180, align: 'center'},
         {field: 'updateTime', title: '更新时间', minWidth: 180, align: 'center'}
     ],
-    renderTable: function (table) {
+    formColumn: function () {
         var columnList = [];
         for(var index = 0; index < Insurance.column.length; index ++ ){
             var columnItem = Insurance.column[index];
@@ -204,10 +203,19 @@ var Insurance = {
             }
         }
         console.log(columnList);
+        return columnList;
+    },
+    queryTable: function (table, queryJson) {
+        var columnList = Insurance.formColumn();
+        table.reload('insurance-table-reload',{
+            page: { curr: 1 },
+            cols: [ columnList ],
+            where: queryJson
+        });
+    },
+    renderTable: function (table) {
+        var columnList = Insurance.formColumn();
         if(Insurance.table){
-            Insurance.table.reload({
-                cols: [[{field: 'id', title: 'ID', width: 50, sort: false, align: 'center', fixed: true}]],
-            });
             Insurance.table.reload({
                 cols: [ columnList ],
             });
