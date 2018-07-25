@@ -248,7 +248,7 @@ h1 {
 	display: block;
 	height: 80px;
 	width: 328px;
-	background: url(../images/logo.png) no-repeat left center;
+	background: url(/static/image/portal/index/logo.png) no-repeat left center;
 }
 
 .h_nav li {
@@ -324,7 +324,7 @@ div.tips {
 	left: 50%;
 	margin-left: 280px;
 	top: 12px;
-	background: url(../images/phone.png) no-repeat center center;
+	background: url(/static/image/portal/index/phone.png) no-repeat center center;
 }
 .footer{
 	width: 100%;
@@ -364,7 +364,7 @@ div.tips {
 	width: 20px;
 	height: 20px;
 	margin-top: 1px;
-	background: url(../images/footer_icon.png) no-repeat
+	background: url(/static/image/portal/index/footer_icon.png) no-repeat
 }
 .footer_info .content dd .c1{
 	background-position: 0 0;
