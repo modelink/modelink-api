@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 
 <head>
     <meta charset="utf-8">
@@ -7,10 +7,9 @@
     <meta name="renderer" content="webkit">
     <meta name="keywords" content="黑牛保险,互联网保险,黑牛保,赠险,重疾险,保险方案,私人订制,少儿保险,儿童保险,意外伤害保险,健康保险,交通意外险">
     <meta name="description" content="黑牛保险是国内首个提供保险规划、投保建议的互联网保险平台，专注于重疾险、意外险、寿险、养老险等健康险。1分钟1千元0骚扰，为您和家人订制专属保险方案。">
-    <title>关于我们_互联网保险_保险方案订制_黑牛保险</title>
-    <link rel="Shortcut Icon" href="static/home/images/favicon.ico">
-    <script src="static/home/js/jquery.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="static/home/css/home.css" />
+    <title>北京数驰科技</title>
+    <link rel="stylesheet" th:href="@{/static/css/portal/index/home.css}">
+    <link rel="shortcut icon" th:href="@{/static/image/portal/index/favicon.ico}" type="image/x-icon" />
 </head>
 
 <body>
@@ -23,13 +22,13 @@
                     <a href="/">首页</a>
                 </li>
                 <li>
-                    <a href="intro.html?index=0">公司简介</a>
+                    <a href="introduce.html?index=0">公司简介</a>
                 </li>
                 <li>
-                    <a href="intro.html?index=3">工作机会</a>
+                    <a href="introduce.html?index=3">工作机会</a>
                 </li>
                 <li>
-                    <a href="intro.html?index=4">联系我们</a>
+                    <a href="introduce.html?index=4">联系我们</a>
                 </li>
             </ul>
         </div>
@@ -151,7 +150,7 @@
                     <h2>联系我们</h2>
                     <div class="int_con_cont">
                         <div class="int_con_code">
-                            <img src="static/home/images/code.jpg">
+                            <img src="/static/image/portal/index/code.jpg">
                         </div>
                         <div class="int_con_text">
                             <p>服务热线：010-87227385（工作日10:00-17:00）</p>
@@ -168,7 +167,7 @@
                             <a href="http://map.baidu.com/?newmap=1&ie=utf-8&s=s%26wd%3D%E5%8C%97%E4%BA%AC%E5%B8%82%E5%A4%A7%E5%85%B4%E5%8C%BA%E4%BA%A6%E5%BA%84%E5%A4%A7%E6%97%8F%E5%B9%BF%E5%9C%BAt5%E5%8F%B7%E6%A5%BC"
                                 target="_blank">
                                 <!--<iframe src="map.html" width="370" height="180"></iframe>-->
-                                <img src="static/home/images/map.jpg" alt="地图">
+                                <img src="/static/image/portal/index/map.jpg" alt="地图">
                                 <p>查看完整地图</p>
                             </a>
                         </div>
@@ -194,23 +193,23 @@
                 <dl class="about">
                     <dt>关于我们</dt>
                     <dd>
-                        <a href="intro.html?index=0">公司简介</a>
+                        <a href="introduce.html?index=0">公司简介</a>
                     </dd>
                     <dd>
-                        <a href="intro.html?index=1">产品与服务</a>
+                        <a href="introduce.html?index=1">产品与服务</a>
                     </dd>
                     <dd>
-                        <a href="intro.html?index=2">团队介绍</a>
+                        <a href="introduce.html?index=2">团队介绍</a>
                     </dd>
                     <dd>
-                        <a href="intro.html?index=3">工作机会</a>
+                        <a href="introduce.html?index=3">工作机会</a>
                     </dd>
                     <dd>
-                        <a href="intro.html?index=4">联系我们</a>
+                        <a href="introduce.html?index=4">联系我们</a>
                     </dd>
                 </dl>
                 <div class="code">
-                    <img src="static/home/images/code.jpg" alt="二维码">
+                    <img src="/static/image/portal/index/code.jpg" alt="二维码">
                     <p>关注我们</p>
                 </div>
             </div>
@@ -227,6 +226,7 @@
         </div>
     </div>
 </body>
-<script src="static/home/js/index.js" type="text/javascript"></script>
+<script th:src="@{/static/js/portal/index/jquery.js}" type="text/javascript"></script>
+<script th:src="@{/static/js/portal/index/index.js}" type="text/javascript"></script>
 
 </html>
