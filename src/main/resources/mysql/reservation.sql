@@ -14,4 +14,3 @@ CREATE TABLE `reservation` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COMMENT='预约登记表';
 
-ALTER TABLE `reservation` ADD `advertise_position` VARCHAR(32) NOT NULL DEFAULT '' COMMENT '广告位' AFTER `source_type`;
