@@ -1,0 +1,33 @@
+.block{
+    max-height:415px;
+    width: 100%;
+    background-color: white;
+    margin-bottom: 18px;
+    padding: 10px 0;
+}
+.content-img{
+    height: 170px;
+    width: 100%;
+}
+.content-title{
+    color: #3C3C3C;
+    padding: 12px 0;
+}
+.content-article{
+    color: #666666;
+    line-height: 25px;
+    font-size:15px;
+    word-break: break-all;
+}
+.block>p{
+    margin: 0 10px;
+}
+.mark{
+    font-size: 14px;
+    color: #C3C3C3;
+    padding-top: 12px;
+}
+.mark>span:nth-child(2){
+    position: absolute;
+    right: 10px;
+}

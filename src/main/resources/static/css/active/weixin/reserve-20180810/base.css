@@ -1,0 +1,19 @@
+* {margin: 0;padding: 0;}
+th{vertical-align: middle !important;  text-align: center !important;}
+html, body {font-family: "Microsoft YaHei";}
+.header {width: 100%;height: 35.5px;background-color: #1FD1BF;color: white;font-size: 18px;display: -webkit-flex;display: flex;justify-content: space-between;line-height: 35.5px; /*display: none;*/}
+.header span:nth-child(3){margin-right:16px;}
+.header img:nth-child(1) {height: 11.5px;width: 10.5px;margin: 13px -20px 13px 10px;}
+.header img:nth-child(3) {height: 18px;width: 18px;margin-top: 10px;margin-right: 10px;}
+.content {background-color: #F3F7FA;}
+.content ul, .content li {display: block;list-style: none;overflow: hidden;}
+.header-title{height: 30px;margin:8px 0;display: -webkit-flex;display: flex;justify-content: space-between;font-size: 10px;padding:0 10px;}
+.header-title .ht-left{height: 30px;float: left;flex: 1;}
+.header-title .ht-left>img{width: 30px;height:100%;border-radius:50%;float: left;}
+.header-title .ht-left>span{display: block;float: left;line-height: 30px;margin-left: 10px;}
+.header-title .ht-left .ht-desc {margin-left:10px;float: left;}
+.header-title .ht-left .ht-desc>p {color:#b6b6b6;}
+.header-title .ht-left .ht-desc>span{color:#353535;}
+.header-title .ht-right{height: 30px;line-height:30px;float: left;flex: 1;text-align: right;color: #b6b6b6;}
+#msgAlert {display:none;position: fixed;top:50%;left:0;min-height: 20px;text-align:center;max-height: 80px;width: 100%;z-index:99999;}
+#msgAlert>div{max-width: 60%;line-height: 20px;text-align: center;display: inline-block;padding: 5px;border-radius: 3px;background: rgba(0,0,0,0.5);color: #fff;}

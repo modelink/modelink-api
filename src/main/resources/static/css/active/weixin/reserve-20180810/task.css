@@ -1,0 +1,19 @@
+.datelist{height:109px;background-color:#1fd1bf;width: 100%;}
+.datelist .mj{height:50px;color: white;}
+.datelist .mj>span{display: block;height: 50px;font-size: 37px;margin:-7px 10px 0 17px;float: left;}
+.datelist .mj>.nf>span{display: block;width: 100%;}
+.datelist .mj>.nf>span:first-child{font-size: 12px;}
+.datelist .mj>.nf>span:last-child{font-size: 14px;}
+.datelist ul{display: flex;flex-flow: nowrap;list-style: none;}
+.datelist ul li{flex: 1;height: 58px;}
+.datelist ul li span{display: block;width: 100%;text-align: center;}
+.datelist ul li span:first-child{font-size: 12px;color: white;}
+.datelist ul li span:last-child{font-size: 28px;color: #63eee0;}
+.datelist .day-active{color: #fff !important;}
+.task{display: block;list-style: none;}
+.task li{display: flex;height: 73px;width: 100%;background-color: white;margin-bottom:9px;}
+.task li>img:nth-child(1){height: 55px;width:55px;border-radius: 50%;margin: 9px 8px 9px 16px;display: block;float: left;}
+.task li>div{flex:1;padding-top: 18px;}
+.task li>div p {color:#999;font-size: 12px;}
+.task li>div span{color:#353535;font-size: 16px;}
+.task li>img:nth-child(3){height: 20px;width:20px;border-radius: 50%;margin: 29px 8px 29px 14px;display: block;float: right;}

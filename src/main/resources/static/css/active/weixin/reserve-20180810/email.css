@@ -1,0 +1,7 @@
+body{background-color: #F3F7FA;}
+.email{display: block;list-style: none;}
+.email li{display: flex;height: 73px;width: 100%;background-color: white;margin-bottom:9px;flex-wrap: nowrap;overflow: hidden;justify-content: space-between;}
+.email li>div:first-child{flex:1;line-height: 73px;padding-left: 14px;overflow: hidden;}
+.email li>div:last-child{flex:1;display: flex;align-items: center;justify-content: flex-end;padding-right: 14px;overflow: hidden;}
+.email li>div:last-child span{color:#353535;font-size: 16px;display: inline-block;line-height: 73px;}
+.email li>div:last-child img{height: 20px;width:20px;display: block;}

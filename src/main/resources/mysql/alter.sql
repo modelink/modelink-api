@@ -1,0 +1,1 @@
+alter table permission modify column `value` varchar(256);

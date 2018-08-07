@@ -1,0 +1,5 @@
+body{background-color: #fff;}
+.notice{display: block;list-style: none;}
+.notice li{display: flex;height: 73px;width: 100%;background-color: white;margin-bottom:9px;flex-wrap: nowrap;overflow: hidden;padding: 10px 14px;}
+.notice li>img:nth-child(1){height: 55px;width:55px;border-radius: 50%;display: block;}
+.notice li>div{flex:1;line-height: 73px;padding-left: 14px;padding-right:14px;overflow: hidden;}
