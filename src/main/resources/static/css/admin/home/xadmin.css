@@ -521,3 +521,23 @@ table th, table td {
     }
 }
 
+.layui-card {
+    background-color: #FBFBFB;
+    border: solid 1px #E6E6E6;
+}
+.layui-card-header {
+    height: 38px;
+    line-height: 38px;
+    border-color: #E6E6E6;
+}
+.layui-card-title {
+    height: 38px;
+    text-align: center;
+    line-height: 38px;
+    background-color: white;
+    border-bottom: solid 1px #E6E6E6;
+}
+.layui-card-body {
+    background-color: white;
+}
+

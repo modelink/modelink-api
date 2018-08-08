@@ -59,7 +59,7 @@ public class AdminInsuranceController {
 
     @RequestMapping("/echart")
     public String echart() {
-        return "/admin/insurance/echart";
+        return "/admin/insurance/insurance-echart";
     }
 
     @ResponseBody
