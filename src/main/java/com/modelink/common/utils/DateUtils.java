@@ -85,6 +85,27 @@ public class DateUtils {
     }
 
     /**
+     * 日期格式转化
+     * @param dateString
+     * @param pattern
+     * @return
+     */
+    public static String dateFormatTransform(String dateString, String pattern, String distPattern){
+        //通过格式化输出日期
+        Date date = null;
+        String resultDate = null;
+        try {
+            DateFormat dateFormat = new SimpleDateFormat(pattern);
+            date = dateFormat.parse(dateString);
+            resultDate = formatDate(date, distPattern);
+        } catch (Exception e) {
+            logger.error("[dateUtils|formatDate]日期转换失败。dateString={}", dateString, e);
+            resultDate = "";
+        }
+        return resultDate;
+    }
+
+    /**
      * 获取指定日期是星期几
      * @param date
      * @return

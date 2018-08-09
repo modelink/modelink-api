@@ -14,7 +14,7 @@ CREATE TABLE `insurance` (
   `contact_time` date COMMENT '预约时间',
   `arrange_time` date COMMENT '下发时间',
   `merchant_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '预约商户（如小米、华夏）',
-  `platform` varchar(20) NOT NULL DEFAULT '' COMMENT '预约平台（微信、PC、WAP、转介绍）',
+  `platformName` varchar(20) NOT NULL DEFAULT '' COMMENT '预约平台（微信、PC、WAP、转介绍）',
   `data_type` varchar(20) NOT NULL DEFAULT '' COMMENT '数据来源（SEM、自然流量）',
   `source_type` int(11) NOT NULL DEFAULT '0' COMMENT '入口类型',
   

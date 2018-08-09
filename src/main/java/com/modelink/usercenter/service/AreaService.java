@@ -14,6 +14,8 @@ public interface AreaService {
     public int update(Area area);
     /** 根据ID查询记录 **/
     public Area findById(Integer areaId);
+    /** 查询符合条件的记录 **/
+    public Area findByNameAndType(String areaName, int areaType);
     /** 根据条件查询记录列表 **/
     public List<Area> findListByParam(Area area);
     /** 根据条件查询记录列表（支持分页） **/

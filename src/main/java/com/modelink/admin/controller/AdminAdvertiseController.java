@@ -11,6 +11,7 @@ import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
 import com.modelink.common.utils.ClassReflectUtils;
+import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
@@ -186,20 +187,20 @@ public class AdminAdvertiseController {
                 // 渠道明细
                 advertiseAnalyse.setDataType(dataItem.get(3));
 
-                advertiseAnalyse.setViewCount(tranform2Integer(dataItem.get(5)));
-                advertiseAnalyse.setClickCount(tranform2Integer(dataItem.get(6)));
-                advertiseAnalyse.setBrowseCount(tranform2Integer(dataItem.get(10)));
-                advertiseAnalyse.setArriveCount(tranform2Integer(dataItem.get(11)));
-                advertiseAnalyse.setArriveUserCount(tranform2Integer(dataItem.get(12)));
-                advertiseAnalyse.setArriveRate(tranform2BigDecimal(dataItem.get(13)));
-                advertiseAnalyse.setAgainCount(tranform2Integer(dataItem.get(14)));
-                advertiseAnalyse.setAgainRate(tranform2BigDecimal(dataItem.get(15)));
+                advertiseAnalyse.setViewCount(DataUtils.tranform2Integer(dataItem.get(5)));
+                advertiseAnalyse.setClickCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                advertiseAnalyse.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(10)));
+                advertiseAnalyse.setArriveCount(DataUtils.tranform2Integer(dataItem.get(11)));
+                advertiseAnalyse.setArriveUserCount(DataUtils.tranform2Integer(dataItem.get(12)));
+                advertiseAnalyse.setArriveRate(DataUtils.tranform2BigDecimal(dataItem.get(13)));
+                advertiseAnalyse.setAgainCount(DataUtils.tranform2Integer(dataItem.get(14)));
+                advertiseAnalyse.setAgainRate(DataUtils.tranform2BigDecimal(dataItem.get(15)));
                 advertiseAnalyse.setAverageStayTime(dataItem.get(16));
-                advertiseAnalyse.setTransformCount(tranform2Integer(dataItem.get(17)));
-                advertiseAnalyse.setDirectTransformCount(tranform2Integer(dataItem.get(18)));
-                advertiseAnalyse.setBackTransformCount(tranform2Integer(dataItem.get(19)));
-                advertiseAnalyse.setTransformCost(tranform2BigDecimal(dataItem.get(20)));
-                advertiseAnalyse.setInsuranceFee(tranform2BigDecimal(dataItem.get(21)));
+                advertiseAnalyse.setTransformCount(DataUtils.tranform2Integer(dataItem.get(17)));
+                advertiseAnalyse.setDirectTransformCount(DataUtils.tranform2Integer(dataItem.get(18)));
+                advertiseAnalyse.setBackTransformCount(DataUtils.tranform2Integer(dataItem.get(19)));
+                advertiseAnalyse.setTransformCost(DataUtils.tranform2BigDecimal(dataItem.get(20)));
+                advertiseAnalyse.setInsuranceFee(DataUtils.tranform2BigDecimal(dataItem.get(21)));
 
                 advertiseAnalyseService.insert(advertiseAnalyse);
             } catch (Exception e) {
@@ -253,18 +254,7 @@ public class AdminAdvertiseController {
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
 
-    private int tranform2Integer(String varchar){
-        if(StringUtils.hasText(varchar)){
-            return Integer.parseInt(varchar);
-        }
-        return 0;
-    }
-    private BigDecimal tranform2BigDecimal(String varchar){
-        if(StringUtils.hasText(varchar)){
-            return new BigDecimal(varchar);
-        }
-        return new BigDecimal("0.00");
-    }
+
     private List<AdvertiseAnalyseVo> transformBean2VoList(List<AdvertiseAnalyse> advertiseAnalyseList){
         Merchant merchant;
         AdvertiseAnalyseVo advertiseAnalyseVo;

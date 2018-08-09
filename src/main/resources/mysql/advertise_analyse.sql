@@ -4,7 +4,7 @@ CREATE TABLE `advertise_analyse` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `stat_time` timestamp NOT NULL DEFAULT '2000-01-01 00:00:00' COMMENT '统计日期',
   `merchant_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '预约商户（如小米、华夏）',
-  `platform` varchar(20) NOT NULL DEFAULT '' COMMENT '预约平台（微信、PC、WAP、转介绍）',
+  `platformName` varchar(20) NOT NULL DEFAULT '' COMMENT '预约平台（微信、PC、WAP、转介绍）',
   `data_type` varchar(20) NOT NULL DEFAULT '' COMMENT '数据来源（SEM、自然流量）',
 
   `view_count` int(11) NOT NULL DEFAULT 0 COMMENT '展现量',

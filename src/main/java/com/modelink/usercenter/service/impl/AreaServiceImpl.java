@@ -50,6 +50,19 @@ public class AreaServiceImpl implements AreaService {
     }
 
     /**
+     * 查询符合条件的记录
+     *
+     * @param areaName
+     * @param areaType
+     **/
+    public Area findByNameAndType(String areaName, int areaType) {
+        Area area = new Area();
+        area.setAreaName(areaName);
+        area.setAreaType(areaType);
+        return areaMapper.selectOne(area);
+    }
+
+    /**
      * 根据条件查询记录列表
      *
      * @param area
