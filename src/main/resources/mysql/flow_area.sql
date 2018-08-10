@@ -1,5 +1,5 @@
-DROP TABLE IF EXISTS `flow-area`;
-CREATE TABLE `flow-area` (
+DROP TABLE IF EXISTS `flow_area`;
+CREATE TABLE `flow_area` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
 
   `date` varchar(10) NOT NULL DEFAULT '' COMMENT '时间',
