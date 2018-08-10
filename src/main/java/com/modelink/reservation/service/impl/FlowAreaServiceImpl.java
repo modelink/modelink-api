@@ -2,10 +2,10 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.reservation.bean.Flow;
-import com.modelink.reservation.mapper.FlowMapper;
-import com.modelink.reservation.service.FlowService;
-import com.modelink.reservation.vo.FlowParamPagerVo;
+import com.modelink.reservation.bean.FlowArea;
+import com.modelink.reservation.mapper.FlowAreaMapper;
+import com.modelink.reservation.service.FlowAreaService;
+import com.modelink.reservation.vo.FlowAreaParamPagerVo;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -14,42 +14,42 @@ import javax.annotation.Resource;
 import java.util.List;
 
 @Service
-public class FlowServiceImpl implements FlowService {
+public class FlowAreaServiceImpl implements FlowAreaService {
 
     @Resource
-    private FlowMapper flowMapper;
+    private FlowAreaMapper flowAreaMapper;
 
     /**
-     * 插入一条承保记录
+     * 插入一条记录
      *
-     * @param flow
+     * @param flowArea
      * @return
      */
     @Override
-    public int insert(Flow flow) {
-        return flowMapper.insertSelective(flow);
+    public int insert(FlowArea flowArea) {
+        return flowAreaMapper.insertSelective(flowArea);
     }
 
     /**
      * 查询符合条件的记录总数
      *
-     * @param flow
+     * @param flowArea
      * @return
      */
     @Override
-    public int countByParam(Flow flow) {
+    public int countByParam(FlowArea flowArea) {
         return 0;
     }
 
     /**
      * 查询符合条件的记录
-     * @param flow
+     * @param flowArea
      * @return
      */
-    public Flow findOneByParam(Flow flow) {
-        List<Flow> flowList = flowMapper.select(flow);
-        if(flowList != null && flowList.size() > 0){
-            return flowList.get(0);
+    public FlowArea findOneByParam(FlowArea flowArea) {
+        List<FlowArea> flowAreaList = flowAreaMapper.select(flowArea);
+        if(flowAreaList != null && flowAreaList.size() > 0){
+            return flowAreaList.get(0);
         }
         return null;
     }
@@ -61,8 +61,8 @@ public class FlowServiceImpl implements FlowService {
      * @return
      */
     @Override
-    public List<Flow> findListByParam(FlowParamPagerVo paramPagerVo) {
-        Example example = new Example(Flow.class);
+    public List<FlowArea> findListByParam(FlowAreaParamPagerVo paramPagerVo) {
+        Example example = new Example(FlowArea.class);
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
@@ -70,8 +70,8 @@ public class FlowServiceImpl implements FlowService {
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
 
-        List<Flow> flowList = flowMapper.selectByExample(example);
-        return flowList;
+        List<FlowArea> flowAreaList = flowAreaMapper.selectByExample(example);
+        return flowAreaList;
     }
 
     /**
@@ -81,10 +81,10 @@ public class FlowServiceImpl implements FlowService {
      * @return
      */
     @Override
-    public PageInfo<Flow> findPagerByParam(FlowParamPagerVo paramPagerVo) {
+    public PageInfo<FlowArea> findPagerByParam(FlowAreaParamPagerVo paramPagerVo) {
         PageHelper.startPage(paramPagerVo.getPageNo(), paramPagerVo.getPageSize());
 
-        Example example = new Example(Flow.class);
+        Example example = new Example(FlowArea.class);
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
@@ -92,8 +92,8 @@ public class FlowServiceImpl implements FlowService {
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
         example.setOrderByClause("date desc");
-        List<Flow> flowList = flowMapper.selectByExample(example);
-        PageInfo<Flow> pageInfo = new PageInfo<>(flowList);
+        List<FlowArea> flowAreaList = flowAreaMapper.selectByExample(example);
+        PageInfo<FlowArea> pageInfo = new PageInfo<>(flowAreaList);
         return pageInfo;
     }
 }

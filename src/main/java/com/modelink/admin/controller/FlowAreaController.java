@@ -2,6 +2,7 @@ package com.modelink.admin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.modelink.common.enums.AreaTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
@@ -9,10 +10,10 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.reservation.bean.MediaItem;
-import com.modelink.reservation.service.MediaItemService;
-import com.modelink.reservation.vo.MediaItemParamPagerVo;
-import com.modelink.reservation.vo.MediaItemVo;
+import com.modelink.reservation.bean.FlowArea;
+import com.modelink.reservation.service.FlowAreaService;
+import com.modelink.reservation.vo.FlowAreaParamPagerVo;
+import com.modelink.reservation.vo.FlowAreaVo;
 import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.AreaService;
@@ -38,10 +39,10 @@ import java.util.Map;
  * 承保效果数据Controller
  */
 @Controller
-@RequestMapping("/admin/mediaItem")
-public class MediaItemController {
+@RequestMapping("/admin/flowArea")
+public class FlowAreaController {
 
-    public static Logger logger = LoggerFactory.getLogger(MediaItemController.class);
+    public static Logger logger = LoggerFactory.getLogger(FlowAreaController.class);
     public static String yyyyMMddFormat = "yyyy-MM-dd";
 
     @Resource
@@ -49,24 +50,24 @@ public class MediaItemController {
     @Resource
     private MerchantService merchantService;
     @Resource
-    private MediaItemService mediaItemService;
+    private FlowAreaService flowAreaService;
 
     @RequestMapping
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/mediaItem/list");
+        modelAndView.setViewName("/admin/flow/flow-area-list");
         return modelAndView;
     }
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<MediaItemVo> list(MediaItemParamPagerVo paramPagerVo){
-        LayuiResultPagerVo<MediaItemVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
+    public LayuiResultPagerVo<FlowAreaVo> list(FlowAreaParamPagerVo paramPagerVo){
+        LayuiResultPagerVo<FlowAreaVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
-        PageInfo<MediaItem> pageInfo = mediaItemService.findPagerByParam(paramPagerVo);
-        List<MediaItem> mediaItemList = pageInfo.getList();
-        List<MediaItemVo> advertiseAnalyseVoList = transformBean2VoList(mediaItemList);
+        PageInfo<FlowArea> pageInfo = flowAreaService.findPagerByParam(paramPagerVo);
+        List<FlowArea> flowAreaList = pageInfo.getList();
+        List<FlowAreaVo> advertiseAnalyseVoList = transformBean2VoList(flowAreaList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -81,14 +82,14 @@ public class MediaItemController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            //fieldFormatMap.put(16, "HH:mm:ss");
+            fieldFormatMap.put(9, "HH:mm:ss");
 
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
-            logger.error("[mediaItemController|importExcel]发生异常", e);
+            logger.error("[flowAreaController|importExcel]发生异常", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
@@ -109,7 +110,7 @@ public class MediaItemController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 18){
+            if(dataItem.size() < 11){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -132,7 +133,7 @@ public class MediaItemController {
 
         // 数据入库
         Area area;
-        MediaItem mediaItem;
+        FlowArea flowArea;
         Merchant merchant;
         String date;
         for(List<String> dataItem : dataList){
@@ -149,45 +150,38 @@ public class MediaItemController {
             }
             try {
                 // 重复数据校验
-                mediaItem = new MediaItem();
+                flowArea = new FlowArea();
 
                 date = dataItem.get(1);
-                mediaItem.setDate(date);
+                flowArea.setDate(date);
                 merchant = merchantService.findByName(dataItem.get(2));
-                mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
-                mediaItem.setPlatformName(dataItem.get(3));
-                mediaItem.setSourceType(dataItem.get(4));
-                mediaItem = mediaItemService.findOneByParam(mediaItem);
-                if(mediaItem != null){
+                flowArea.setMerchantId(merchant == null ? 0L : merchant.getId());
+                flowArea.setPlatformName(dataItem.get(3));
+                flowArea = flowAreaService.findOneByParam(flowArea);
+                if(flowArea != null){
                     continue;
                 }
 
                 // 保存数据
-                mediaItem = new MediaItem();
-                mediaItem.setDate(dataItem.get(1));
-                mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
+                flowArea = new FlowArea();
+                flowArea.setDate(dataItem.get(1));
+                flowArea.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                mediaItem.setPlatformName(dataItem.get(3));
-                // 广告活动
-                mediaItem.setSourceType(dataItem.get(4));
+                flowArea.setPlatformName(dataItem.get(3));
 
-                mediaItem.setSourceMedia(dataItem.get(5));
-                mediaItem.setAdvertiseSeries(dataItem.get(6));
-                mediaItem.setKeyWordGroup(dataItem.get(7));
-                mediaItem.setAdvertiseDesc(dataItem.get(8));
-                mediaItem.setKeyWord(dataItem.get(9));
-                mediaItem.setPopularizeCell(dataItem.get(10));
-                mediaItem.setPopularizePlan(dataItem.get(11));
-                mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(12)));
-                mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(13)));
-                mediaItem.setSpeedCost(dataItem.get(14));
-                mediaItem.setClickRate(dataItem.get(15));
-                mediaItem.setAverageClickPrice(dataItem.get(16));
-                mediaItem.setAverageRank(dataItem.get(17));
+                area = areaService.findByNameAndType(dataItem.get(4), AreaTypeEnum.省.getValue());
+                flowArea.setProvinceId(area == null ? 0 : area.getAreaId());
+                area = areaService.findByNameAndType(dataItem.get(5), AreaTypeEnum.市.getValue());
+                flowArea.setCityId(area == null ? 0 : area.getAreaId());
+                flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                flowArea.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                flowArea.setUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                flowArea.setAverageStayTime(dataItem.get(9));
+                flowArea.setAgainClickRate(dataItem.get(10));
 
-                mediaItemService.insert(mediaItem);
+                flowAreaService.insert(flowArea);
             } catch (Exception e) {
-                logger.error("[mediaItemController|importExcel]保存数据发生异常。mediaItem={}", JSON.toJSONString(dataItem), e);
+                logger.error("[flowAreaController|importExcel]保存数据发生异常。flowArea={}", JSON.toJSONString(dataItem), e);
             }
 
         }
@@ -196,19 +190,25 @@ public class MediaItemController {
     }
 
 
-    private List<MediaItemVo> transformBean2VoList(List<MediaItem> mediaItemList){
+    private List<FlowAreaVo> transformBean2VoList(List<FlowArea> flowAreaList){
+        Area area;
         Merchant merchant;
-        MediaItemVo mediaItemVo;
-        List<MediaItemVo> mediaItemVoList = new ArrayList<>();
-        for(MediaItem mediaItem : mediaItemList){
-            merchant = merchantService.findById(mediaItem.getMerchantId());
-            mediaItemVo = new MediaItemVo();
-            BeanUtils.copyProperties(mediaItem, mediaItemVo);
-            mediaItemVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            mediaItemVo.setCreateTime(DateUtils.formatDate(mediaItem.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            mediaItemVo.setUpdateTime(DateUtils.formatDate(mediaItem.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
-            mediaItemVoList.add(mediaItemVo);
+        FlowAreaVo flowAreaVo;
+        List<FlowAreaVo> flowAreaVoList = new ArrayList<>();
+        for(FlowArea flowArea : flowAreaList){
+            merchant = merchantService.findById(flowArea.getMerchantId());
+            flowAreaVo = new FlowAreaVo();
+            BeanUtils.copyProperties(flowArea, flowAreaVo);
+
+            area = areaService.findById(flowArea.getProvinceId());
+            flowAreaVo.setProvinceName(area == null ? "" : area.getAreaName());
+            area = areaService.findById(flowArea.getCityId());
+            flowAreaVo.setCityName(area == null ? "" : area.getAreaName());
+            flowAreaVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            flowAreaVo.setCreateTime(DateUtils.formatDate(flowArea.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            flowAreaVo.setUpdateTime(DateUtils.formatDate(flowArea.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            flowAreaVoList.add(flowAreaVo);
         }
-        return mediaItemVoList;
+        return flowAreaVoList;
     }
 }

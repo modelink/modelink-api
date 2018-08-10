@@ -7,12 +7,12 @@ import com.modelink.reservation.vo.FlowParamPagerVo;
 import java.util.List;
 
 /**
- * 承保数据服务接口
+ * 地区流量数据服务接口
  */
 public interface FlowService {
 
     /**
-     * 插入一条承保记录
+     * 插入一条记录
      * @param flow
      * @return
      */

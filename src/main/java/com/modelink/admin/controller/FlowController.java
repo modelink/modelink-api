@@ -2,6 +2,8 @@ package com.modelink.admin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.modelink.common.enums.AreaTypeEnum;
+import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
@@ -9,10 +11,10 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.reservation.bean.MediaItem;
-import com.modelink.reservation.service.MediaItemService;
-import com.modelink.reservation.vo.MediaItemParamPagerVo;
-import com.modelink.reservation.vo.MediaItemVo;
+import com.modelink.reservation.bean.Flow;
+import com.modelink.reservation.service.FlowService;
+import com.modelink.reservation.vo.FlowParamPagerVo;
+import com.modelink.reservation.vo.FlowVo;
 import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.AreaService;
@@ -29,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
+import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -38,10 +41,10 @@ import java.util.Map;
  * 承保效果数据Controller
  */
 @Controller
-@RequestMapping("/admin/mediaItem")
-public class MediaItemController {
+@RequestMapping("/admin/flow")
+public class FlowController {
 
-    public static Logger logger = LoggerFactory.getLogger(MediaItemController.class);
+    public static Logger logger = LoggerFactory.getLogger(FlowController.class);
     public static String yyyyMMddFormat = "yyyy-MM-dd";
 
     @Resource
@@ -49,24 +52,24 @@ public class MediaItemController {
     @Resource
     private MerchantService merchantService;
     @Resource
-    private MediaItemService mediaItemService;
+    private FlowService flowService;
 
     @RequestMapping
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/mediaItem/list");
+        modelAndView.setViewName("/admin/flow/flow-list");
         return modelAndView;
     }
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<MediaItemVo> list(MediaItemParamPagerVo paramPagerVo){
-        LayuiResultPagerVo<MediaItemVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
+    public LayuiResultPagerVo<FlowVo> list(FlowParamPagerVo paramPagerVo){
+        LayuiResultPagerVo<FlowVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
-        PageInfo<MediaItem> pageInfo = mediaItemService.findPagerByParam(paramPagerVo);
-        List<MediaItem> mediaItemList = pageInfo.getList();
-        List<MediaItemVo> advertiseAnalyseVoList = transformBean2VoList(mediaItemList);
+        PageInfo<Flow> pageInfo = flowService.findPagerByParam(paramPagerVo);
+        List<Flow> flowList = pageInfo.getList();
+        List<FlowVo> advertiseAnalyseVoList = transformBean2VoList(flowList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -81,14 +84,14 @@ public class MediaItemController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            //fieldFormatMap.put(16, "HH:mm:ss");
+            fieldFormatMap.put(10, "HH:mm:ss");
 
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
-            logger.error("[mediaItemController|importExcel]发生异常", e);
+            logger.error("[flowController|importExcel]发生异常", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
@@ -109,7 +112,7 @@ public class MediaItemController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 18){
+            if(dataItem.size() < 12){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -132,7 +135,7 @@ public class MediaItemController {
 
         // 数据入库
         Area area;
-        MediaItem mediaItem;
+        Flow flow;
         Merchant merchant;
         String date;
         for(List<String> dataItem : dataList){
@@ -149,45 +152,37 @@ public class MediaItemController {
             }
             try {
                 // 重复数据校验
-                mediaItem = new MediaItem();
+                flow = new Flow();
 
                 date = dataItem.get(1);
-                mediaItem.setDate(date);
+                flow.setDate(date);
                 merchant = merchantService.findByName(dataItem.get(2));
-                mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
-                mediaItem.setPlatformName(dataItem.get(3));
-                mediaItem.setSourceType(dataItem.get(4));
-                mediaItem = mediaItemService.findOneByParam(mediaItem);
-                if(mediaItem != null){
+                flow.setMerchantId(merchant == null ? 0L : merchant.getId());
+                flow.setPlatformName(dataItem.get(3));
+                flow = flowService.findOneByParam(flow);
+                if(flow != null){
                     continue;
                 }
 
                 // 保存数据
-                mediaItem = new MediaItem();
-                mediaItem.setDate(dataItem.get(1));
-                mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
+                flow = new Flow();
+                flow.setDate(dataItem.get(1));
+                flow.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                mediaItem.setPlatformName(dataItem.get(3));
-                // 广告活动
-                mediaItem.setSourceType(dataItem.get(4));
+                flow.setPlatformName(dataItem.get(3));
 
-                mediaItem.setSourceMedia(dataItem.get(5));
-                mediaItem.setAdvertiseSeries(dataItem.get(6));
-                mediaItem.setKeyWordGroup(dataItem.get(7));
-                mediaItem.setAdvertiseDesc(dataItem.get(8));
-                mediaItem.setKeyWord(dataItem.get(9));
-                mediaItem.setPopularizeCell(dataItem.get(10));
-                mediaItem.setPopularizePlan(dataItem.get(11));
-                mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(12)));
-                mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(13)));
-                mediaItem.setSpeedCost(dataItem.get(14));
-                mediaItem.setClickRate(dataItem.get(15));
-                mediaItem.setAverageClickPrice(dataItem.get(16));
-                mediaItem.setAverageRank(dataItem.get(17));
+                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(4)));
+                flow.setAccessCount(DataUtils.tranform2Integer(dataItem.get(5)));
+                flow.setUserCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                flow.setClickCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                flow.setAgainClickCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                flow.setAgainClickRate(dataItem.get(9));
+                flow.setAverageStayTime(dataItem.get(10));
+                flow.setAverageBrowsePageCount(DataUtils.tranform2Integer(dataItem.get(11)));
 
-                mediaItemService.insert(mediaItem);
+                flowService.insert(flow);
             } catch (Exception e) {
-                logger.error("[mediaItemController|importExcel]保存数据发生异常。mediaItem={}", JSON.toJSONString(dataItem), e);
+                logger.error("[flowController|importExcel]保存数据发生异常。flow={}", JSON.toJSONString(dataItem), e);
             }
 
         }
@@ -196,19 +191,19 @@ public class MediaItemController {
     }
 
 
-    private List<MediaItemVo> transformBean2VoList(List<MediaItem> mediaItemList){
+    private List<FlowVo> transformBean2VoList(List<Flow> flowList){
         Merchant merchant;
-        MediaItemVo mediaItemVo;
-        List<MediaItemVo> mediaItemVoList = new ArrayList<>();
-        for(MediaItem mediaItem : mediaItemList){
-            merchant = merchantService.findById(mediaItem.getMerchantId());
-            mediaItemVo = new MediaItemVo();
-            BeanUtils.copyProperties(mediaItem, mediaItemVo);
-            mediaItemVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            mediaItemVo.setCreateTime(DateUtils.formatDate(mediaItem.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            mediaItemVo.setUpdateTime(DateUtils.formatDate(mediaItem.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
-            mediaItemVoList.add(mediaItemVo);
+        FlowVo flowVo;
+        List<FlowVo> flowVoList = new ArrayList<>();
+        for(Flow flow : flowList){
+            merchant = merchantService.findById(flow.getMerchantId());
+            flowVo = new FlowVo();
+            BeanUtils.copyProperties(flow, flowVo);
+            flowVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            flowVo.setCreateTime(DateUtils.formatDate(flow.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            flowVo.setUpdateTime(DateUtils.formatDate(flow.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            flowVoList.add(flowVo);
         }
-        return mediaItemVoList;
+        return flowVoList;
     }
 }

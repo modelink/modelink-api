@@ -47,7 +47,7 @@ public class Flow implements Serializable {
     /**
      * 二跳率
      **/
-    private Integer againClickRate;
+    private String againClickRate;
     /**
      * 平均停留时间
      **/
@@ -138,11 +138,11 @@ public class Flow implements Serializable {
         this.againClickCount = againClickCount;
     }
 
-    public Integer getAgainClickRate() {
+    public String getAgainClickRate() {
         return againClickRate;
     }
 
-    public void setAgainClickRate(Integer againClickRate) {
+    public void setAgainClickRate(String againClickRate) {
         this.againClickRate = againClickRate;
     }
 

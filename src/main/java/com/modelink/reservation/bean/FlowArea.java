@@ -1,14 +1,15 @@
-package com.modelink.reservation.vo;
+package com.modelink.reservation.bean;
 
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 承保效果
+ * 地区流量表
  */
-public class FlowVo implements Serializable {
+public class FlowArea implements Serializable {
 
+    @Id
     private Long id;
     /**
      * 日期
@@ -17,32 +18,31 @@ public class FlowVo implements Serializable {
     /**
      * 合作商户
      **/
-    private String merchantName;
+    private Long merchantId;
     /**
      * 渠道归属
      **/
     private String platformName;
-
+    /**
+     * 省份名称
+     **/
+    private Integer provinceId;
+    /**
+     * 城市名称
+     **/
+    private Integer cityId;
+    /**
+     * 流入量
+     **/
+    private Integer inflowCount;
     /**
      * 浏览量
      **/
     private Integer browseCount;
     /**
-     * 访问量
-     **/
-    private Integer accessCount;
-    /**
      * 用户数
      **/
     private Integer userCount;
-    /**
-     * 点击量
-     **/
-    private Integer clickCount;
-    /**
-     * 二跳量
-     **/
-    private Integer againClickCount;
     /**
      * 二跳率
      **/
@@ -52,18 +52,13 @@ public class FlowVo implements Serializable {
      **/
     private String averageStayTime;
     /**
-     * 平均浏览页面数
-     **/
-    private Integer averageBrowsePageCount;
-
-    /**
      * 创建时间
      **/
-    private String createTime;
+    private Date createTime;
     /**
      * 修改时间
      **/
-    private String updateTime;
+    private Date updateTime;
 
     public Long getId() {
         return id;
@@ -81,12 +76,12 @@ public class FlowVo implements Serializable {
         this.date = date;
     }
 
-    public String getMerchantName() {
-        return merchantName;
+    public Long getMerchantId() {
+        return merchantId;
     }
 
-    public void setMerchantName(String merchantName) {
-        this.merchantName = merchantName;
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
     public String getPlatformName() {
@@ -105,12 +100,28 @@ public class FlowVo implements Serializable {
         this.browseCount = browseCount;
     }
 
-    public Integer getAccessCount() {
-        return accessCount;
+    public Integer getProvinceId() {
+        return provinceId;
     }
 
-    public void setAccessCount(Integer accessCount) {
-        this.accessCount = accessCount;
+    public void setProvinceId(Integer provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public Integer getCityId() {
+        return cityId;
+    }
+
+    public void setCityId(Integer cityId) {
+        this.cityId = cityId;
+    }
+
+    public Integer getInflowCount() {
+        return inflowCount;
+    }
+
+    public void setInflowCount(Integer inflowCount) {
+        this.inflowCount = inflowCount;
     }
 
     public Integer getUserCount() {
@@ -119,22 +130,6 @@ public class FlowVo implements Serializable {
 
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
-    }
-
-    public Integer getClickCount() {
-        return clickCount;
-    }
-
-    public void setClickCount(Integer clickCount) {
-        this.clickCount = clickCount;
-    }
-
-    public Integer getAgainClickCount() {
-        return againClickCount;
-    }
-
-    public void setAgainClickCount(Integer againClickCount) {
-        this.againClickCount = againClickCount;
     }
 
     public String getAgainClickRate() {
@@ -153,27 +148,19 @@ public class FlowVo implements Serializable {
         this.averageStayTime = averageStayTime;
     }
 
-    public Integer getAverageBrowsePageCount() {
-        return averageBrowsePageCount;
-    }
-
-    public void setAverageBrowsePageCount(Integer averageBrowsePageCount) {
-        this.averageBrowsePageCount = averageBrowsePageCount;
-    }
-
-    public String getCreateTime() {
+    public Date getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
 
-    public String getUpdateTime() {
+    public Date getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(String updateTime) {
+    public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
 }
