@@ -1,8 +1,9 @@
 package com.modelink.admin.bean;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Role {
+public class Role implements Serializable {
 
     private Long id;
     private String name;

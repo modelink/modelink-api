@@ -2,6 +2,7 @@ package com.modelink.admin.bean;
 
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -9,7 +10,7 @@ import java.util.List;
 /**
  * 后台资源，对应一个一个菜单
  */
-public class Permission {
+public class Permission implements Serializable {
 
     @Id
     private Long id;

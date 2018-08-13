@@ -2,9 +2,10 @@ package com.modelink.admin.vo;
 
 import com.modelink.admin.bean.Permission;
 
+import java.io.Serializable;
 import java.util.List;
 
-public class AdminVo {
+public class AdminVo implements Serializable {
 
     private Long id;
     private String userName;
