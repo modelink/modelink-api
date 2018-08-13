@@ -30,7 +30,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * 承保效果数据Controller
+ * 异常数据Controller
  */
 @Controller
 @RequestMapping("/admin/abnormal")

@@ -1,15 +1,15 @@
-package com.modelink.reservation.bean;
+package com.modelink.reservation.vo;
 
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
-public class Repellent implements Serializable {
+public class RepellentVo implements Serializable {
 
     @Id
     private Long id;
     /** 合作商户 **/
-    private Long merchantId;
+    private String merchantName;
     /** 数据导出机构名称 **/
     private String exportOrgName;
     /** 投保单号 **/
@@ -17,9 +17,9 @@ public class Repellent implements Serializable {
     /** 保单号 **/
     private String insuranceNo;
     /** 保单状态 **/
-    private Integer status;
+    private String status;
     /** 保单子状态 **/
-    private Integer childStatus;
+    private String childStatus;
     /** 被保人名称 **/
     private String insuranceName;
     /** 产品名称 **/
@@ -53,14 +53,14 @@ public class Repellent implements Serializable {
     /** 承保日期 **/
     private String insuranceDate;
     /** 交费方式 **/
-    private Integer payType;
+    private String payTypeName;
     /** 犹豫日期 **/
     private String hesitateDate;
     /** 交费期间 **/
     private Integer payInterval;
 
-    private Date createTime;
-    private Date updateTime;
+    private String createTime;
+    private String updateTime;
 
     public Long getId() {
         return id;
@@ -84,22 +84,6 @@ public class Repellent implements Serializable {
 
     public void setInsuranceNo(String insuranceNo) {
         this.insuranceNo = insuranceNo;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getChildStatus() {
-        return childStatus;
-    }
-
-    public void setChildStatus(Integer childStatus) {
-        this.childStatus = childStatus;
     }
 
     public String getInsuranceName() {
@@ -206,36 +190,52 @@ public class Repellent implements Serializable {
         this.insuranceDate = insuranceDate;
     }
 
-    public Integer getPayType() {
-        return payType;
+    public String getMerchantName() {
+        return merchantName;
     }
 
-    public void setPayType(Integer payType) {
-        this.payType = payType;
+    public void setMerchantName(String merchantName) {
+        this.merchantName = merchantName;
     }
 
-    public Date getCreateTime() {
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public String getChildStatus() {
+        return childStatus;
+    }
+
+    public void setChildStatus(String childStatus) {
+        this.childStatus = childStatus;
+    }
+
+    public String getPayTypeName() {
+        return payTypeName;
+    }
+
+    public void setPayTypeName(String payTypeName) {
+        this.payTypeName = payTypeName;
+    }
+
+    public String getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(Date createTime) {
+    public void setCreateTime(String createTime) {
         this.createTime = createTime;
     }
 
-    public Date getUpdateTime() {
+    public String getUpdateTime() {
         return updateTime;
     }
 
-    public void setUpdateTime(Date updateTime) {
+    public void setUpdateTime(String updateTime) {
         this.updateTime = updateTime;
-    }
-
-    public Long getMerchantId() {
-        return merchantId;
-    }
-
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
     }
 
     public String getExportOrgName() {

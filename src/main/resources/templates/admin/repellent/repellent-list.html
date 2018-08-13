@@ -9,34 +9,15 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" th:href="@{/static/css/admin/home/font.css}">
     <link rel="stylesheet" th:href="@{/static/css/admin/home/xadmin.css}">
-    <style>
-        #columnField {
-            width: 150px;
-            height: 450px;
-            border: solid 1px #009688;
-            background-color: white;
-            margin-top: 2px;
-            display: none;
-            position: absolute;
-            overflow-y: auto;
-            z-index: 9;
-        }
-    </style>
 </head>
 <body>
 <div class="x-body layui-anim layui-anim-up">
-    <form class="layui-form layui-form-pane" id="insurance-form">
+    <form class="layui-form layui-form-pane" id="repellent-form">
         <div class="layui-form-item">
             <div class="layui-inline">
                 <label class="layui-form-label">选择时间</label>
                 <div class="layui-input-inline">
                     <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">预约电话</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="mobile" name="mobile" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <input type="hidden" id="columnFieldIds" name="columnFieldIds">
@@ -50,10 +31,10 @@
     <div class="layui-btn-group table-toobar">
         <li class="layui-nav-item layui-btn" data-type="setColumnField"><p>设置列属性</p></li>
         <li class="layui-btn" id="importExcel"><i class="layui-icon"></i>导入文件</li>
-        <li class="layui-btn" id="exportExcel" data-type="exportExcel">导出文件</li>
+        <!--<li class="layui-btn" id="exportExcel" data-type="exportExcel">导出文件</li>-->
     </div>
-    <div class="layui-form layui-form-pane" id="columnField"></div>
-    <table class="layui-hide" id="insurance-table-grid"></table>
+    <div class="layui-form layui-form-pane columnField" id="columnField"></div>
+    <table class="layui-hide" id="repellent-table-grid"></table>
 
 
     <div class="layui-progress layui-progress-big" lay-showpercent="true" lay-filter="upload-progress" style="display:none">
@@ -62,8 +43,8 @@
     <script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
     <script th:inline="javascript">
         layui.config({
-            base: '/static/js/admin/insurance/' //你的模块目录
-        }).use('insurance'); //加载入口
+            base: '/static/js/admin/repellent/' //你的模块目录
+        }).use('repellent'); //加载入口
     </script>
 </div>
 
