@@ -21,7 +21,7 @@ CREATE TABLE `media_item` (
 
   `click_rate` varchar(10) NOT NULL DEFAULT '' COMMENT '点击率',
   `average_click_price` varchar(32) NOT NULL DEFAULT '' COMMENT '平均点击价格',
-  `average_ranking` varchar(32) NOT NULL DEFAULT '' COMMENT '平均排名',
+  `average_rank` varchar(32) NOT NULL DEFAULT '' COMMENT '平均排名',
 
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
