@@ -110,7 +110,7 @@ public class FlowAreaController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 11){
+            if(dataItem.size() < 12){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -178,11 +178,12 @@ public class FlowAreaController {
 
                 flowArea.setProvinceId(provinceId);
                 flowArea.setCityId(cityId);
-                flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(6)));
-                flowArea.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(7)));
-                flowArea.setUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
-                flowArea.setAverageStayTime(dataItem.get(9));
-                flowArea.setAgainClickRate(dataItem.get(10));
+                flowArea.setSource(dataItem.get(6));
+                flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                flowArea.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                flowArea.setUserCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                flowArea.setAverageStayTime(dataItem.get(10));
+                flowArea.setAgainClickRate(dataItem.get(11));
 
                 if(exist) {
                     flowAreaService.update(flowArea);

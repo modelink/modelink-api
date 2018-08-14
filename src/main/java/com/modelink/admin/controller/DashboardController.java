@@ -11,6 +11,7 @@ import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.service.FlowReserveService;
 import com.modelink.reservation.service.UnderwriteService;
+import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
 import java.util.*;
+import java.util.concurrent.atomic.DoubleAccumulator;
 
 @Controller
 @RequestMapping("/admin/dashboard")
@@ -41,34 +43,25 @@ public class DashboardController {
             return resultVo;
         }
 
-        List<FlowReserve> flowReserveList = flowReserveService.findListWithLimitColumnByDateRange(paramVo);
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         String dateKey;
         int reserveCount;
-        Map<String, Integer> reserveCountMap = new HashMap<>();
+        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType());
         for (FlowReserve flowReserve : flowReserveList) {
             dateKey = getDateKeyByDateType(flowReserve.getDate(), paramVo.getDateType());
-
             reserveCount = 0;
-            if(reserveCountMap.get(dateKey) != null){
-                reserveCount = reserveCountMap.get(dateKey);
+            if(statCountMap.get(dateKey) != null){
+                reserveCount = (Integer)statCountMap.get(dateKey);
             }
-            reserveCountMap.put(dateKey, reserveCount ++ );
+            reserveCount ++;
+            statCountMap.put(dateKey, reserveCount);
         }
 
-        JSONObject resultJson = new JSONObject();
-        JSONArray titleArray = new JSONArray();
-        JSONArray contentArray = new JSONArray();
-        Set<String> keySet = reserveCountMap.keySet();
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
-        Arrays.sort(keyArray);
-        for(String key : keyArray){
-            titleArray.add(key);
-            contentArray.add(reserveCountMap.get(key));
-        }
-        resultJson.put("titleList", titleArray);
-        resultJson.put("contentList", contentArray);
-
+        JSONObject resultJson = formResultJson(statCountMap);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;
@@ -89,16 +82,17 @@ public class DashboardController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setColumnFieldIds("finishDate,reserveMobile");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String dateKey;
         int reserveCount;
-        Map<String, Integer> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType());
+        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType());
         for (Underwrite underwrite : underwriteList) {
             dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
             reserveCount = 0;
             if(statCountMap.get(dateKey) != null){
-                reserveCount = statCountMap.get(dateKey);
+                reserveCount = (Integer)statCountMap.get(dateKey);
             }
             reserveCount ++;
             statCountMap.put(dateKey, reserveCount);
@@ -110,7 +104,45 @@ public class DashboardController {
         return resultVo;
     }
 
-    private JSONObject formResultJson(Map<String, Integer> statCountMap){
+
+    @ResponseBody
+    @RequestMapping("/getUnderwriteAmount")
+    public ResultVo getUnderwriteAmount(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        String rtnMsg = initDashboardParam(paramVo);
+        if(StringUtils.hasText(rtnMsg)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg(rtnMsg);
+            return resultVo;
+        }
+
+        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+
+        String dateKey;
+        int reserveCount;
+        double insuranceTotalAmount;
+        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType());
+        for (Underwrite underwrite : underwriteList) {
+            dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            insuranceTotalAmount = 0.00;
+            if(statCountMap.get(dateKey) != null){
+                insuranceTotalAmount = (Double)statCountMap.get(dateKey);
+            }
+            insuranceTotalAmount += Double.valueOf(underwrite.getInsuranceFee());
+            statCountMap.put(dateKey, insuranceTotalAmount);
+        }
+
+        JSONObject resultJson = formResultJson(statCountMap);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    private JSONObject formResultJson(Map<String, Object> statCountMap){
         JSONObject resultJson = new JSONObject();
         JSONArray titleArray = new JSONArray();
         JSONArray contentArray = new JSONArray();
@@ -170,8 +202,8 @@ public class DashboardController {
      * @param dateType
      * @return
      */
-    private Map<String, Integer> initResultMap(String chooseDate, int dateType){
-        Map<String, Integer> resultMap = new HashMap<>();
+    private Map<String, Object> initResultMap(String chooseDate, int dateType){
+        Map<String, Object> resultMap = new HashMap<>();
         String[] dateArray = chooseDate.split(" - ");
 
         String dateKey = getDateKeyByDateType(dateArray[0], dateType);

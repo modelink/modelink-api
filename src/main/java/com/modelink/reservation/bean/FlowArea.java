@@ -32,6 +32,10 @@ public class FlowArea implements Serializable {
      **/
     private Integer cityId;
     /**
+     * 来源类型
+     **/
+    private String source;
+    /**
      * 流入量
      **/
     private Integer inflowCount;
@@ -90,6 +94,14 @@ public class FlowArea implements Serializable {
 
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public Integer getBrowseCount() {

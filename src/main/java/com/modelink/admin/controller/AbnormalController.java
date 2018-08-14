@@ -99,7 +99,7 @@ public class AbnormalController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 11){
+            if(dataItem.size() < 12){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -139,9 +139,9 @@ public class AbnormalController {
             try {
                 // 重复数据校验
                 abnormal = new Abnormal();
-                abnormal.setDate(dataItem.get(0));
-                abnormal.setSource(dataItem.get(3));
-                abnormal.setMobile(dataItem.get(4));
+                abnormal.setDate(dataItem.get(1));
+                abnormal.setSource(dataItem.get(4));
+                abnormal.setMobile(dataItem.get(5));
                 abnormal = abnormalService.findOneByParam(abnormal);
                 if(abnormal == null){
                     exist = false;
@@ -149,17 +149,17 @@ public class AbnormalController {
                 }
 
                 // 保存数据
-                abnormal.setDate(dataItem.get(0));
-                abnormal.setOrgName(dataItem.get(1));
-                abnormal.setTsrName(dataItem.get(2));
-                abnormal.setSource(dataItem.get(3));
-                abnormal.setMobile(dataItem.get(4));
-                abnormal.setArrangeDate(dataItem.get(5));
-                abnormal.setCallDate(dataItem.get(6));
-                abnormal.setCallResult(dataItem.get(7));
-                abnormal.setFirstCallResult(dataItem.get(8));
-                abnormal.setSecondCallResult(dataItem.get(9));
-                abnormal.setThirdCallResult(dataItem.get(10));
+                abnormal.setDate(dataItem.get(1));
+                abnormal.setOrgName(dataItem.get(2));
+                abnormal.setTsrName(dataItem.get(3));
+                abnormal.setSource(dataItem.get(4));
+                abnormal.setMobile(dataItem.get(5));
+                abnormal.setArrangeDate(dataItem.get(6));
+                abnormal.setCallDate(dataItem.get(7));
+                abnormal.setCallResult(dataItem.get(8));
+                abnormal.setFirstCallResult(dataItem.get(9));
+                abnormal.setSecondCallResult(dataItem.get(10));
+                abnormal.setThirdCallResult(dataItem.get(11));
 
                 if(exist) {
                     abnormalService.update(abnormal);

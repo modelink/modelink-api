@@ -58,7 +58,6 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 dateType: $("#dateType").val()
             },
             success: function (response) {
-                //$("#underwrite-count-echart").html("");
                 if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.contentList.length <= 0){
                     insuranceEcharts.drawLineEchart("underwrite-count-echart", ["","","","",""], ["0","0","0","0","0"]);
                     return;
@@ -67,11 +66,11 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 $("#underwrite-count label").html(response.rtnData.lastValue);
                 $("#underwrite-count em").html(response.rtnData.trendRate + "%");
                 if(response.rtnData.trendRate == 0){
-                    $("#underwrite-count i").addClass("icon-arrow-equal").attr("style", "color:yellow;")
+                    $("#underwrite-count i").removeClass().addClass("iconfont icon-arrow-equal").attr("style", "color:gray;")
                 }else if(response.rtnData.trendRate > 0){
-                    $("#underwrite-count i").addClass("icon-arrow-up").attr("style", "color:blue;")
+                    $("#underwrite-count i").removeClass().addClass("iconfont icon-arrow-up").attr("style", "color:green;")
                 }else if(response.rtnData.trendRate < 0){
-                    $("#underwrite-count i").addClass("icon-arrow-down").attr("style", "color:red;")
+                    $("#underwrite-count i").removeClass().addClass("iconfont icon-arrow-down").attr("style", "color:red;")
                 }
 
             }

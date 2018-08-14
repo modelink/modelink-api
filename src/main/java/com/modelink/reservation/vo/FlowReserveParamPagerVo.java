@@ -6,6 +6,7 @@ public class FlowReserveParamPagerVo extends PagerVo {
 
     private String chooseDate;
     private String mobile;
+    private Long merchantId;
     private String columnFieldIds;
 
     public String getChooseDate() {
@@ -22,6 +23,14 @@ public class FlowReserveParamPagerVo extends PagerVo {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
     }
 
     public String getColumnFieldIds() {

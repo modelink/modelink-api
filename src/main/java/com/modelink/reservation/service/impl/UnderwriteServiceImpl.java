@@ -75,6 +75,9 @@ public class UnderwriteServiceImpl implements UnderwriteService {
     @Override
     public List<Underwrite> findListByParam(UnderwriteParamPagerVo paramPagerVo) {
         Example example = new Example(Underwrite.class);
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");

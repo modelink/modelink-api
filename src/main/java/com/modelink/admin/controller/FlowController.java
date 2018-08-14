@@ -2,8 +2,6 @@ package com.modelink.admin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
-import com.modelink.common.enums.AreaTypeEnum;
-import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
@@ -31,7 +29,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import javax.xml.crypto.Data;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +110,7 @@ public class FlowController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 12){
+            if(dataItem.size() < 13){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -171,14 +168,15 @@ public class FlowController {
                 // 渠道归属
                 flow.setPlatformName(dataItem.get(3));
 
-                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(4)));
-                flow.setAccessCount(DataUtils.tranform2Integer(dataItem.get(5)));
-                flow.setUserCount(DataUtils.tranform2Integer(dataItem.get(6)));
-                flow.setClickCount(DataUtils.tranform2Integer(dataItem.get(7)));
-                flow.setAgainClickCount(DataUtils.tranform2Integer(dataItem.get(8)));
-                flow.setAgainClickRate(dataItem.get(9));
-                flow.setAverageStayTime(dataItem.get(10));
-                flow.setAverageBrowsePageCount(DataUtils.tranform2Integer(dataItem.get(11)));
+                flow.setWebsite(dataItem.get(4));
+                flow.setSource(dataItem.get(5));
+                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                flow.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                flow.setUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                flow.setAgainClickCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                flow.setAgainClickRate(dataItem.get(10));
+                flow.setAverageStayTime(dataItem.get(11));
+                flow.setAverageBrowsePageCount(DataUtils.tranform2Integer(dataItem.get(12)));
 
                 if(isExist) {
                     flowService.update(flow);
