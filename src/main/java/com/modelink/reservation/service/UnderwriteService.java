@@ -1,6 +1,8 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import com.modelink.reservation.bean.Underwrite;
 
@@ -45,4 +47,11 @@ public interface UnderwriteService {
      * @return
      */
     public PageInfo<Underwrite> findPagerByParam(UnderwriteParamPagerVo paramPagerVo);
+
+    /**
+     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
+     * @param paramVo
+     * @return
+     */
+    public List<Underwrite> findListWithLimitColumnByDateRange(DashboardParamVo paramVo);
 }

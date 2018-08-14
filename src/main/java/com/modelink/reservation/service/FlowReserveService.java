@@ -1,6 +1,7 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 
@@ -45,4 +46,11 @@ public interface FlowReserveService {
      * @return
      */
     public PageInfo<FlowReserve> findPagerByParam(FlowReserveParamPagerVo paramPagerVo);
+
+    /**
+     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
+     * @param paramVo
+     * @return
+     */
+    public List<FlowReserve> findListWithLimitColumnByDateRange(DashboardParamVo paramVo);
 }

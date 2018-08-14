@@ -2,6 +2,7 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.mapper.FlowReserveMapper;
 import com.modelink.reservation.service.FlowReserveService;
@@ -95,5 +96,22 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         PageInfo<FlowReserve> pageInfo = new PageInfo<>(flowReserveList);
         return pageInfo;
+    }
+
+    /**
+     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
+     * @param paramVo
+     * @return
+     */
+    @Override
+    public List<FlowReserve> findListWithLimitColumnByDateRange(DashboardParamVo paramVo) {
+        String startDate = "";
+        String endDate = "";
+        if(!StringUtils.isEmpty(paramVo.getChooseDate()) && paramVo.getChooseDate().contains(" - ")){
+            String[] chooseDates = paramVo.getChooseDate().split(" - ");
+            startDate = chooseDates[0];
+            endDate = chooseDates[1];
+        }
+        return flowReserveMapper.findListWithLimitColumnByDateRange(startDate, endDate, paramVo.getMerchantId());
     }
 }

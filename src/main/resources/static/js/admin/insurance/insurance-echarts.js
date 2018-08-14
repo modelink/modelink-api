@@ -3,43 +3,14 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     var form = layui.form;
     var laydate = layui.laydate;
 
-    //年选择器
-    laydate.render({
-        elem: '#chooseYear',
-        type: 'year',
-        value: new Date(),
-        isInitValue: true
-    });
-    //年月选择器
-    laydate.render({
-        elem: '#chooseMonth',
-        type: 'month',
-        value: new Date(),
-        isInitValue: true
-    });
     //时间选择器
     laydate.render({
         elem: '#chooseDate',
-        type: 'date',
-        value: new Date(),
-        isInitValue: true
-    });
-
-    $(".choose-date").hide();
-    $(".choose-date.date").show();
-    form.on('select(dateType)', function(selected){
-        $(".choose-date").hide();
-        if(selected.value == 1){
-            $(".choose-date.date").show();
-        }else if(selected.value == 2){
-            $(".choose-date.month").show();
-        }else if(selected.value == 3){
-            $(".choose-date.year").show();
-        }
+        range: true
     });
 
     insuranceEcharts.elementMap["reserve-count-echart"] = $("#reserve-count-echart");
-    insuranceEcharts.elementMap["insurance-count-echart"] = $("#reserve-count-echart");
+    insuranceEcharts.elementMap["underwrite-count-echart"] = $("#reserve-count-echart");
     insuranceEcharts.elementMap["insurance-fee-echart"] = $("#insurance-fee-echart");
     insuranceEcharts.elementMap["insurance-cost-echart"] = $("#insurance-cost-echart");
     insuranceEcharts.elementMap["exception-count-echart"] = $("#exception-count-echart");
@@ -48,7 +19,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.elementMap["transform-rate-echart"] = $("#transform-rate-echart");
 
     insuranceEcharts.echartsMap["reserve-count-echart"] = echarts.init($("#reserve-count-echart")[0]);
-    insuranceEcharts.echartsMap["insurance-count-echart"] = echarts.init($("#insurance-count-echart")[0]);
+    insuranceEcharts.echartsMap["underwrite-count-echart"] = echarts.init($("#underwrite-count-echart")[0]);
     insuranceEcharts.echartsMap["insurance-fee-echart"] = echarts.init($("#insurance-fee-echart")[0]);
     insuranceEcharts.echartsMap["insurance-cost-echart"] = echarts.init($("#insurance-cost-echart")[0]);
     insuranceEcharts.echartsMap["exception-count-echart"] = echarts.init($("#exception-count-echart")[0]);
@@ -70,13 +41,39 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
             },
             success: function (response) {
                 insuranceEcharts.drawLineEchart("reserve-count-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawLineEchart("insurance-count-echart", ["","","","",""], ["5","6","7","6","5"]);
                 insuranceEcharts.drawLineEchart("insurance-fee-echart", ["","","","",""], ["5","6","7","6","5"]);
                 insuranceEcharts.drawLineEchart("insurance-cost-echart", ["","","","",""], ["5","6","7","6","5"]);
                 insuranceEcharts.drawLineEchart("exception-count-echart", ["","","","",""], ["5","6","7","6","5"]);
                 insuranceEcharts.drawLineEchart("transform-cycle-echart", ["","","","",""], ["5","6","7","6","5"]);
                 insuranceEcharts.drawAgeBarEchart("gender-age-echart", ["","","","",""], ["5","6","7","6","5"]);
                 insuranceEcharts.drawLineEchart("transform-rate-echart", ["","","","",""], ["5","6","7","6","5"]);
+            }
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/getUnderwrite",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                //$("#underwrite-count-echart").html("");
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.contentList.length <= 0){
+                    insuranceEcharts.drawLineEchart("underwrite-count-echart", ["","","","",""], ["0","0","0","0","0"]);
+                    return;
+                }
+                insuranceEcharts.drawLineEchart("underwrite-count-echart", response.rtnData.titleList, response.rtnData.contentList);
+                $("#underwrite-count label").html(response.rtnData.lastValue);
+                $("#underwrite-count em").html(response.rtnData.trendRate + "%");
+                if(response.rtnData.trendRate == 0){
+                    $("#underwrite-count i").addClass("icon-arrow-equal").attr("style", "color:yellow;")
+                }else if(response.rtnData.trendRate > 0){
+                    $("#underwrite-count i").addClass("icon-arrow-up").attr("style", "color:blue;")
+                }else if(response.rtnData.trendRate < 0){
+                    $("#underwrite-count i").addClass("icon-arrow-down").attr("style", "color:red;")
+                }
+
             }
         })
     });

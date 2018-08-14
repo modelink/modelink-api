@@ -1,5 +1,6 @@
 package com.modelink.reservation.bean;
 
+import javax.persistence.Column;
 import javax.persistence.Id;
 import java.util.Date;
 
@@ -11,6 +12,7 @@ public class Underwrite {
     @Id
     private Long id;
     /** 合作商户 **/
+    @Column(name = "merchant_id")
     private Long merchantId;
     /** 产品名称 **/
     private String productName;

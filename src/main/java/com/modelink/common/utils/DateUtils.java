@@ -122,6 +122,51 @@ public class DateUtils {
         return weekDays[week];
     }
 
+    /**
+     * 获取当前第几季度
+     * @param date
+     * @return
+     */
+    public static int getSeasonByDate(Date date) {
+
+        int season = 0;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int year = calendar.get(Calendar.YEAR);
+        int month = calendar.get(Calendar.MONTH);
+        switch (month) {
+            case Calendar.JANUARY:
+            case Calendar.FEBRUARY:
+            case Calendar.MARCH:
+                season = 1;
+                break;
+            case Calendar.APRIL:
+            case Calendar.MAY:
+            case Calendar.JUNE:
+                season = 2;
+                break;
+            case Calendar.JULY:
+            case Calendar.AUGUST:
+            case Calendar.SEPTEMBER:
+                season = 3;
+                break;
+            case Calendar.OCTOBER:
+            case Calendar.NOVEMBER:
+            case Calendar.DECEMBER:
+                season = 4;
+                break;
+            default:
+                break;
+        }
+        return season;
+    }
+
+    /**
+     * 根据生日获取年龄
+     * @param birthday
+     * @return
+     */
     public static int getAgeByBirthday(Date birthday) {
         int age = 0;
         try {

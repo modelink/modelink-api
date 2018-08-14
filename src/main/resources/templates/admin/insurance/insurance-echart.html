@@ -21,11 +21,18 @@
             border-color: #E6E6E6;
         }
         .echart-header {
-            height: 38px;
+            height: 48px;
             text-align: center;
-            line-height: 38px;
+            line-height: 48px;
             background-color: white;
             border-bottom: solid 1px #E6E6E6;
+        }
+        .echart-header label {
+            font-size: 32px;
+        }
+        .echart-header i {
+            margin-left: 50px;
+            font-size: 24px;
         }
         .layui-card-body {
             background-color: white;
@@ -40,7 +47,7 @@
                 <label class="layui-form-label">项目选择</label>
                 <div class="layui-input-inline">
                     <select id="merchant" name="merchant" lay-filter="merchant">
-                        <option value="1" selected="">华夏</option>
+                        <option value="2" selected="">华夏</option>
                     </select>
                 </div>
             </div>
@@ -48,9 +55,11 @@
                 <label class="layui-form-label">日期类型</label>
                 <div class="layui-input-inline">
                     <select id="dateType" name="dateType" lay-filter="dateType">
-                        <option value="1" selected="">日</option>
-                        <option value="2">月</option>
-                        <option value="3">年</option>
+                        <option value="5" selected="">日</option>
+                        <option value="4">周</option>
+                        <option value="3">月</option>
+                        <option value="2">季度</option>
+                        <option value="1">年</option>
                     </select>
                 </div>
             </div>
@@ -58,18 +67,6 @@
                 <label class="layui-form-label">选择日期</label>
                 <div class="layui-input-inline">
                     <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline choose-date month">
-                <label class="layui-form-label">选择月份</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="chooseMonth" name="chooseMonth" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline choose-date year">
-                <label class="layui-form-label">选择年份</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="chooseYear" name="chooseYear" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -93,11 +90,12 @@
             <div class="layui-card">
                 <div class="layui-card-header">承保数量</div>
                 <div class="layui-card-body">
-                    <div class="echart-header">
+                    <div id="underwrite-count" class="echart-header">
                         <label>100000人</label>
-                        <i class="iconfont icon-arrow-up" style="margin-left: 50px; font-size: 24px; color: green;"></i> 20%
+                        <i class="iconfont"></i>
+                        <em>20%</em>
                     </div>
-                    <div id="insurance-count-echart" style="height: 200px;"></div>
+                    <div id="underwrite-count-echart" style="height: 200px;"></div>
                 </div>
             </div>
         </div>

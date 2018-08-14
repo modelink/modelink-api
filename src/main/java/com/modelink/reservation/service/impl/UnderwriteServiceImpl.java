@@ -2,6 +2,8 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.mapper.UnderwriteMapper;
 import com.modelink.reservation.service.UnderwriteService;
@@ -66,11 +68,14 @@ public class UnderwriteServiceImpl implements UnderwriteService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("createTime", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
+            criteria.andGreaterThanOrEqualTo("finishDate", chooseDates[0]);
+            criteria.andLessThanOrEqualTo("finishDate", chooseDates[1]);
+        }
+        if(!StringUtils.isEmpty(paramPagerVo.getMerchantId())){
+            criteria.andEqualTo("merchantId", paramPagerVo.getMerchantId());
         }
         if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
-            criteria.andEqualTo("mobile", paramPagerVo.getMobile());
+            criteria.andEqualTo("reserveMobile", paramPagerVo.getMobile());
         }
 
         List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
@@ -101,5 +106,23 @@ public class UnderwriteServiceImpl implements UnderwriteService {
         List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
         PageInfo<Underwrite> pageInfo = new PageInfo<>(underwriteList);
         return pageInfo;
+    }
+
+
+    /**
+     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
+     * @param paramVo
+     * @return
+     */
+    @Override
+    public List<Underwrite> findListWithLimitColumnByDateRange(DashboardParamVo paramVo) {
+        String startDate = "";
+        String endDate = "";
+        if(!StringUtils.isEmpty(paramVo.getChooseDate()) && paramVo.getChooseDate().contains(" - ")){
+            String[] chooseDates = paramVo.getChooseDate().split(" - ");
+            startDate = chooseDates[0];
+            endDate = chooseDates[1];
+        }
+        return underwriteMapper.findListWithLimitColumnByDateRange(startDate, endDate, paramVo.getMerchantId());
     }
 }
