@@ -32,6 +32,17 @@ public class FlowReserveServiceImpl implements FlowReserveService {
     }
 
     /**
+     * 更新一条记录
+     *
+     * @param flowReserve
+     * @return
+     */
+    @Override
+    public int update(FlowReserve flowReserve) {
+        return flowReserveMapper.updateByPrimaryKeySelective(flowReserve);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param flowReserve

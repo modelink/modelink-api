@@ -31,6 +31,17 @@ public class MediaItemServiceImpl implements MediaItemService {
     }
 
     /**
+     * 更新一条记录
+     *
+     * @param mediaItem
+     * @return
+     */
+    @Override
+    public int update(MediaItem mediaItem) {
+        return mediaItemMapper.updateByPrimaryKeySelective(mediaItem);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param mediaItem

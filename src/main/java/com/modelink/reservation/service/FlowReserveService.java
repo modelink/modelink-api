@@ -20,6 +20,13 @@ public interface FlowReserveService {
     public int insert(FlowReserve flowReserve);
 
     /**
+     * 更新一条记录
+     * @param flowReserve
+     * @return
+     */
+    public int update(FlowReserve flowReserve);
+
+    /**
      * 查询符合条件的记录总数
      * @param flowReserve
      * @return

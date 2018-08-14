@@ -121,10 +121,12 @@ public class AbnormalController {
         }
 
         // 数据入库
+        boolean exist;
         Abnormal abnormal;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            exist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -138,14 +140,15 @@ public class AbnormalController {
                 // 重复数据校验
                 abnormal = new Abnormal();
                 abnormal.setDate(dataItem.get(0));
+                abnormal.setSource(dataItem.get(3));
                 abnormal.setMobile(dataItem.get(4));
                 abnormal = abnormalService.findOneByParam(abnormal);
-                if(abnormal != null){
-                    continue;
+                if(abnormal == null){
+                    exist = false;
+                    abnormal = new Abnormal();
                 }
 
                 // 保存数据
-                abnormal = new Abnormal();
                 abnormal.setDate(dataItem.get(0));
                 abnormal.setOrgName(dataItem.get(1));
                 abnormal.setTsrName(dataItem.get(2));
@@ -158,13 +161,15 @@ public class AbnormalController {
                 abnormal.setSecondCallResult(dataItem.get(9));
                 abnormal.setThirdCallResult(dataItem.get(10));
 
-                abnormalService.insert(abnormal);
+                if(exist) {
+                    abnormalService.update(abnormal);
+                }else {
+                    abnormalService.insert(abnormal);
+                }
             } catch (Exception e) {
                 logger.error("[abnormalController|importExcel]保存数据发生异常。abnormal={}", JSON.toJSONString(dataItem), e);
             }
-
         }
-
         return resultVo;
     }
 

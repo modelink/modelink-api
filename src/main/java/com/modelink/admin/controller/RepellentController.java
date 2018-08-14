@@ -103,6 +103,7 @@ public class RepellentController {
 
 
         // 校验Excel数据是否符合规定
+        boolean isExist;
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
@@ -134,6 +135,7 @@ public class RepellentController {
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            isExist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -146,16 +148,16 @@ public class RepellentController {
             try {
                 // 重复数据校验
                 repellent = new Repellent();
-                repellent.setRepellentNo(dataItem.get(3));
                 repellent.setInsuranceNo(dataItem.get(4));
+                repellent.setStatus(InsuranceStatusEnum.getValueByText(dataItem.get(5)));
                 repellent = repellentService.findOneByParam(repellent);
-                if(repellent != null){
-                    continue;
+                if(repellent == null){
+                    isExist = false;
+                    repellent = new Repellent();
                 }
 
                 merchant = merchantService.findByName(dataItem.get(1));
                 // 保存数据
-                repellent = new Repellent();
                 repellent.setMerchantId(merchant == null ? 0 : merchant.getId());
                 repellent.setExportOrgName(dataItem.get(2));
                 repellent.setRepellentNo(dataItem.get(3));
@@ -182,7 +184,11 @@ public class RepellentController {
                 repellent.setHesitateDate(dataItem.get(24));
                 repellent.setPayInterval(DataUtils.tranform2Integer(dataItem.get(25)));
 
-                repellentService.insert(repellent);
+                if(isExist){
+                    repellentService.update(repellent);
+                }else {
+                    repellentService.insert(repellent);
+                }
             } catch (Exception e) {
                 logger.error("[repellentController|importExcel]保存数据发生异常。repellent={}", JSON.toJSONString(dataItem), e);
             }

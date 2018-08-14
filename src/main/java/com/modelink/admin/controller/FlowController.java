@@ -108,6 +108,7 @@ public class FlowController {
 
 
         // 校验Excel数据是否符合规定
+        boolean isExist;
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
@@ -137,10 +138,10 @@ public class FlowController {
         Area area;
         Flow flow;
         Merchant merchant;
-        String date;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            isExist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -154,18 +155,17 @@ public class FlowController {
                 // 重复数据校验
                 flow = new Flow();
 
-                date = dataItem.get(1);
-                flow.setDate(date);
-                merchant = merchantService.findByName(dataItem.get(2));
-                flow.setMerchantId(merchant == null ? 0L : merchant.getId());
+                flow.setDate(dataItem.get(1));
                 flow.setPlatformName(dataItem.get(3));
+                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(4)));
                 flow = flowService.findOneByParam(flow);
-                if(flow != null){
-                    continue;
+                if(flow == null){
+                    isExist = false;
+                    flow = new Flow();
                 }
 
+                merchant = merchantService.findByName(dataItem.get(2));
                 // 保存数据
-                flow = new Flow();
                 flow.setDate(dataItem.get(1));
                 flow.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
@@ -180,7 +180,11 @@ public class FlowController {
                 flow.setAverageStayTime(dataItem.get(10));
                 flow.setAverageBrowsePageCount(DataUtils.tranform2Integer(dataItem.get(11)));
 
-                flowService.insert(flow);
+                if(isExist) {
+                    flowService.update(flow);
+                }else{
+                    flowService.insert(flow);
+                }
             } catch (Exception e) {
                 logger.error("[flowController|importExcel]保存数据发生异常。flow={}", JSON.toJSONString(dataItem), e);
             }

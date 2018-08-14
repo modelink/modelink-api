@@ -31,6 +31,17 @@ public class FlowAreaServiceImpl implements FlowAreaService {
     }
 
     /**
+     * 更新一条记录
+     *
+     * @param flowArea
+     * @return
+     */
+    @Override
+    public int update(FlowArea flowArea) {
+        return flowAreaMapper.updateByPrimaryKeySelective(flowArea);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param flowArea

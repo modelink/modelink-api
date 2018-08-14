@@ -31,6 +31,17 @@ public class FlowServiceImpl implements FlowService {
     }
 
     /**
+     * 更新一条记录
+     *
+     * @param flow
+     * @return
+     */
+    @Override
+    public int update(Flow flow) {
+        return flowMapper.updateByPrimaryKeySelective(flow);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param flow

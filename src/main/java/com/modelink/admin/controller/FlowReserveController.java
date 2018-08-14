@@ -42,7 +42,6 @@ import java.util.Map;
 public class FlowReserveController {
 
     public static Logger logger = LoggerFactory.getLogger(FlowReserveController.class);
-    public static String yyyyMMddFormat = "yyyy-MM-dd";
 
     @Resource
     private AreaService areaService;
@@ -105,6 +104,7 @@ public class FlowReserveController {
 
 
         // 校验Excel数据是否符合规定
+        boolean isExist;
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
@@ -137,6 +137,7 @@ public class FlowReserveController {
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            isExist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -149,15 +150,17 @@ public class FlowReserveController {
             try {
                 // 重复数据校验
                 flowReserve = new FlowReserve();
-                flowReserve.setReserveNo(dataItem.get(4));
+                flowReserve.setDate(dataItem.get(2));
+                flowReserve.setReserveMobile(dataItem.get(5));
+                flowReserve.setAdvertiseActive(dataItem.get(7));
                 flowReserve = flowReserveService.findOneByParam(flowReserve);
-                if(flowReserve != null){
-                    continue;
+                if(flowReserve == null){
+                    isExist = false;
+                    flowReserve = new FlowReserve();
                 }
 
                 merchant = merchantService.findByName(dataItem.get(1));
                 // 保存数据
-                flowReserve = new FlowReserve();
                 flowReserve.setDate(dataItem.get(2));
                 flowReserve.setTime(dataItem.get(3));
                 flowReserve.setMerchantId(merchant == null ? 0L : merchant.getId());
@@ -219,7 +222,11 @@ public class FlowReserveController {
 
                 flowReserve.setIsMakeUp(dataItem.get(47));
 
-                flowReserveService.insert(flowReserve);
+                if(isExist){
+                    flowReserveService.update(flowReserve);
+                }else {
+                    flowReserveService.insert(flowReserve);
+                }
             } catch (Exception e) {
                 logger.error("[flowReserveController|importExcel]保存数据发生异常。flowReserve={}", JSON.toJSONString(dataItem), e);
             }

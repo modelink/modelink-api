@@ -31,6 +31,17 @@ public class RepellentServiceImpl implements RepellentService {
     }
 
     /**
+     * 更新一条记录
+     *
+     * @param repellent
+     * @return
+     */
+    @Override
+    public int update(Repellent repellent) {
+        return repellentMapper.updateByPrimaryKeySelective(repellent);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param repellent

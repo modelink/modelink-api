@@ -2,6 +2,7 @@ package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
 import com.modelink.reservation.bean.Repellent;
+import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.vo.RepellentParamPagerVo;
 
 import java.util.List;
@@ -17,6 +18,13 @@ public interface RepellentService {
      * @return
      */
     public int insert(Repellent repellent);
+
+    /**
+     * 更新一条记录
+     * @param repellent
+     * @return
+     */
+    public int update(Repellent repellent);
 
     /**
      * 查询符合条件的记录总数

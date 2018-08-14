@@ -133,12 +133,14 @@ public class FlowAreaController {
 
         // 数据入库
         Area area;
+        boolean exist;
         FlowArea flowArea;
         Merchant merchant;
-        String date;
+        int provinceId, cityId;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            exist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -149,37 +151,44 @@ public class FlowAreaController {
                 continue;
             }
             try {
+                area = areaService.findByNameAndType(dataItem.get(4), AreaTypeEnum.省.getValue());
+                provinceId = area == null ? 0 : area.getAreaId();
+                area = areaService.findByNameAndType(dataItem.get(5), AreaTypeEnum.市.getValue());
+                cityId = area == null ? 0 : area.getAreaId();
+
                 // 重复数据校验
                 flowArea = new FlowArea();
-
-                date = dataItem.get(1);
-                flowArea.setDate(date);
-                merchant = merchantService.findByName(dataItem.get(2));
-                flowArea.setMerchantId(merchant == null ? 0L : merchant.getId());
+                flowArea.setDate(dataItem.get(1));
                 flowArea.setPlatformName(dataItem.get(3));
+                flowArea.setProvinceId(provinceId);
+                flowArea.setCityId(cityId);
+                flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 flowArea = flowAreaService.findOneByParam(flowArea);
-                if(flowArea != null){
-                    continue;
+                if(flowArea == null){
+                    exist = false;
+                    flowArea = new FlowArea();
                 }
 
+                merchant = merchantService.findByName(dataItem.get(2));
                 // 保存数据
-                flowArea = new FlowArea();
                 flowArea.setDate(dataItem.get(1));
                 flowArea.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
                 flowArea.setPlatformName(dataItem.get(3));
 
-                area = areaService.findByNameAndType(dataItem.get(4), AreaTypeEnum.省.getValue());
-                flowArea.setProvinceId(area == null ? 0 : area.getAreaId());
-                area = areaService.findByNameAndType(dataItem.get(5), AreaTypeEnum.市.getValue());
-                flowArea.setCityId(area == null ? 0 : area.getAreaId());
+                flowArea.setProvinceId(provinceId);
+                flowArea.setCityId(cityId);
                 flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 flowArea.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(7)));
                 flowArea.setUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
                 flowArea.setAverageStayTime(dataItem.get(9));
                 flowArea.setAgainClickRate(dataItem.get(10));
 
-                flowAreaService.insert(flowArea);
+                if(exist) {
+                    flowAreaService.update(flowArea);
+                }else {
+                    flowAreaService.insert(flowArea);
+                }
             } catch (Exception e) {
                 logger.error("[flowAreaController|importExcel]保存数据发生异常。flowArea={}", JSON.toJSONString(dataItem), e);
             }

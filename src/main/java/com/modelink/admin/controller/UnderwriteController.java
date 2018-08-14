@@ -134,12 +134,14 @@ public class UnderwriteController {
 
         // 数据入库
         Area area;
+        boolean exist;
         Underwrite underwrite;
         Merchant merchant;
         String reserveDate;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            exist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -159,13 +161,12 @@ public class UnderwriteController {
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
                 underwrite.setPlatformName(dataItem.get(2));
                 underwrite.setSourceType(dataItem.get(3));
+                underwrite.setReserveMobile(dataItem.get(7));
                 underwrite = underwriteService.findOneByParam(underwrite);
-                if(underwrite != null){
-                    continue;
+                if(underwrite == null){
+                    exist = false;
+                    underwrite = new Underwrite();
                 }
-
-                // 保存数据
-                underwrite = new Underwrite();
 
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
@@ -195,7 +196,11 @@ public class UnderwriteController {
                 area = areaService.findByNameAndType(dataItem.get(19), AreaTypeEnum.市.getValue());
                 underwrite.setCityId(area == null ? 0 : area.getAreaId());
 
-                underwriteService.insert(underwrite);
+                if(exist) {
+                    underwriteService.update(underwrite);
+                }else{
+                    underwriteService.insert(underwrite);
+                }
             } catch (Exception e) {
                 logger.error("[adminAdvertiseController|importExcel]保存数据发生异常。underwrite={}", JSON.toJSONString(dataItem), e);
             }

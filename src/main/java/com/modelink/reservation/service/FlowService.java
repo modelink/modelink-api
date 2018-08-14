@@ -19,6 +19,13 @@ public interface FlowService {
     public int insert(Flow flow);
 
     /**
+     * 更新一条记录
+     * @param flow
+     * @return
+     */
+    public int update(Flow flow);
+
+    /**
      * 查询符合条件的记录总数
      * @param flow
      * @return

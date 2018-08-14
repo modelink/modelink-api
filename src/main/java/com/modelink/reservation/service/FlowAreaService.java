@@ -2,6 +2,7 @@ package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
 import com.modelink.reservation.bean.FlowArea;
+import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.vo.FlowAreaParamPagerVo;
 
 import java.util.List;
@@ -17,6 +18,13 @@ public interface FlowAreaService {
      * @return
      */
     public int insert(FlowArea flowArea);
+
+    /**
+     * 更新一条记录
+     * @param flowArea
+     * @return
+     */
+    public int update(FlowArea flowArea);
 
     /**
      * 查询符合条件的记录总数

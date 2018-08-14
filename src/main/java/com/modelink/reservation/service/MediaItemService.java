@@ -2,6 +2,7 @@ package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
 import com.modelink.reservation.bean.MediaItem;
+import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.vo.MediaItemParamPagerVo;
 
 import java.util.List;
@@ -17,6 +18,13 @@ public interface MediaItemService {
      * @return
      */
     public int insert(MediaItem mediaItem);
+
+    /**
+     * 更新一条记录
+     * @param mediaItem
+     * @return
+     */
+    public int update(MediaItem mediaItem);
 
     /**
      * 查询符合条件的记录总数

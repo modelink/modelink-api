@@ -31,6 +31,17 @@ public class AbnormalServiceImpl implements AbnormalService {
     }
 
     /**
+     * 更新一条记录
+     *
+     * @param abnormal
+     * @return
+     */
+    @Override
+    public int update(Abnormal abnormal) {
+        return abnormalMapper.updateByPrimaryKeySelective(abnormal);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param abnormal

@@ -81,8 +81,6 @@ public class MediaItemController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            //fieldFormatMap.put(16, "HH:mm:ss");
-
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
@@ -105,6 +103,7 @@ public class MediaItemController {
 
 
         // 校验Excel数据是否符合规定
+        boolean isExist;
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
@@ -131,13 +130,12 @@ public class MediaItemController {
         }
 
         // 数据入库
-        Area area;
         MediaItem mediaItem;
         Merchant merchant;
-        String date;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
+            isExist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -150,20 +148,19 @@ public class MediaItemController {
             try {
                 // 重复数据校验
                 mediaItem = new MediaItem();
-
-                date = dataItem.get(1);
-                mediaItem.setDate(date);
-                merchant = merchantService.findByName(dataItem.get(2));
-                mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
+                mediaItem.setDate(dataItem.get(1));
                 mediaItem.setPlatformName(dataItem.get(3));
                 mediaItem.setSourceType(dataItem.get(4));
+                mediaItem.setSpeedCost(dataItem.get(14));
                 mediaItem = mediaItemService.findOneByParam(mediaItem);
-                if(mediaItem != null){
-                    continue;
+                if(mediaItem == null){
+                    isExist = false;
+                    mediaItem = new MediaItem();
                 }
 
+
+                merchant = merchantService.findByName(dataItem.get(2));
                 // 保存数据
-                mediaItem = new MediaItem();
                 mediaItem.setDate(dataItem.get(1));
                 mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
@@ -185,7 +182,11 @@ public class MediaItemController {
                 mediaItem.setAverageClickPrice(dataItem.get(16));
                 mediaItem.setAverageRank(dataItem.get(17));
 
-                mediaItemService.insert(mediaItem);
+                if(isExist){
+                    mediaItemService.update(mediaItem);
+                }else {
+                    mediaItemService.insert(mediaItem);
+                }
             } catch (Exception e) {
                 logger.error("[mediaItemController|importExcel]保存数据发生异常。mediaItem={}", JSON.toJSONString(dataItem), e);
             }

@@ -21,6 +21,13 @@ public interface UnderwriteService {
     public int insert(Underwrite underwrite);
 
     /**
+     * 更新一条记录
+     * @param underwrite
+     * @return
+     */
+    public int update(Underwrite underwrite);
+
+    /**
      * 查询符合条件的记录总数
      * @param underwrite
      * @return

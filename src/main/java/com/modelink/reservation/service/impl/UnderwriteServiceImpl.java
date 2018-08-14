@@ -33,6 +33,16 @@ public class UnderwriteServiceImpl implements UnderwriteService {
     }
 
     /**
+     * 更新一条记录
+     * @param underwrite
+     * @return
+     */
+    @Override
+    public int update(Underwrite underwrite) {
+        return underwriteMapper.updateByPrimaryKeySelective(underwrite);
+    }
+
+    /**
      * 查询符合条件的记录总数
      *
      * @param underwrite
