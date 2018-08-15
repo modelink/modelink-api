@@ -43,9 +43,9 @@ public class UnderwriteVo implements Serializable {
     @ExportField(value="投保人地址")
     private String address;
     @ExportField(value="省份")
-    private Integer province;
+    private String provinceName;
     @ExportField(value="城市")
-    private Integer city;
+    private String cityName;
     @ExportField(value="创建时间")
     private String createTime;
     @ExportField(value="更新时间")
@@ -179,20 +179,20 @@ public class UnderwriteVo implements Serializable {
         this.address = address;
     }
 
-    public Integer getProvince() {
-        return province;
+    public String getProvinceName() {
+        return provinceName;
     }
 
-    public void setProvince(Integer province) {
-        this.province = province;
+    public void setProvinceName(String provinceName) {
+        this.provinceName = provinceName;
     }
 
-    public Integer getCity() {
-        return city;
+    public String getCityName() {
+        return cityName;
     }
 
-    public void setCity(Integer city) {
-        this.city = city;
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
     }
 
     public String getCreateTime() {

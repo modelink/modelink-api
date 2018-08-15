@@ -44,7 +44,6 @@ import java.util.Map;
 public class UnderwriteController {
 
     public static Logger logger = LoggerFactory.getLogger(UnderwriteController.class);
-    public static String yyyyMMddFormat = "yyyy-MM-dd";
 
     @Resource
     private AreaService areaService;
@@ -138,6 +137,7 @@ public class UnderwriteController {
         Underwrite underwrite;
         Merchant merchant;
         String reserveDate;
+        int index;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -187,7 +187,12 @@ public class UnderwriteController {
                 underwrite.setInsuranceFee(dataItem.get(13));
                 underwrite.setGender(dataItem.get(14));
                 underwrite.setBirthday(dataItem.get(15));
-                underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(16)));
+                if(StringUtils.hasText(dataItem.get(16)) && dataItem.get(16).contains(".")) {
+                    index = dataItem.get(16).indexOf(".");
+                    underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(16).substring(0, index)));
+                }else if(StringUtils.hasText(dataItem.get(16))){
+                    underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(16)));
+                }
                 underwrite.setAddress(dataItem.get(17));
                 // 查找省份数据
                 area = areaService.findByNameAndType(dataItem.get(18), AreaTypeEnum.省.getValue());
@@ -212,6 +217,7 @@ public class UnderwriteController {
 
 
     private List<UnderwriteVo> transformBean2VoList(List<Underwrite> underwriteList){
+        Area area;
         Merchant merchant;
         UnderwriteVo underwriteVo;
         List<UnderwriteVo> underwriteVoList = new ArrayList<>();
@@ -220,6 +226,12 @@ public class UnderwriteController {
             underwriteVo = new UnderwriteVo();
             BeanUtils.copyProperties(underwrite, underwriteVo);
             underwriteVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            underwriteVo.setPayType(InsurancePayTypeEnum.getTextByValue(underwrite.getPayType()));
+
+            area = areaService.findById(underwrite.getProvinceId());
+            underwriteVo.setProvinceName(area == null ? "" : area.getAreaName());
+            area = areaService.findById(underwrite.getCityId());
+            underwriteVo.setCityName(area == null ? "" : area.getAreaName());
             underwriteVo.setCreateTime(DateUtils.formatDate(underwrite.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
             underwriteVo.setUpdateTime(DateUtils.formatDate(underwrite.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
             underwriteVoList.add(underwriteVo);
