@@ -5,6 +5,7 @@ import com.modelink.common.vo.PagerVo;
 public class UnderwriteParamPagerVo extends PagerVo {
 
     private String chooseDate;
+    private String dateField;
     private String mobile;
     private Long merchantId;
     private String columnFieldIds;
@@ -15,6 +16,14 @@ public class UnderwriteParamPagerVo extends PagerVo {
 
     public void setChooseDate(String chooseDate) {
         this.chooseDate = chooseDate;
+    }
+
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
     }
 
     public String getMobile() {

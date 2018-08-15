@@ -66,7 +66,7 @@ public class AdvertiseAnalyseServiceImpl implements AdvertiseAnalyseService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("statTime", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("statTime", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("statTime", chooseDates[0]);
         }
 
@@ -88,7 +88,7 @@ public class AdvertiseAnalyseServiceImpl implements AdvertiseAnalyseService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("statTime", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("statTime", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("statTime", chooseDates[0]);
         }
 

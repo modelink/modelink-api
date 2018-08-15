@@ -5,6 +5,7 @@ import com.github.pagehelper.PageInfo;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
+import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
@@ -70,6 +71,13 @@ public class AbnormalController {
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("异常数据表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是异常数据表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             fieldFormatMap.put(0, "M月d日");
 
@@ -99,7 +107,7 @@ public class AbnormalController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 12){
+            if(dataItem.size() < 15){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -154,12 +162,19 @@ public class AbnormalController {
                 abnormal.setTsrName(dataItem.get(3));
                 abnormal.setSource(dataItem.get(4));
                 abnormal.setMobile(dataItem.get(5));
-                abnormal.setArrangeDate(dataItem.get(6));
-                abnormal.setCallDate(dataItem.get(7));
-                abnormal.setCallResult(dataItem.get(8));
-                abnormal.setFirstCallResult(dataItem.get(9));
-                abnormal.setSecondCallResult(dataItem.get(10));
-                abnormal.setThirdCallResult(dataItem.get(11));
+                abnormal.setReserveDate(dataItem.get(6));
+                abnormal.setArrangeDate(dataItem.get(7));
+                abnormal.setCallDate(dataItem.get(8));
+                abnormal.setCallResult(dataItem.get(9));
+                abnormal.setLastResult(dataItem.get(10));
+                abnormal.setProblemData(dataItem.get(11));
+                if("-".trim().equals(dataItem.get(12))) {
+                    abnormal.setCallCount(1);
+                }else{
+                    abnormal.setCallCount(DataUtils.tranform2Integer(dataItem.get(12)));
+                }
+                abnormal.setSourceMedia(dataItem.get(13));
+                abnormal.setDeviceName(dataItem.get(14));
 
                 if(exist) {
                     abnormalService.update(abnormal);

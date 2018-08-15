@@ -6,6 +6,7 @@ import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 地区流量数据服务接口
@@ -46,6 +47,13 @@ public interface FlowReserveService {
      * @return
      */
     public List<FlowReserve> findListByParam(FlowReserveParamPagerVo paramPagerVo);
+
+    /**
+     * 查询符合条件的列表
+     * @param mobileSet
+     * @return
+     */
+    public List<FlowReserve> findListByMobiles(Set<String> mobileSet, String sortField);
 
     /**
      * 查询符合条件的记录列表（分页查询）

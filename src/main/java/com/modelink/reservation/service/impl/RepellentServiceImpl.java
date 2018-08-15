@@ -77,7 +77,7 @@ public class RepellentServiceImpl implements RepellentService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("insurance_date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("insurance_date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("insurance_date", chooseDates[0]);
         }
 
@@ -99,7 +99,7 @@ public class RepellentServiceImpl implements RepellentService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("insurance_date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("insurance_date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("insurance_date", chooseDates[0]);
         }
         example.setOrderByClause("insurance_date desc");

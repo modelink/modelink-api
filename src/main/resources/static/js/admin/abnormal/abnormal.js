@@ -148,12 +148,11 @@ var FlowBase = {
 
         'source',
         'mobile',
+        'reserveDate',
         'arrangeDate',
         'callDate',
         'callResult',
-        'firstCallResult',
-        'secondCallResult',
-        'thirdCallResult',
+        'lastResult',
 
         'createTime',
         'updateTime'
@@ -165,12 +164,17 @@ var FlowBase = {
         {field: 'tsrName', title: 'TSR姓名', minWidth: 100, align: 'center'},
         {field: 'source', title: '数据来源', minWidth: 100, align: 'center'},
         {field: 'mobile', title: '手机号码', minWidth: 120, align: 'center'},
-        {field: 'arrangeDate', title: '数据下发日期', minWidth: 100, align: 'center'},
+
+        {field: 'reserveDate', title: '预约日期', minWidth: 120, align: 'center'},
+        {field: 'arrangeDate', title: '数据下发日期', minWidth: 120, align: 'center'},
         {field: 'callDate', title: '首拨日期', minWidth: 120, align: 'center'},
         {field: 'callResult', title: '首拨状态', minWidth: 150, align: 'center'},
-        {field: 'firstCallResult', title: '第1天拨打结果', minWidth: 150, align: 'center'},
-        {field: 'secondCallResult', title: '第2天拨打结果', minWidth: 150, align: 'center'},
-        {field: 'thirdCallResult', title: '第3天拨打结果', minWidth: 150, align: 'center'},
+        {field: 'lastResult', title: '最终状态', minWidth: 150, align: 'center'},
+        {field: 'callCount', title: '拨打次数', minWidth: 100, align: 'center'},
+
+        {field: 'problemData', title: '问题数据', minWidth: 100, align: 'center'},
+        {field: 'sourceMedia', title: '内部媒体', minWidth: 100, align: 'center'},
+        {field: 'deviceName', title: '设备', minWidth: 100, align: 'center'},
 
         {field: 'createTime', title: '创建时间', minWidth: 150, align: 'center'},
         {field: 'updateTime', title: '更新时间', minWidth: 150, align: 'center'}

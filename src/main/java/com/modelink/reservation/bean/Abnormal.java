@@ -21,18 +21,25 @@ public class Abnormal implements Serializable {
     private String source;
     /** 手机号码 **/
     private String mobile;
+    /** 预约日期 **/
+    private String reserveDate;
     /** 数据下发日期 **/
     private String arrangeDate;
     /** 首拨日期 **/
     private String callDate;
     /** 首拨结果 **/
     private String callResult;
-    /** 第1天拨打结果 **/
-    private String firstCallResult;
-    /** 第2天拨打结果 **/
-    private String secondCallResult;
-    /** 第3天拨打结果 **/
-    private String thirdCallResult;
+    /** 最终状态 **/
+    private String lastResult;
+    /** 是否问题数据 **/
+    private String problemData;
+    /** 拨打次数 **/
+    private Integer callCount;
+    /** 内部媒体 **/
+    private String sourceMedia;
+    /** 设备 **/
+    private String deviceName;
+
     /** 创建日期 **/
     private Date createTime;
     /** 更新日期 **/
@@ -110,28 +117,52 @@ public class Abnormal implements Serializable {
         this.callResult = callResult;
     }
 
-    public String getFirstCallResult() {
-        return firstCallResult;
+    public String getReserveDate() {
+        return reserveDate;
     }
 
-    public void setFirstCallResult(String firstCallResult) {
-        this.firstCallResult = firstCallResult;
+    public void setReserveDate(String reserveDate) {
+        this.reserveDate = reserveDate;
     }
 
-    public String getSecondCallResult() {
-        return secondCallResult;
+    public String getLastResult() {
+        return lastResult;
     }
 
-    public void setSecondCallResult(String secondCallResult) {
-        this.secondCallResult = secondCallResult;
+    public void setLastResult(String lastResult) {
+        this.lastResult = lastResult;
     }
 
-    public String getThirdCallResult() {
-        return thirdCallResult;
+    public String getProblemData() {
+        return problemData;
     }
 
-    public void setThirdCallResult(String thirdCallResult) {
-        this.thirdCallResult = thirdCallResult;
+    public void setProblemData(String problemData) {
+        this.problemData = problemData;
+    }
+
+    public Integer getCallCount() {
+        return callCount;
+    }
+
+    public void setCallCount(Integer callCount) {
+        this.callCount = callCount;
+    }
+
+    public String getSourceMedia() {
+        return sourceMedia;
+    }
+
+    public void setSourceMedia(String sourceMedia) {
+        this.sourceMedia = sourceMedia;
+    }
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
     }
 
     public Date getCreateTime() {

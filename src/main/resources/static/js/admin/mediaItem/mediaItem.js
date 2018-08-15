@@ -144,33 +144,26 @@ var MediaItem = {
         'id',
         'merchantName',
         'platformName',
-        'sourceType',
 
-        'sourceMedia',
+        'advertiseActive',
+        'advertiseMedia',
         'advertiseSeries',
         'keyWordGroup',
 
-        'advertiseDesc',
         'keyWord',
-
-        'popularizeCell',
-        'popularizePlan',
         'speedCost'
     ],
     column: [
         {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
         {field: 'merchantName', title: '合作商户', minWidth: 120, align: 'center'},
         {field: 'platformName', title: '渠道归属', minWidth: 100, align: 'center'},
-        {field: 'sourceType', title: '广告活动', minWidth: 100, align: 'center'},
 
-        {field: 'sourceMedia', title: '广告媒体', minWidth: 150, align: 'center'},
+        {field: 'advertiseActive', title: '广告活动', minWidth: 100, align: 'center'},
+        {field: 'advertiseMedia', title: '广告媒体', minWidth: 150, align: 'center'},
         {field: 'advertiseSeries', title: '广告系列', minWidth: 150, align: 'center'},
         {field: 'keyWordGroup', title: '关键词组', minWidth: 150, align: 'center'},
-        {field: 'advertiseDesc', title: '广告描述', minWidth: 150, align: 'center'},
         {field: 'keyWord', title: '关键词', minWidth: 150, align: 'center'},
-        {field: 'popularizeCell', title: '推广单元', minWidth: 150, align: 'center'},
 
-        {field: 'popularizePlan', title: '推广计划', minWidth: 150, align: 'center'},
         {field: 'showCount', title: '展现量', minWidth: 100, align: 'center'},
         {field: 'clickCount', title: '点击量', minWidth: 100, align: 'center'},
         {field: 'speedCost', title: '消费', minWidth: 100, align: 'center'},

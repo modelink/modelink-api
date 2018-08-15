@@ -10,19 +10,19 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     });
 
     insuranceEcharts.elementMap["reserve-count-echart"] = $("#reserve-count-echart");
-    insuranceEcharts.elementMap["underwrite-count-echart"] = $("#reserve-count-echart");
-    insuranceEcharts.elementMap["insurance-fee-echart"] = $("#insurance-fee-echart");
-    insuranceEcharts.elementMap["insurance-cost-echart"] = $("#insurance-cost-echart");
-    insuranceEcharts.elementMap["exception-count-echart"] = $("#exception-count-echart");
+    insuranceEcharts.elementMap["underwrite-count-echart"] = $("#underwrite-count-echart");
+    insuranceEcharts.elementMap["underwrite-amount-echart"] = $("#underwrite-amount-echart");
+    insuranceEcharts.elementMap["transform-cost-echart"] = $("#transform-cost-echart");
+    insuranceEcharts.elementMap["abnormal-count-echart"] = $("#abnormal-count-echart");
     insuranceEcharts.elementMap["transform-cycle-echart"] = $("#transform-cycle-echart");
     insuranceEcharts.elementMap["gender-age-echart"] = $("#gender-age-echart");
     insuranceEcharts.elementMap["transform-rate-echart"] = $("#transform-rate-echart");
 
     insuranceEcharts.echartsMap["reserve-count-echart"] = echarts.init($("#reserve-count-echart")[0]);
     insuranceEcharts.echartsMap["underwrite-count-echart"] = echarts.init($("#underwrite-count-echart")[0]);
-    insuranceEcharts.echartsMap["insurance-fee-echart"] = echarts.init($("#insurance-fee-echart")[0]);
-    insuranceEcharts.echartsMap["insurance-cost-echart"] = echarts.init($("#insurance-cost-echart")[0]);
-    insuranceEcharts.echartsMap["exception-count-echart"] = echarts.init($("#exception-count-echart")[0]);
+    insuranceEcharts.echartsMap["underwrite-amount-echart"] = echarts.init($("#underwrite-amount-echart")[0]);
+    insuranceEcharts.echartsMap["transform-cost-echart"] = echarts.init($("#transform-cost-echart")[0]);
+    insuranceEcharts.echartsMap["abnormal-count-echart"] = echarts.init($("#abnormal-count-echart")[0]);
     insuranceEcharts.echartsMap["transform-cycle-echart"] = echarts.init($("#transform-cycle-echart")[0]);
     insuranceEcharts.echartsMap["gender-age-echart"] = echarts.init($("#gender-age-echart")[0]);
     insuranceEcharts.echartsMap["transform-rate-echart"] = echarts.init($("#transform-rate-echart")[0]);
@@ -30,53 +30,20 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 
     //搜索表单提交
     $("#search-btn").on("click", function () {
-        $.ajax({
-            url: "",
-            data: {
-                merchant: $("#merchant").val(),
-                dateType: $("#dateType").val(),
-                chooseYear: $("#chooseYear").val(),
-                chooseMonth: $("#chooseMonth").val(),
-                chooseDate: $("#chooseDate").val()
-            },
-            success: function (response) {
-                insuranceEcharts.drawLineEchart("reserve-count-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawLineEchart("insurance-fee-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawLineEchart("insurance-cost-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawLineEchart("exception-count-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawLineEchart("transform-cycle-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawAgeBarEchart("gender-age-echart", ["","","","",""], ["5","6","7","6","5"]);
-                insuranceEcharts.drawLineEchart("transform-rate-echart", ["","","","",""], ["5","6","7","6","5"]);
-            }
-        });
 
-        $.ajax({
-            url: "/admin/dashboard/getUnderwrite",
-            data: {
-                merchantId: $("#merchant").val(),
-                chooseDate: $("#chooseDate").val(),
-                dateType: $("#dateType").val()
-            },
-            success: function (response) {
-                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.contentList.length <= 0){
-                    insuranceEcharts.drawLineEchart("underwrite-count-echart", ["","","","",""], ["0","0","0","0","0"]);
-                    return;
-                }
-                insuranceEcharts.drawLineEchart("underwrite-count-echart", response.rtnData.titleList, response.rtnData.contentList);
-                $("#underwrite-count label").html(response.rtnData.lastValue);
-                $("#underwrite-count em").html(response.rtnData.trendRate + "%");
-                if(response.rtnData.trendRate == 0){
-                    $("#underwrite-count i").removeClass().addClass("iconfont icon-arrow-equal").attr("style", "color:gray;")
-                }else if(response.rtnData.trendRate > 0){
-                    $("#underwrite-count i").removeClass().addClass("iconfont icon-arrow-up").attr("style", "color:green;")
-                }else if(response.rtnData.trendRate < 0){
-                    $("#underwrite-count i").removeClass().addClass("iconfont icon-arrow-down").attr("style", "color:red;")
-                }
+        insuranceEcharts.getDataJson($, "reserve-count", "/admin/dashboard/getReserveCount");
+        insuranceEcharts.getDataJson($, "underwrite-count", "/admin/dashboard/getUnderwriteCount");
+        insuranceEcharts.getDataJson($, "underwrite-amount", "/admin/dashboard/getUnderwriteAmount");
+        insuranceEcharts.getDataJson($, "transform-cost", "/admin/dashboard/getTransformCost");
+        insuranceEcharts.getDataJson($, "abnormal-count", "/admin/dashboard/getAbnormalCount");
 
-            }
-        })
+        insuranceEcharts.drawLineEchart("transform-cycle-echart", ["","","","",""], ["5","6","7","6","5"]);
+        insuranceEcharts.drawAgeBarEchart("gender-age-echart", ["","","","",""], ["5","6","7","6","5"]);
+        insuranceEcharts.drawLineEchart("transform-rate-echart", ["","","","",""], ["5","6","7","6","5"]);
     });
     $("#search-btn").trigger("click");
+
+
 
 
     window.onresize = function () {
@@ -91,6 +58,36 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 var insuranceEcharts = {
     elementMap: {},
     echartsMap: {},
+
+    // 获取后台JSON数据的方法
+    getDataJson: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.contentList.length <= 0){
+                    insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", ["","","","",""], ["0","0","0","0","0"]);
+                    return;
+                }
+                insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", response.rtnData.titleList, response.rtnData.contentList);
+                $("#" + selectedPrefix + " label").html(response.rtnData.lastValue);
+                $("#" + selectedPrefix + " em").html(response.rtnData.trendRate + "%");
+                if(response.rtnData.trendRate == 0){
+                    $("#" + selectedPrefix + " i").removeClass().addClass("iconfont icon-arrow-equal").attr("style", "color:gray;")
+                }else if(response.rtnData.trendRate > 0){
+                    $("#" + selectedPrefix + " i").removeClass().addClass("iconfont icon-arrow-up").attr("style", "color:green;")
+                }else if(response.rtnData.trendRate < 0){
+                    $("#" + selectedPrefix + " i").removeClass().addClass("iconfont icon-arrow-down").attr("style", "color:red;")
+                }
+            }
+        });
+    },
+
+    // echarts 画图方法
     drawLineEchart: function (selectedId, xData, data) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据

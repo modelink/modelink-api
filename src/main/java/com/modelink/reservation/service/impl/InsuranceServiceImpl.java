@@ -66,7 +66,7 @@ public class InsuranceServiceImpl implements InsuranceService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("createTime", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("createTime", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
         }
         if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
@@ -91,7 +91,7 @@ public class InsuranceServiceImpl implements InsuranceService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("createTime", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("createTime", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
         }
         if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {

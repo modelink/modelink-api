@@ -13,6 +13,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class FlowReserveServiceImpl implements FlowReserveService {
@@ -78,10 +79,28 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
 
+        List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
+        return flowReserveList;
+    }
+
+    /**
+     * 查询符合条件的列表
+     *
+     * @param mobileSet
+     * @return
+     */
+    @Override
+    public List<FlowReserve> findListByMobiles(Set<String> mobileSet, String sortField) {
+        Example example = new Example(FlowReserve.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(!StringUtils.isEmpty(mobileSet) && mobileSet.size() > 0){
+            criteria.andIn("reserveMobile", mobileSet);
+        }
+        example.setOrderByClause(sortField);
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;
     }
@@ -100,7 +119,7 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
         example.setOrderByClause("date desc");

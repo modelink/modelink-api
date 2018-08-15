@@ -108,7 +108,7 @@ public class MediaItemController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 18){
+            if(dataItem.size() < 15){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -150,7 +150,7 @@ public class MediaItemController {
                 mediaItem = new MediaItem();
                 mediaItem.setDate(dataItem.get(1));
                 mediaItem.setPlatformName(dataItem.get(3));
-                mediaItem.setSourceType(dataItem.get(4));
+                mediaItem.setAdvertiseActive(dataItem.get(4));
                 mediaItem.setSpeedCost(dataItem.get(14));
                 mediaItem = mediaItemService.findOneByParam(mediaItem);
                 if(mediaItem == null){
@@ -166,21 +166,18 @@ public class MediaItemController {
                 // 渠道归属
                 mediaItem.setPlatformName(dataItem.get(3));
                 // 广告活动
-                mediaItem.setSourceType(dataItem.get(4));
+                mediaItem.setAdvertiseActive(dataItem.get(4));
 
-                mediaItem.setSourceMedia(dataItem.get(5));
+                mediaItem.setAdvertiseMedia(dataItem.get(5));
                 mediaItem.setAdvertiseSeries(dataItem.get(6));
                 mediaItem.setKeyWordGroup(dataItem.get(7));
-                mediaItem.setAdvertiseDesc(dataItem.get(8));
-                mediaItem.setKeyWord(dataItem.get(9));
-                mediaItem.setPopularizeCell(dataItem.get(10));
-                mediaItem.setPopularizePlan(dataItem.get(11));
-                mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(12)));
-                mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(13)));
-                mediaItem.setSpeedCost(dataItem.get(14));
-                mediaItem.setClickRate(dataItem.get(15));
-                mediaItem.setAverageClickPrice(dataItem.get(16));
-                mediaItem.setAverageRank(dataItem.get(17));
+                mediaItem.setKeyWord(dataItem.get(8));
+                mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(10)));
+                mediaItem.setSpeedCost(dataItem.get(11));
+                mediaItem.setClickRate(dataItem.get(12));
+                mediaItem.setAverageClickPrice(dataItem.get(13));
+                mediaItem.setAverageRank(dataItem.get(14));
 
                 if(isExist){
                     mediaItemService.update(mediaItem);

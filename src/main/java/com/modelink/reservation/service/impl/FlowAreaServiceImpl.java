@@ -77,7 +77,7 @@ public class FlowAreaServiceImpl implements FlowAreaService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
 
@@ -99,7 +99,7 @@ public class FlowAreaServiceImpl implements FlowAreaService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
         example.setOrderByClause("date desc");

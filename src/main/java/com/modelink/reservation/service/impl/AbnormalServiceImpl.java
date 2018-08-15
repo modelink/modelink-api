@@ -75,10 +75,14 @@ public class AbnormalServiceImpl implements AbnormalService {
     public List<Abnormal> findListByParam(AbnormalParamPagerVo paramPagerVo) {
         Example example = new Example(Abnormal.class);
         Example.Criteria criteria = example.createCriteria();
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "date";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("date", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
 
         List<Abnormal> abnormalList = abnormalMapper.selectByExample(example);
@@ -99,7 +103,7 @@ public class AbnormalServiceImpl implements AbnormalService {
         Example.Criteria criteria = example.createCriteria();
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThan("date", chooseDates[1]);
+            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
             criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
         }
         example.setOrderByClause("date desc");
