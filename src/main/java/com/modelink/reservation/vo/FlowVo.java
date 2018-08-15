@@ -22,7 +22,14 @@ public class FlowVo implements Serializable {
      * 渠道归属
      **/
     private String platformName;
-
+    /**
+     * 网站来源
+     */
+    private String website;
+    /**
+     * 来源类型
+     **/
+    private String source;
     /**
      * 浏览量
      **/
@@ -30,15 +37,11 @@ public class FlowVo implements Serializable {
     /**
      * 访问量
      **/
-    private Integer accessCount;
+    private Integer inflowCount;
     /**
      * 用户数
      **/
     private Integer userCount;
-    /**
-     * 点击量
-     **/
-    private Integer clickCount;
     /**
      * 二跳量
      **/
@@ -54,7 +57,7 @@ public class FlowVo implements Serializable {
     /**
      * 平均浏览页面数
      **/
-    private Integer averageBrowsePageCount;
+    private String averageBrowsePageCount;
 
     /**
      * 创建时间
@@ -105,12 +108,28 @@ public class FlowVo implements Serializable {
         this.browseCount = browseCount;
     }
 
-    public Integer getAccessCount() {
-        return accessCount;
+    public String getWebsite() {
+        return website;
     }
 
-    public void setAccessCount(Integer accessCount) {
-        this.accessCount = accessCount;
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public Integer getInflowCount() {
+        return inflowCount;
+    }
+
+    public void setInflowCount(Integer inflowCount) {
+        this.inflowCount = inflowCount;
     }
 
     public Integer getUserCount() {
@@ -119,14 +138,6 @@ public class FlowVo implements Serializable {
 
     public void setUserCount(Integer userCount) {
         this.userCount = userCount;
-    }
-
-    public Integer getClickCount() {
-        return clickCount;
-    }
-
-    public void setClickCount(Integer clickCount) {
-        this.clickCount = clickCount;
     }
 
     public Integer getAgainClickCount() {
@@ -153,11 +164,11 @@ public class FlowVo implements Serializable {
         this.averageStayTime = averageStayTime;
     }
 
-    public Integer getAverageBrowsePageCount() {
+    public String getAverageBrowsePageCount() {
         return averageBrowsePageCount;
     }
 
-    public void setAverageBrowsePageCount(Integer averageBrowsePageCount) {
+    public void setAverageBrowsePageCount(String averageBrowsePageCount) {
         this.averageBrowsePageCount = averageBrowsePageCount;
     }
 

@@ -154,7 +154,8 @@ public class FlowController {
 
                 flow.setDate(dataItem.get(1));
                 flow.setPlatformName(dataItem.get(3));
-                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(4)));
+                flow.setWebsite(dataItem.get(4));
+                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 flow = flowService.findOneByParam(flow);
                 if(flow == null){
                     isExist = false;
@@ -176,7 +177,7 @@ public class FlowController {
                 flow.setAgainClickCount(DataUtils.tranform2Integer(dataItem.get(9)));
                 flow.setAgainClickRate(dataItem.get(10));
                 flow.setAverageStayTime(dataItem.get(11));
-                flow.setAverageBrowsePageCount(DataUtils.tranform2Integer(dataItem.get(12)));
+                flow.setAverageBrowsePageCount(dataItem.get(12));
 
                 if(isExist) {
                     flowService.update(flow);

@@ -8,6 +8,7 @@ CREATE TABLE `flow_area` (
 
   `province_id` int(11) NOT NULL DEFAULT 0 COMMENT '省份ID',
   `city_id` int(11) NOT NULL DEFAULT 0 COMMENT '城市ID',
+  `source` varchar(20) NOT NULL DEFAULT '' COMMENT '来源类型',
   `inflow_count` int(11) NOT NULL DEFAULT 0 COMMENT '流入量',
   `browse_count` int(11) NOT NULL DEFAULT 0 COMMENT '浏览量',
   `user_count` int(11) NOT NULL DEFAULT 0 COMMENT '用户数',

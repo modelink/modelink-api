@@ -2,6 +2,7 @@ package com.modelink.common.excel;
 
 import com.modelink.common.utils.DateUtils;
 import org.apache.poi.hssf.usermodel.HSSFDateUtil;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +29,8 @@ public class ExcelImportHelper {
         if (!inputStream.markSupported()) {
             inputStream = new PushbackInputStream(inputStream, 8);
         }
-
+        OPCPackage.open(inputStream);
+        logger.info("[excelImportHelper|importExcel]开始读取Excel中的数据");
         workBook = WorkbookFactory.create(inputStream);
         if (workBook == null) {
             logger.error("[excelImportHelper|importExcel]目标表格工作空间为空");
@@ -38,7 +41,6 @@ public class ExcelImportHelper {
             logger.error("[excelImportHelper|importExcel]目标表格工作簿数目为零");
             throw new Exception("读取Excel文件发生异常");
         }
-        sheet = workBook.getSheetAt(0);
 
         // 数据行长度
         int rowLength, colLength;
@@ -55,6 +57,7 @@ public class ExcelImportHelper {
         rowLength = (configation.getTotalRowNum() == ExcelImportConfigation.DEFAULT_INT ? rowLength : configation.getTotalRowNum() + startRowNum);
         Map<Integer, String> fieldFormatMap;
         for (int i = startRowNum; i < rowLength; i++) {
+            logger.info("[excelImportHelper|importExcel]正在读取第" + i + "行数据");
             rowData = new ArrayList<String>();
             row = sheet.getRow(i);
             colLength = row.getLastCellNum();
@@ -64,9 +67,13 @@ public class ExcelImportHelper {
                 if(cell == null){
                     cellContent = "";
                 }else if(cell.getCellTypeEnum() == CellType.NUMERIC && HSSFDateUtil.isCellDateFormatted(cell)){
-//                    cellContent = DateUtils.formatDate(cell.getDateCellValue(), "yyyy-MM-dd");
                     fieldFormatMap = configation.getFieldFormatMap();
-                    cellContent = DateUtils.formatDate(cell.getDateCellValue(), StringUtils.hasText(fieldFormatMap.get(j)) ? fieldFormatMap.get(j) : "yyyy-MM-dd");
+                    cellContent = DateUtils.formatDate(cell.getDateCellValue(),
+                            StringUtils.hasText(fieldFormatMap.get(j)) ? fieldFormatMap.get(j) : "yyyy-MM-dd");
+                }else if(cell.getCellTypeEnum() == CellType.NUMERIC){
+                    cellContent = String.valueOf(cell.getNumericCellValue());
+                    DecimalFormat decimalFormat = new DecimalFormat("#.##");
+                    cellContent = decimalFormat.format(Double.valueOf(cellContent));
                 }else{
                     cell.setCellType(CellType.STRING);
                     cellContent = cell.getStringCellValue();
@@ -81,6 +88,7 @@ public class ExcelImportHelper {
             if("".equals(sb.toString())){
                 continue;
             }
+
             rtnList.add(rowData);
         }
 

@@ -58,7 +58,7 @@ public class Flow implements Serializable {
     /**
      * 平均浏览页面数
      **/
-    private Integer averageBrowsePageCount;
+    private String averageBrowsePageCount;
 
     /**
      * 创建时间
@@ -149,11 +149,11 @@ public class Flow implements Serializable {
         this.averageStayTime = averageStayTime;
     }
 
-    public Integer getAverageBrowsePageCount() {
+    public String getAverageBrowsePageCount() {
         return averageBrowsePageCount;
     }
 
-    public void setAverageBrowsePageCount(Integer averageBrowsePageCount) {
+    public void setAverageBrowsePageCount(String averageBrowsePageCount) {
         this.averageBrowsePageCount = averageBrowsePageCount;
     }
 
