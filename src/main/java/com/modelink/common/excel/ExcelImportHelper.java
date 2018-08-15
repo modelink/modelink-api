@@ -29,7 +29,6 @@ public class ExcelImportHelper {
         if (!inputStream.markSupported()) {
             inputStream = new PushbackInputStream(inputStream, 8);
         }
-        OPCPackage.open(inputStream);
         logger.info("[excelImportHelper|importExcel]开始读取Excel中的数据");
         workBook = WorkbookFactory.create(inputStream);
         if (workBook == null) {

@@ -162,7 +162,7 @@ public class FlowAreaController {
                 flowArea.setPlatformName(dataItem.get(3));
                 flowArea.setProvinceId(provinceId);
                 flowArea.setCityId(cityId);
-                flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
                 flowArea = flowAreaService.findOneByParam(flowArea);
                 if(flowArea == null){
                     exist = false;

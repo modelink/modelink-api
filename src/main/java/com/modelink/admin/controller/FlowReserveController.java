@@ -167,10 +167,14 @@ public class FlowReserveController {
                 // 渠道归属
                 flowReserve.setPlatformName(dataItem.get(6));
 
-                area = areaService.findByNameAndType(dataItem.get(23), AreaTypeEnum.省.getValue());
-                flowReserve.setProvinceId(area == null ? 0 : area.getAreaId());
-                area = areaService.findByNameAndType(dataItem.get(24), AreaTypeEnum.市.getValue());
-                flowReserve.setCityId(area == null ? 0 : area.getAreaId());
+                if(StringUtils.hasText(dataItem.get(23))) {
+                    area = areaService.findByNameAndType(dataItem.get(23), AreaTypeEnum.省.getValue());
+                    flowReserve.setProvinceId(area == null ? 0 : area.getAreaId());
+                }
+                if(StringUtils.hasText(dataItem.get(24))) {
+                    area = areaService.findByNameAndType(dataItem.get(24), AreaTypeEnum.市.getValue());
+                    flowReserve.setCityId(area == null ? 0 : area.getAreaId());
+                }
 
                 flowReserve.setReserveNo(dataItem.get(4));
                 flowReserve.setReserveMobile(dataItem.get(5));
