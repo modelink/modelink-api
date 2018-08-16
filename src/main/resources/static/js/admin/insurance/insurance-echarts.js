@@ -16,7 +16,9 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.elementMap["abnormal-count-echart"] = $("#abnormal-count-echart");
     insuranceEcharts.elementMap["transform-cycle-echart"] = $("#transform-cycle-echart");
     insuranceEcharts.elementMap["gender-age-echart"] = $("#gender-age-echart");
+    insuranceEcharts.elementMap["reserve-click-echart"] = $("#reserve-click-echart");
     insuranceEcharts.elementMap["transform-rate-echart"] = $("#transform-rate-echart");
+    insuranceEcharts.elementMap["insurance-map-echart"] = $("#insurance-map-echart");
 
     insuranceEcharts.echartsMap["reserve-count-echart"] = echarts.init($("#reserve-count-echart")[0]);
     insuranceEcharts.echartsMap["underwrite-count-echart"] = echarts.init($("#underwrite-count-echart")[0]);
@@ -25,21 +27,27 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.echartsMap["abnormal-count-echart"] = echarts.init($("#abnormal-count-echart")[0]);
     insuranceEcharts.echartsMap["transform-cycle-echart"] = echarts.init($("#transform-cycle-echart")[0]);
     insuranceEcharts.echartsMap["gender-age-echart"] = echarts.init($("#gender-age-echart")[0]);
+    insuranceEcharts.echartsMap["reserve-click-echart"] = echarts.init($("#reserve-click-echart")[0]);
     insuranceEcharts.echartsMap["transform-rate-echart"] = echarts.init($("#transform-rate-echart")[0]);
+    insuranceEcharts.echartsMap["insurance-map-echart"] = echarts.init($("#insurance-map-echart")[0]);
 
 
     //搜索表单提交
     $("#search-btn").on("click", function () {
 
-        insuranceEcharts.getDataJson($, "reserve-count", "/admin/dashboard/getReserveCount");
-        insuranceEcharts.getDataJson($, "underwrite-count", "/admin/dashboard/getUnderwriteCount");
-        insuranceEcharts.getDataJson($, "underwrite-amount", "/admin/dashboard/getUnderwriteAmount");
-        insuranceEcharts.getDataJson($, "transform-cost", "/admin/dashboard/getTransformCost");
-        insuranceEcharts.getDataJson($, "abnormal-count", "/admin/dashboard/getAbnormalCount");
+        insuranceEcharts.getDataJson2DrawLine($, "reserve-count", "/admin/dashboard/getReserveCount");
+        insuranceEcharts.getDataJson2DrawLine($, "underwrite-count", "/admin/dashboard/getUnderwriteCount");
+        insuranceEcharts.getDataJson2DrawLine($, "underwrite-amount", "/admin/dashboard/getUnderwriteAmount");
+        insuranceEcharts.getDataJson2DrawLine($, "transform-cost", "/admin/dashboard/getTransformCost");
+        insuranceEcharts.getDataJson2DrawLine($, "abnormal-count", "/admin/dashboard/getAbnormalCount");
+        insuranceEcharts.getDataJson2DrawLine($, "transform-cycle", "/admin/dashboard/getTransformCycle");
+        insuranceEcharts.getDataJson2DrawLine($, "transform-rate", "/admin/dashboard/getTransformRate");
+        insuranceEcharts.getDataJson2DrawLine($, "reserve-click", "/admin/dashboard/getReserveClick");
+        insuranceEcharts.getDataJson2DrawAgeBar($, "gender-age", "/admin/dashboard/getGenderAge");
+        insuranceEcharts.getDataJson2DrawMap($, "insurance-map", "/admin/dashboard/getInsuranceMap");
 
-        insuranceEcharts.drawLineEchart("transform-cycle-echart", ["","","","",""], ["5","6","7","6","5"]);
-        insuranceEcharts.drawAgeBarEchart("gender-age-echart", ["","","","",""], ["5","6","7","6","5"]);
-        insuranceEcharts.drawLineEchart("transform-rate-echart", ["","","","",""], ["5","6","7","6","5"]);
+
+
     });
     $("#search-btn").trigger("click");
 
@@ -59,8 +67,8 @@ var insuranceEcharts = {
     elementMap: {},
     echartsMap: {},
 
-    // 获取后台JSON数据的方法
-    getDataJson: function ($, selectedPrefix, dataUrl) {
+    // 获取后台JSON数据画折线图
+    getDataJson2DrawLine: function ($, selectedPrefix, dataUrl) {
         $.ajax({
             url: dataUrl,
             data: {
@@ -86,6 +94,82 @@ var insuranceEcharts = {
             }
         });
     },
+    // 获取后台JSON数据画年龄分布图
+    getDataJson2DrawAgeBar: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    insuranceEcharts.drawAgeBarEchart(selectedPrefix + "-echart",
+                        ['0-5', '5-18', '18-25', '25-30', '30-35', '35-40', '40-50', '50-55', '55以上'],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawAgeBarEchart(selectedPrefix + "-echart",
+                    ['0-5', '5-18', '18-25', '25-30', '30-35', '35-40', '40-50', '50-55', '55以上'],
+                    response.rtnData.manData, response.rtnData.womenData);
+                $("#" + selectedPrefix + " label").html(response.rtnData.labelValue);
+            }
+        });
+    },
+    // 获取后台JSON数据画地图
+    getDataJson2DrawMap: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    insuranceEcharts.drawMapEchart("insurance-map-echart", [
+                        {name: '北京市',value: 0 },
+                        {name: '天津市',value: 0 },
+                        {name: '上海市',value: 0 },
+                        {name: '重庆市',value: 0 },
+                        {name: '河北省',value: 0 },
+                        {name: '河南省',value: 0 },
+                        {name: '云南省',value: 0 },
+                        {name: '辽宁省',value: 0 },
+                        {name: '黑龙江省',value: 0 },
+                        {name: '湖南省',value: 0 },
+                        {name: '安徽省',value: 0 },
+                        {name: '山东省',value: 0 },
+                        {name: '新疆维吾尔自治区',value: 0 },
+                        {name: '江苏省',value: 0 },
+                        {name: '浙江省',value: 0 },
+                        {name: '江西省',value: 0 },
+                        {name: '湖北省',value: 0 },
+                        {name: '广西壮族自治区',value: 0 },
+                        {name: '甘肃省',value: 0 },
+                        {name: '山西省',value: 0 },
+                        {name: '内蒙古自治区',value: 0 },
+                        {name: '陕西省',value: 0 },
+                        {name: '吉林省',value: 0 },
+                        {name: '福建省',value: 0 },
+                        {name: '贵州省',value: 0 },
+                        {name: '广东省',value: 0 },
+                        {name: '青海省',value: 0 },
+                        {name: '西藏自治区',value: 0 },
+                        {name: '四川省',value: 0 },
+                        {name: '宁夏回族自治区',value: 0 },
+                        {name: '海南省',value: 0 },
+                        {name: '台湾省',value: 0 },
+                        {name: '香港特别行政区',value: 0 },
+                        {name: '澳门特别行政区',value: 0 }
+                    ]);
+                    return;
+                }
+                insuranceEcharts.drawMapEchart("insurance-map-echart", response.rtnData);
+            }
+        });
+    },
 
     // echarts 画图方法
     drawLineEchart: function (selectedId, xData, data) {
@@ -108,14 +192,14 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawAgeBarEchart: function (selectedId, xData, data) {
+    drawAgeBarEchart: function (selectedId, labelData, leftData, rightData) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         var echartOption = {
             xAxis: [
                 {
                     type: 'value',
-                    max: 500,
-                    min: -500,
+                    //max: 500,
+                    //min: -500,
                     show: false,
                     axisLabel: {
                         formatter: function (data) {
@@ -129,41 +213,72 @@ var insuranceEcharts = {
                     type: 'category',
                     show: false,
                     axisTick: {show: false},
-                    data: ['0-18岁', '18-30岁', '30-50岁', '50-60岁', '60-70岁', '70-80岁', '80岁以上']
+                    data: labelData
                 }
             ],
             series: [
                 {
-                    name: '收入',
-                    type: 'bar',
-                    stack: '总量',
-                    label: {
-                        normal: {
-                            show: false
-                        }
-                    },
-                    data: [320, 302, 341, 374, 390, 450, 420]
-                },
-                {
-                    name: '支出',
+                    name: '男性',
                     type: 'bar',
                     stack: '总量',
                     label: {
                         normal: {
                             show: false,
-                            position: 'left',
+                            position: 'left'
+                        }
+                    },
+                    data: leftData
+                },
+                {
+                    name: '女性',
+                    type: 'bar',
+                    stack: '总量',
+                    label: {
+                        normal: {
+                            show: false,
+                            position: 'right',
                             formatter: function (v) {
                                 return Math.abs(v.data)
                             }
                         }
                     },
-                    data: [-320, -132, -101, -134, -190, -420, -440],
+                    data: rightData,
                     formatter: function (v) {
                         return Math.abs(v)
                     }
                 }
             ]
         };
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+    },
+    drawMapEchart: function (selectedId, provinceData) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        // 指定图表的配置项和数据
+        var echartOption = {
+            backgroundColor: '#FFFFFF',
+            tooltip : {
+                trigger: 'item'
+            },
+
+            //配置属性
+            series: [{
+                name: '保费',
+                type: 'map',
+                mapType: 'china',
+                roam: true,
+                label: {
+                    normal: {
+                        show: false  //省份名称
+                    },
+                    emphasis: {
+                        show: false
+                    }
+                },
+                data: provinceData  //数据
+            }]
+        };
+
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     }

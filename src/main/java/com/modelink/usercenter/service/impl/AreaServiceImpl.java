@@ -50,6 +50,22 @@ public class AreaServiceImpl implements AreaService {
     }
 
     /**
+     * 根据ID查询记录
+     *
+     * @param areaIdList
+     **/
+    @Override
+    public List<Area> findByIdList(List<Integer> areaIdList) {
+        Example example = new Example(Area.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(areaIdList != null && areaIdList.size() > 0) {
+            criteria.andIn("areaId", areaIdList);
+        }
+        List<Area> areaList = areaMapper.selectByExample(example);
+        return areaList;
+    }
+
+    /**
      * 查询符合条件的记录
      *
      * @param areaName

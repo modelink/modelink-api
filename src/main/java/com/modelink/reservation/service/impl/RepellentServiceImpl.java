@@ -75,10 +75,14 @@ public class RepellentServiceImpl implements RepellentService {
     public List<Repellent> findListByParam(RepellentParamPagerVo paramPagerVo) {
         Example example = new Example(Repellent.class);
         Example.Criteria criteria = example.createCriteria();
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "insuranceDate";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("insurance_date", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("insurance_date", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
 
         List<Repellent> repellentList = repellentMapper.selectByExample(example);

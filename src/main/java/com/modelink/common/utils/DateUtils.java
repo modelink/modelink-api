@@ -2,6 +2,7 @@ package com.modelink.common.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -103,6 +104,27 @@ public class DateUtils {
             resultDate = "";
         }
         return resultDate;
+    }
+
+    public static int getDateDifference(String startDateStr, String endDateStr) {
+        if(StringUtils.isEmpty(startDateStr) || StringUtils.isEmpty(endDateStr)){
+            return 0;
+        }
+        Date startDate = formatDate(startDateStr, "yyyy-MM-dd");
+        Date endDate = formatDate(endDateStr, "yyyy-MM-dd");
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(startDate);
+        long startTime = calendar.getTimeInMillis();
+        calendar.setTime(endDate);
+        long endTime = calendar.getTimeInMillis();
+        long difference = (endTime - startTime) / (1000 * 3600 * 24);
+
+        return Integer.parseInt(String.valueOf(difference)) + 1;
+    }
+
+    public static void main(String[] args) {
+        System.out.println(getDateDifference("2018-07-01", "2018-08-05"));
     }
 
     /**
