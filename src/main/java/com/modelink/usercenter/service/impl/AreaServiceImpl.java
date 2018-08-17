@@ -76,7 +76,7 @@ public class AreaServiceImpl implements AreaService {
      * @param areaType
      **/
     public Area findByNameAndType(String areaName, int areaType) {
-        if("未知地区".equals(areaName)){
+        if("未知地区".equals(areaName) || "-".equals(areaName)){
             return null;
         }
         Area area = new Area();
