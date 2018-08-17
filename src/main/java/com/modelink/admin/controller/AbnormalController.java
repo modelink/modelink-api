@@ -150,10 +150,14 @@ public class AbnormalController {
                 abnormal.setDate(dataItem.get(1));
                 abnormal.setSource(dataItem.get(4));
                 abnormal.setMobile(dataItem.get(5));
+                abnormal.setCallResult(dataItem.get(9));
+                abnormal.setLastResult(dataItem.get(10));
                 abnormal = abnormalService.findOneByParam(abnormal);
                 if(abnormal == null){
                     exist = false;
                     abnormal = new Abnormal();
+                }else{
+                    logger.info("[abnormalController|importExcel]重复数据{}", JSON.toJSONString(abnormal));
                 }
 
                 // 保存数据

@@ -12,6 +12,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.elementMap["reserve-count-echart"] = $("#reserve-count-echart");
     insuranceEcharts.elementMap["underwrite-count-echart"] = $("#underwrite-count-echart");
     insuranceEcharts.elementMap["underwrite-amount-echart"] = $("#underwrite-amount-echart");
+    insuranceEcharts.elementMap["repellent-amount-echart"] = $("#repellent-amount-echart");
     insuranceEcharts.elementMap["transform-cost-echart"] = $("#transform-cost-echart");
     insuranceEcharts.elementMap["abnormal-count-echart"] = $("#abnormal-count-echart");
     insuranceEcharts.elementMap["transform-cycle-echart"] = $("#transform-cycle-echart");
@@ -19,10 +20,12 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.elementMap["reserve-click-echart"] = $("#reserve-click-echart");
     insuranceEcharts.elementMap["transform-rate-echart"] = $("#transform-rate-echart");
     insuranceEcharts.elementMap["insurance-map-echart"] = $("#insurance-map-echart");
+    insuranceEcharts.elementMap["word-clouds-echart"] = $("#word-clouds-echart");
 
     insuranceEcharts.echartsMap["reserve-count-echart"] = echarts.init($("#reserve-count-echart")[0]);
     insuranceEcharts.echartsMap["underwrite-count-echart"] = echarts.init($("#underwrite-count-echart")[0]);
     insuranceEcharts.echartsMap["underwrite-amount-echart"] = echarts.init($("#underwrite-amount-echart")[0]);
+    insuranceEcharts.echartsMap["repellent-amount-echart"] = echarts.init($("#repellent-amount-echart")[0]);
     insuranceEcharts.echartsMap["transform-cost-echart"] = echarts.init($("#transform-cost-echart")[0]);
     insuranceEcharts.echartsMap["abnormal-count-echart"] = echarts.init($("#abnormal-count-echart")[0]);
     insuranceEcharts.echartsMap["transform-cycle-echart"] = echarts.init($("#transform-cycle-echart")[0]);
@@ -30,6 +33,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.echartsMap["reserve-click-echart"] = echarts.init($("#reserve-click-echart")[0]);
     insuranceEcharts.echartsMap["transform-rate-echart"] = echarts.init($("#transform-rate-echart")[0]);
     insuranceEcharts.echartsMap["insurance-map-echart"] = echarts.init($("#insurance-map-echart")[0]);
+    insuranceEcharts.echartsMap["word-clouds-echart"] = echarts.init($("#word-clouds-echart")[0]);
 
 
     //搜索表单提交
@@ -38,15 +42,15 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         insuranceEcharts.getDataJson2DrawLine($, "reserve-count", "/admin/dashboard/getReserveCount");
         insuranceEcharts.getDataJson2DrawLine($, "underwrite-count", "/admin/dashboard/getUnderwriteCount");
         insuranceEcharts.getDataJson2DrawLine($, "underwrite-amount", "/admin/dashboard/getUnderwriteAmount");
+        insuranceEcharts.getDataJson2DrawLine($, "repellent-amount", "/admin/dashboard/getRepellentAmount");
         insuranceEcharts.getDataJson2DrawLine($, "transform-cost", "/admin/dashboard/getTransformCost");
         insuranceEcharts.getDataJson2DrawLine($, "abnormal-count", "/admin/dashboard/getAbnormalCount");
         insuranceEcharts.getDataJson2DrawLine($, "transform-cycle", "/admin/dashboard/getTransformCycle");
         insuranceEcharts.getDataJson2DrawLine($, "transform-rate", "/admin/dashboard/getTransformRate");
         insuranceEcharts.getDataJson2DrawLine($, "reserve-click", "/admin/dashboard/getReserveClick");
         insuranceEcharts.getDataJson2DrawAgeBar($, "gender-age", "/admin/dashboard/getGenderAge");
+        insuranceEcharts.getDataJson2WordCloudsMap($, "word-clouds", "/admin/dashboard/getWordClouds");
         insuranceEcharts.getDataJson2DrawMap($, "insurance-map", "/admin/dashboard/getInsuranceMap");
-
-
 
     });
     $("#search-btn").trigger("click");
@@ -170,6 +174,23 @@ var insuranceEcharts = {
             }
         });
     },
+    // 获取后台JSON数据画词云图
+    getDataJson2WordCloudsMap: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    return;
+                }
+                insuranceEcharts.drawWordCloudsEchart(selectedPrefix + "-echart", response.rtnData);
+            }
+        });
+    },
 
     // echarts 画图方法
     drawLineEchart: function (selectedId, xData, data) {
@@ -276,6 +297,39 @@ var insuranceEcharts = {
                     }
                 },
                 data: provinceData  //数据
+            }]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+    },
+    drawWordCloudsEchart: function (selectedId, wordCloudsData) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        // 指定图表的配置项和数据
+        var echartOption = {
+            tooltip: {},
+            series: [{
+                type: 'wordCloud',
+                gridSize: 20,
+                sizeRange: [12, 50],
+                rotationRange: [0, 0],
+                shape: 'circle',
+                textStyle: {
+                    normal: {
+                        color: function() {
+                            return 'rgb(' + [
+                                Math.round(Math.random() * 160),
+                                Math.round(Math.random() * 160),
+                                Math.round(Math.random() * 160)
+                            ].join(',') + ')';
+                        }
+                    },
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowColor: '#333'
+                    }
+                },
+                data: wordCloudsData
             }]
         };
 

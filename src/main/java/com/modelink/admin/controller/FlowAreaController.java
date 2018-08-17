@@ -163,10 +163,14 @@ public class FlowAreaController {
                 flowArea.setProvinceId(provinceId);
                 flowArea.setCityId(cityId);
                 flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                flowArea.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                flowArea.setUserCount(DataUtils.tranform2Integer(dataItem.get(9)));
                 flowArea = flowAreaService.findOneByParam(flowArea);
                 if(flowArea == null){
                     exist = false;
                     flowArea = new FlowArea();
+                }else{
+                    logger.info("[flowAreaController|importExcel]重复数据{}", JSON.toJSONString(dataItem));
                 }
 
                 merchant = merchantService.findByName(dataItem.get(2));

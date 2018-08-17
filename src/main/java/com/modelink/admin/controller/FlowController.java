@@ -152,17 +152,22 @@ public class FlowController {
                 // 重复数据校验
                 flow = new Flow();
 
+                merchant = merchantService.findByName(dataItem.get(2));
                 flow.setDate(dataItem.get(1));
+                flow.setMerchantId(merchant.getId());
                 flow.setPlatformName(dataItem.get(3));
                 flow.setWebsite(dataItem.get(4));
+                flow.setSource(dataItem.get(5));
                 flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 flow = flowService.findOneByParam(flow);
                 if(flow == null){
                     isExist = false;
                     flow = new Flow();
+                }else{
+                    logger.info("[flowController|importExcel]重复数据{}", JSON.toJSONString(flow));
                 }
 
-                merchant = merchantService.findByName(dataItem.get(2));
+
                 // 保存数据
                 flow.setDate(dataItem.get(1));
                 flow.setMerchantId(merchant == null ? 0L : merchant.getId());

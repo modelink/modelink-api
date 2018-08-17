@@ -161,13 +161,15 @@ var Underwrite = {
     ],
     column: [
         {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
-        {field: 'orgName', title: '导出机构', minWidth: 120, align: 'center'},
-        {field: 'productName', title: '产品名称', minWidth: 120, align: 'center'},
         {field: 'merchantName', title: '合作商户', minWidth: 120, align: 'center'},
-        {field: 'platformName', title: '数据来源', minWidth: 100, align: 'center'},
+        {field: 'platformName', title: '渠道归属', minWidth: 100, align: 'center'},
+        {field: 'advertiseActive', title: '广告活动', minWidth: 100, align: 'center'},
+        {field: 'productName', title: '产品名称', minWidth: 120, align: 'center'},
+        {field: 'orgName', title: '数据导出机构', minWidth: 120, align: 'center'},
         {field: 'insuranceNo', title: '保单号', minWidth: 100, align: 'center'},
 
         {field: 'reserveMobile', title: '预约电话', minWidth: 120, align: 'center'},
+        {field: 'source', title: '数据来源', minWidth: 120, align: 'center'},
         {field: 'reserveDate', title: '来源日期', minWidth: 100, align: 'center'},
         {field: 'finishDate', title: '成单日期', minWidth: 100, align: 'center'},
         {field: 'payType', title: '缴费方式', minWidth: 120, align: 'center'},

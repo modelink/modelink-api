@@ -184,6 +184,46 @@ public class DashboardController {
     }
 
     @ResponseBody
+    @RequestMapping("/getRepellentAmount")
+    public ResultVo getRepellentAmount(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        String rtnMsg = initDashboardParam(paramVo);
+        if(StringUtils.hasText(rtnMsg)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg(rtnMsg);
+            return resultVo;
+        }
+
+        String dateKey;
+
+        // 退保保费汇总
+        RepellentParamPagerVo repellentParamPagerVo = new RepellentParamPagerVo();
+        repellentParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        repellentParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        repellentParamPagerVo.setColumnFieldIds("id,hesitateDate");
+        repellentParamPagerVo.setDateField("hesitateDate");
+        List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
+
+        double refundTotalAmount;
+        Map<String, Object> refundAmountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        for (Repellent repellent : repellentList) {
+            dateKey = getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
+            refundTotalAmount = 0.00;
+            if(refundAmountMap.get(dateKey) != null){
+                refundTotalAmount = (double)refundAmountMap.get(dateKey);
+            }
+            refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
+            refundAmountMap.put(dateKey, refundTotalAmount);
+        }
+
+        JSONObject resultJson = formLineEchartResultJson(refundAmountMap);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
     @RequestMapping("/getTransformCost")
     public ResultVo getTransformCost(DashboardParamVo paramVo){
         ResultVo resultVo = new ResultVo();
@@ -746,6 +786,66 @@ public class DashboardController {
 
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(provinceArray);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getWordClouds")
+    public ResultVo getWordClouds(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        String rtnMsg = initDashboardParam(paramVo);
+        if(StringUtils.hasText(rtnMsg)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg(rtnMsg);
+            return resultVo;
+        }
+
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setColumnFieldIds("date,searchWord");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+
+        int searchCount;
+        Map<String, Integer> searchWordMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            if ("-".equals(flowReserve.getSearchWord()) || "".equals(flowReserve.getSearchWord())) {
+                continue;
+            }
+            if (searchWordMap.get(flowReserve.getSearchWord()) == null) {
+                searchCount = 0;
+            } else {
+                searchCount = searchWordMap.get(flowReserve.getSearchWord());
+                searchCount++;
+            }
+            searchWordMap.put(flowReserve.getSearchWord(), searchCount);
+        }
+
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(searchWordMap.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+
+        });
+
+        int count = 0;
+        JSONObject wordCloud;
+        JSONArray wordCloudArray = new JSONArray();
+        for (Map.Entry<String, Integer> mapping : list) {
+            if(count > 30){
+                break;
+            }
+            wordCloud = new JSONObject();
+            wordCloud.put("name", mapping.getKey());
+            wordCloud.put("value", mapping.getValue());
+            wordCloudArray.add(wordCloud);
+            count ++;
+        }
+
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(wordCloudArray);
         return resultVo;
     }
 

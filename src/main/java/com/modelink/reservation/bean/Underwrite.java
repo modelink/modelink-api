@@ -22,12 +22,12 @@ public class Underwrite {
     private String insuranceNo;
     /** 预约电话号码 **/
     private String reserveMobile;
-    /** 数据来源 **/
+    /** 渠道归属 **/
     private String platformName;
     /** 广告活动 **/
-    private String sourceType;
-    /** 来源类型 **/
-    private String thirdSourceType;
+    private String advertiseActive;
+    /** 数据来源 **/
+    private String source;
     /** 来源日期 **/
     private String reserveDate;
     /** 成单日期 **/
@@ -111,20 +111,20 @@ public class Underwrite {
         this.platformName = platformName;
     }
 
-    public String getSourceType() {
-        return sourceType;
+    public String getAdvertiseActive() {
+        return advertiseActive;
     }
 
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 
-    public String getThirdSourceType() {
-        return thirdSourceType;
+    public String getSource() {
+        return source;
     }
 
-    public void setThirdSourceType(String thirdSourceType) {
-        this.thirdSourceType = thirdSourceType;
+    public void setSource(String source) {
+        this.source = source;
     }
 
     public String getReserveDate() {

@@ -156,6 +156,8 @@ public class MediaItemController {
                 if(mediaItem == null){
                     isExist = false;
                     mediaItem = new MediaItem();
+                }else{
+                    logger.info("[mediaItemController|importExcel]重复数据{}", JSON.toJSONString(mediaItem));
                 }
 
 

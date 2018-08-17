@@ -118,6 +118,22 @@
         </div>
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
+                <div class="layui-card-header">退保保费</div>
+                <div class="layui-card-body">
+                    <div id="repellent-amount" class="echart-header">
+                        <label></label>
+                        <i class="iconfont icon-arrow-equal"></i>
+                        <em></em>
+                    </div>
+                    <div id="repellent-amount-echart" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-card">
                 <div class="layui-card-header">转化成本</div>
                 <div class="layui-card-body">
                     <div id="transform-cost" class="echart-header">
@@ -129,8 +145,6 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="layui-row layui-col-space15">
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">异常数量</div>
@@ -157,7 +171,6 @@
                 </div>
             </div>
         </div>
-
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">总转化率</div>
@@ -171,6 +184,8 @@
                 </div>
             </div>
         </div>
+    </div>
+    <div class="layui-row layui-col-space15">
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">预约总量-点击量</div>
@@ -184,7 +199,6 @@
                 </div>
             </div>
         </div>
-
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">性别年龄区间分布</div>
@@ -193,6 +207,15 @@
                         <label></label>
                     </div>
                     <div id="gender-age-echart" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">词云分析</div>
+                <div class="layui-card-body">
+                    <div id="word-clouds-echart" style="height: 249px;"></div>
                 </div>
             </div>
         </div>
@@ -212,6 +235,7 @@
 <script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
 <script th:src="@{/static/js/common/echarts.min.js}" type="text/javascript" charset="utf-8"></script>
 <script th:src="@{/static/js/common/china.js}" type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/static/js/common/worldcloud.js}" type="text/javascript" charset="utf-8"></script>
 <script th:inline="javascript">
     layui.config({
         base: '/static/js/admin/insurance/' //你的模块目录

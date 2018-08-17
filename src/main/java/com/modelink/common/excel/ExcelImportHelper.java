@@ -56,7 +56,6 @@ public class ExcelImportHelper {
         rowLength = (configation.getTotalRowNum() == ExcelImportConfigation.DEFAULT_INT ? rowLength : configation.getTotalRowNum() + startRowNum);
         Map<Integer, String> fieldFormatMap;
         for (int i = startRowNum; i < rowLength; i++) {
-            logger.info("[excelImportHelper|importExcel]正在读取第" + i + "行数据");
             rowData = new ArrayList<String>();
             row = sheet.getRow(i);
             colLength = row.getLastCellNum();
@@ -90,6 +89,7 @@ public class ExcelImportHelper {
 
             rtnList.add(rowData);
         }
+        logger.info("[excelImportHelper|importExcel]完成读取Excel中的数据，共{}行", rtnList.size());
 
         inputStream.close();
         return rtnList;

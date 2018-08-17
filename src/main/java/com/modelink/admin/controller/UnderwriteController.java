@@ -160,26 +160,29 @@ public class UnderwriteController {
                 merchant = merchantService.findByName(dataItem.get(1));
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
                 underwrite.setPlatformName(dataItem.get(2));
-                underwrite.setSourceType(dataItem.get(3));
+                underwrite.setAdvertiseActive(dataItem.get(3));
+                underwrite.setInsuranceNo(dataItem.get(6));
                 underwrite.setReserveMobile(dataItem.get(7));
                 underwrite = underwriteService.findOneByParam(underwrite);
                 if(underwrite == null){
                     exist = false;
                     underwrite = new Underwrite();
+                }else{
+                    logger.info("[underwriteController|importExcel]重复数据{}", JSON.toJSONString(underwrite));
                 }
 
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
                 underwrite.setPlatformName(dataItem.get(2));
                 // 渠道明细
-                underwrite.setSourceType(dataItem.get(3));
+                underwrite.setAdvertiseActive(dataItem.get(3));
 
                 underwrite.setProductName(dataItem.get(4));
 
                 underwrite.setOrgName(dataItem.get(5));
                 underwrite.setInsuranceNo(dataItem.get(6));
                 underwrite.setReserveMobile(dataItem.get(7));
-                underwrite.setThirdSourceType(dataItem.get(8));
+                underwrite.setSource(dataItem.get(8));
                 underwrite.setReserveDate(dataItem.get(9));
                 underwrite.setFinishDate(dataItem.get(10));
                 underwrite.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(11)));

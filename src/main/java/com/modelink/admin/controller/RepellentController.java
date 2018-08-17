@@ -154,6 +154,8 @@ public class RepellentController {
                 if(repellent == null){
                     isExist = false;
                     repellent = new Repellent();
+                }else{
+                    logger.info("[repellentController|importExcel]重复数据{}", JSON.toJSONString(repellent));
                 }
 
                 merchant = merchantService.findByName(dataItem.get(1));
@@ -182,7 +184,11 @@ public class RepellentController {
                 repellent.setInsuranceDate(dataItem.get(22));
                 repellent.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(23)));
                 repellent.setHesitateDate(dataItem.get(24));
-                repellent.setPayInterval(DataUtils.tranform2Integer(dataItem.get(25)));
+                if("-".equals(dataItem.get(25)) || "".equals(dataItem.get(25))){
+                    repellent.setPayInterval(0);
+                }else {
+                    repellent.setPayInterval(DataUtils.tranform2Integer(dataItem.get(25)));
+                }
 
                 if(isExist){
                     repellentService.update(repellent);

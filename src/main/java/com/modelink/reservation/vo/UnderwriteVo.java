@@ -21,9 +21,9 @@ public class UnderwriteVo implements Serializable {
     @ExportField(value="渠道明细")
     private String platformName;
     @ExportField(value="广告活动")
-    private String sourceType;
+    private String advertiseActive;
     @ExportField(value="数据来源")
-    private String thirdSourceType;
+    private String source;
     @ExportField(value="来源日期")
     private String reserveDate;
     @ExportField(value="成单日期")
@@ -211,19 +211,19 @@ public class UnderwriteVo implements Serializable {
         this.updateTime = updateTime;
     }
 
-    public String getSourceType() {
-        return sourceType;
+    public String getAdvertiseActive() {
+        return advertiseActive;
     }
 
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 
-    public String getThirdSourceType() {
-        return thirdSourceType;
+    public String getSource() {
+        return source;
     }
 
-    public void setThirdSourceType(String thirdSourceType) {
-        this.thirdSourceType = thirdSourceType;
+    public void setSource(String source) {
+        this.source = source;
     }
 }

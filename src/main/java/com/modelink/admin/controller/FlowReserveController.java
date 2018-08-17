@@ -151,12 +151,15 @@ public class FlowReserveController {
                 // 重复数据校验
                 flowReserve = new FlowReserve();
                 flowReserve.setDate(dataItem.get(2));
+                flowReserve.setTime(dataItem.get(3));
                 flowReserve.setReserveMobile(dataItem.get(5));
                 flowReserve.setAdvertiseActive(dataItem.get(7));
                 flowReserve = flowReserveService.findOneByParam(flowReserve);
                 if(flowReserve == null){
                     isExist = false;
                     flowReserve = new FlowReserve();
+                }else{
+                    logger.info("[flowReserveController|importExcel]重复数据{}", JSON.toJSONString(flowReserve));
                 }
 
                 merchant = merchantService.findByName(dataItem.get(1));

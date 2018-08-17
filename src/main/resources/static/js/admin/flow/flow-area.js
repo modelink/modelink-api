@@ -6,15 +6,15 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     var upload = layui.upload;
     var element = layui.element;
 
-    FlowBase.$ = $;
+    FlowArea.$ = $;
 
     /** 生成选择列属性的div **/
     var columnItem;
     var chooseColumnHtml = "";
-    for(var index in FlowBase.column){
+    for(var index in FlowArea.column){
         var checked = "";
-        columnItem = FlowBase.column[index];
-        if($.inArray(columnItem.field, FlowBase.fieldList) > 0){
+        columnItem = FlowArea.column[index];
+        if($.inArray(columnItem.field, FlowArea.fieldList) > 0){
             checked = "checked";
         }
         chooseColumnHtml += '<input type="checkbox" value="' + columnItem.field + '" title="' + columnItem.title + '" ' + checked + '>';
@@ -22,17 +22,17 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     $("#columnField").html(chooseColumnHtml);
     form.render();
 
-    FlowBase.renderTable(table);
+    FlowArea.renderTable(table);
     form.on('checkbox', function(data){
         var isChecked = data.elem.checked;
         var fieldValue = data.elem.value;
-        if(isChecked && $.inArray(fieldValue, FlowBase.fieldList) < 0){
-            FlowBase.fieldList.push(fieldValue);
+        if(isChecked && $.inArray(fieldValue, FlowArea.fieldList) < 0){
+            FlowArea.fieldList.push(fieldValue);
         }
-        if(!isChecked && $.inArray(fieldValue, FlowBase.fieldList)){
-            FlowBase.fieldList.splice($.inArray(fieldValue, FlowBase.fieldList), 1);
+        if(!isChecked && $.inArray(fieldValue, FlowArea.fieldList)){
+            FlowArea.fieldList.splice($.inArray(fieldValue, FlowArea.fieldList), 1);
         }
-        FlowBase.renderTable(table);
+        FlowArea.renderTable(table);
     });
 
     // 初始化上传组件
@@ -47,7 +47,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 + '<div class="layui-progress layui-progress-big" lay-filter="upload-progress">'
                 + '<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>'
                 + '</div>';
-            FlowBase.progressIndex = layer.open({
+            FlowArea.progressIndex = layer.open({
                 title: ['上传文件', 'text-align: center; padding-left: 80px;'],
                 content: progressHtml,
                 btnAlign: 'c',
@@ -97,8 +97,8 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         },
         exportExcel: function(){
             var columnFieldIds = "";
-            for(var index = 0; index < FlowBase.fieldList.length; index ++ ){
-                columnFieldIds += (FlowBase.fieldList[index] + ",")
+            for(var index = 0; index < FlowArea.fieldList.length; index ++ ){
+                columnFieldIds += (FlowArea.fieldList[index] + ",")
             }
             $("#columnFieldIds").val(columnFieldIds);
             $("#flowArea-form").attr("action", "/admin/flowArea/exportExcel").submit();
@@ -121,7 +121,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
         console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 
-        FlowBase.queryTable(table, {
+        FlowArea.queryTable(table, {
             chooseDate: data.field.chooseDate
         });
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
@@ -135,7 +135,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     exports('flow-area', {});
 });
 
-var FlowBase = {
+var FlowArea = {
     $: null,
     table: null,
     progressIndex: null,
@@ -148,6 +148,7 @@ var FlowBase = {
 
         'provinceName',
         'cityName',
+        'source',
         'inflowCount',
         'browseCount',
         'userCount',
@@ -165,6 +166,7 @@ var FlowBase = {
 
         {field: 'provinceName', title: '地区名称', minWidth: 120, align: 'center'},
         {field: 'cityName', title: '城市名称', minWidth: 120, align: 'center'},
+        {field: 'source', title: '来源类型', minWidth: 120, align: 'center'},
         {field: 'inflowCount', title: '流入量', minWidth: 100, align: 'center'},
         {field: 'browseCount', title: '浏览量', minWidth: 100, align: 'center'},
         {field: 'userCount', title: '用户量', minWidth: 100, align: 'center'},
@@ -176,9 +178,9 @@ var FlowBase = {
     ],
     formColumn: function () {
         var columnList = [];
-        for(var index = 0; index < FlowBase.column.length; index ++ ){
-            var columnItem = FlowBase.column[index];
-            if(FlowBase.$.inArray(columnItem.field, FlowBase.fieldList) > 0) {
+        for(var index = 0; index < FlowArea.column.length; index ++ ){
+            var columnItem = FlowArea.column[index];
+            if(FlowArea.$.inArray(columnItem.field, FlowArea.fieldList) > 0) {
                 columnList.push(columnItem);
             }
         }
@@ -186,7 +188,7 @@ var FlowBase = {
         return columnList;
     },
     queryTable: function (table, queryJson) {
-        var columnList = FlowBase.formColumn();
+        var columnList = FlowArea.formColumn();
         table.reload('flowArea-table-reload',{
             page: { curr: 1 },
             cols: [ columnList ],
@@ -195,23 +197,23 @@ var FlowBase = {
     },
     renderTable: function (table) {
         var columnList = [];
-        for(var index = 0; index < FlowBase.column.length; index ++ ){
-            var columnItem = FlowBase.column[index];
-            if(FlowBase.$.inArray(columnItem.field, FlowBase.fieldList) > 0) {
+        for(var index = 0; index < FlowArea.column.length; index ++ ){
+            var columnItem = FlowArea.column[index];
+            if(FlowArea.$.inArray(columnItem.field, FlowArea.fieldList) > 0) {
                 columnList.push(columnItem);
             }
         }
         console.log(columnList);
-        if(FlowBase.table){
-            FlowBase.table.reload({
+        if(FlowArea.table){
+            FlowArea.table.reload({
                 cols: [[{field: 'id', title: 'ID', width: 50, sort: false, align: 'center', fixed: true}]],
             });
-            FlowBase.table.reload({
+            FlowArea.table.reload({
                 cols: [ columnList ],
             });
             return;
         }
-        FlowBase.table = table.render({
+        FlowArea.table = table.render({
             id: 'flowArea-table-reload',
             elem: '#flowArea-table-grid',
             url: '/admin/flowArea/list',

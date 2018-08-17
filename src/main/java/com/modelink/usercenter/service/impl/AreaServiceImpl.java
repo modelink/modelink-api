@@ -6,6 +6,8 @@ import com.modelink.admin.vo.AreaParamPagerVo;
 import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.mapper.AreaMapper;
 import com.modelink.usercenter.service.AreaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
@@ -15,6 +17,8 @@ import java.util.List;
 
 @Service
 public class AreaServiceImpl implements AreaService {
+
+    public static Logger logger = LoggerFactory.getLogger(AreaService.class);
 
     @Resource
     private AreaMapper areaMapper;
@@ -72,10 +76,17 @@ public class AreaServiceImpl implements AreaService {
      * @param areaType
      **/
     public Area findByNameAndType(String areaName, int areaType) {
+        if("未知地区".equals(areaName)){
+            return null;
+        }
         Area area = new Area();
         area.setAreaName(areaName);
         area.setAreaType(areaType);
-        return areaMapper.selectOne(area);
+        area = areaMapper.selectOne(area);
+        if(area == null){
+            logger.error("[areaService|findByNameAndType]{}不存在，地区类型为{}", areaName, areaType);
+        }
+        return area;
     }
 
     /**

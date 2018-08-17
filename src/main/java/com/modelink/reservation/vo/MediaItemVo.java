@@ -2,7 +2,6 @@ package com.modelink.reservation.vo;
 
 import javax.persistence.Id;
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 承保效果
@@ -18,9 +17,9 @@ public class MediaItemVo implements Serializable {
     /** 渠道归属 **/
     private String platformName;
     /** 广告活动 **/
-    private String sourceType;
+    private String advertiseActive;
     /** 广告媒体 **/
-    private String sourceMedia;
+    private String advertiseMedia;
     /** 广告系列 **/
     private String advertiseSeries;
     /** 关键词组 **/
@@ -82,20 +81,20 @@ public class MediaItemVo implements Serializable {
         this.platformName = platformName;
     }
 
-    public String getSourceType() {
-        return sourceType;
+    public String getAdvertiseActive() {
+        return advertiseActive;
     }
 
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 
-    public String getSourceMedia() {
-        return sourceMedia;
+    public String getAdvertiseMedia() {
+        return advertiseMedia;
     }
 
-    public void setSourceMedia(String sourceMedia) {
-        this.sourceMedia = sourceMedia;
+    public void setAdvertiseMedia(String advertiseMedia) {
+        this.advertiseMedia = advertiseMedia;
     }
 
     public String getAdvertiseSeries() {

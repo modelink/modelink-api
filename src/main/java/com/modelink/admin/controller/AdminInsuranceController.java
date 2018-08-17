@@ -57,11 +57,6 @@ public class AdminInsuranceController {
         return "/admin/insurance/list";
     }
 
-    @RequestMapping("/echart")
-    public String echart() {
-        return "/admin/insurance/insurance-echart";
-    }
-
     @ResponseBody
     @RequestMapping("/list")
     public LayuiResultPagerVo<InsuranceVo> list(InsuranceParamPagerVo paramPagerVo) {

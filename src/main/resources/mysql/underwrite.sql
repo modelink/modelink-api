@@ -4,8 +4,8 @@ CREATE TABLE `underwrite` (
 
   `merchant_id` bigint(20) NOT NULL DEFAULT '0' COMMENT '预约商户（如小米、华夏）',
   `platform_name` varchar(20) NOT NULL DEFAULT '' COMMENT '渠道归属（PC、移动端）',
-  `source_type` varchar(20) NOT NULL DEFAULT '' COMMENT '广告活动（百度SEM、自然流量）',
-  `third_source_type` varchar(20) NOT NULL DEFAULT '' COMMENT '数据来源（官网、官微、转介绍）',
+  `advertise_active` varchar(20) NOT NULL DEFAULT '' COMMENT '广告活动（百度SEM、自然流量）',
+  `source` varchar(20) NOT NULL DEFAULT '' COMMENT '数据来源（官网、官微、转介绍）',
 
   `org_name` varchar(32) NOT NULL DEFAULT '' COMMENT '机构名称',
   `product_name` varchar(64) NOT NULL DEFAULT '' COMMENT '产品名称',
