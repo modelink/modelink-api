@@ -197,6 +197,9 @@ var insuranceEcharts = {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         var echartOption = {
+            tooltip: {
+                show: true
+            },
             xAxis: {
                 show: false,
                 type: 'category',

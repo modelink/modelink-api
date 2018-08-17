@@ -81,6 +81,13 @@ public class UnderwriteController {
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("承保数据表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是承保数据表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             //fieldFormatMap.put(16, "HH:mm:ss");
 
@@ -138,6 +145,7 @@ public class UnderwriteController {
         Merchant merchant;
         String reserveDate;
         int index;
+        int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -209,12 +217,13 @@ public class UnderwriteController {
                 }else{
                     underwriteService.insert(underwrite);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[adminAdvertiseController|importExcel]保存数据发生异常。underwrite={}", JSON.toJSONString(dataItem), e);
             }
 
         }
-
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 

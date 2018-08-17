@@ -6,15 +6,15 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     var upload = layui.upload;
     var element = layui.element;
 
-    FlowBase.$ = $;
+    Abnormal.$ = $;
 
     /** 生成选择列属性的div **/
     var columnItem;
     var chooseColumnHtml = "";
-    for(var index in FlowBase.column){
+    for(var index in Abnormal.column){
         var checked = "";
-        columnItem = FlowBase.column[index];
-        if($.inArray(columnItem.field, FlowBase.fieldList) > 0){
+        columnItem = Abnormal.column[index];
+        if($.inArray(columnItem.field, Abnormal.fieldList) > 0){
             checked = "checked";
         }
         chooseColumnHtml += '<input type="checkbox" value="' + columnItem.field + '" title="' + columnItem.title + '" ' + checked + '>';
@@ -22,17 +22,17 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     $("#columnField").html(chooseColumnHtml);
     form.render();
 
-    FlowBase.renderTable(table);
+    Abnormal.renderTable(table);
     form.on('checkbox', function(data){
         var isChecked = data.elem.checked;
         var fieldValue = data.elem.value;
-        if(isChecked && $.inArray(fieldValue, FlowBase.fieldList) < 0){
-            FlowBase.fieldList.push(fieldValue);
+        if(isChecked && $.inArray(fieldValue, Abnormal.fieldList) < 0){
+            Abnormal.fieldList.push(fieldValue);
         }
-        if(!isChecked && $.inArray(fieldValue, FlowBase.fieldList)){
-            FlowBase.fieldList.splice($.inArray(fieldValue, FlowBase.fieldList), 1);
+        if(!isChecked && $.inArray(fieldValue, Abnormal.fieldList)){
+            Abnormal.fieldList.splice($.inArray(fieldValue, Abnormal.fieldList), 1);
         }
-        FlowBase.renderTable(table);
+        Abnormal.renderTable(table);
     });
 
     // 初始化上传组件
@@ -47,7 +47,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                 + '<div class="layui-progress layui-progress-big" lay-filter="upload-progress">'
                 + '<div class="layui-progress-bar layui-bg-green" lay-percent="0%"></div>'
                 + '</div>';
-            FlowBase.progressIndex = layer.open({
+            Abnormal.progressIndex = layer.open({
                 title: ['上传文件', 'text-align: center; padding-left: 80px;'],
                 content: progressHtml,
                 btnAlign: 'c',
@@ -73,7 +73,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         },
         done: function(response){
             if(response.rtnCode == 200){
-                $("#upload-message").html("上传完成");
+                $("#upload-message").html("上传完成，共导入数据：" + response.rtnData);
                 $("#upload-message").attr("data-upload-status", "yes");
                 element.progress("upload-progress", 100 + "%");
             }else{
@@ -97,8 +97,8 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         },
         exportExcel: function(){
             var columnFieldIds = "";
-            for(var index = 0; index < FlowBase.fieldList.length; index ++ ){
-                columnFieldIds += (FlowBase.fieldList[index] + ",")
+            for(var index = 0; index < Abnormal.fieldList.length; index ++ ){
+                columnFieldIds += (Abnormal.fieldList[index] + ",")
             }
             $("#columnFieldIds").val(columnFieldIds);
             $("#abnormal-form").attr("action", "/admin/abnormal/exportExcel").submit();
@@ -121,7 +121,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
         console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
 
-        FlowBase.queryTable(table, {
+        Abnormal.queryTable(table, {
             chooseDate: data.field.chooseDate
         });
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
@@ -135,7 +135,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     exports('abnormal', {});
 });
 
-var FlowBase = {
+var Abnormal = {
     $: null,
     table: null,
     progressIndex: null,
@@ -181,9 +181,9 @@ var FlowBase = {
     ],
     formColumn: function () {
         var columnList = [];
-        for(var index = 0; index < FlowBase.column.length; index ++ ){
-            var columnItem = FlowBase.column[index];
-            if(FlowBase.$.inArray(columnItem.field, FlowBase.fieldList) > 0) {
+        for(var index = 0; index < Abnormal.column.length; index ++ ){
+            var columnItem = Abnormal.column[index];
+            if(Abnormal.$.inArray(columnItem.field, Abnormal.fieldList) > 0) {
                 columnList.push(columnItem);
             }
         }
@@ -191,7 +191,7 @@ var FlowBase = {
         return columnList;
     },
     queryTable: function (table, queryJson) {
-        var columnList = FlowBase.formColumn();
+        var columnList = Abnormal.formColumn();
         table.reload('abnormal-table-reload',{
             page: { curr: 1 },
             cols: [ columnList ],
@@ -200,23 +200,23 @@ var FlowBase = {
     },
     renderTable: function (table) {
         var columnList = [];
-        for(var index = 0; index < FlowBase.column.length; index ++ ){
-            var columnItem = FlowBase.column[index];
-            if(FlowBase.$.inArray(columnItem.field, FlowBase.fieldList) > 0) {
+        for(var index = 0; index < Abnormal.column.length; index ++ ){
+            var columnItem = Abnormal.column[index];
+            if(Abnormal.$.inArray(columnItem.field, Abnormal.fieldList) > 0) {
                 columnList.push(columnItem);
             }
         }
         console.log(columnList);
-        if(FlowBase.table){
-            FlowBase.table.reload({
+        if(Abnormal.table){
+            Abnormal.table.reload({
                 cols: [[{field: 'id', title: 'ID', width: 50, sort: false, align: 'center', fixed: true}]],
             });
-            FlowBase.table.reload({
+            Abnormal.table.reload({
                 cols: [ columnList ],
             });
             return;
         }
-        FlowBase.table = table.render({
+        Abnormal.table = table.render({
             id: 'abnormal-table-reload',
             elem: '#abnormal-table-grid',
             url: '/admin/abnormal/list',

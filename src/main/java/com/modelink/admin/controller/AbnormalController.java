@@ -131,6 +131,7 @@ public class AbnormalController {
         // 数据入库
         boolean exist;
         Abnormal abnormal;
+        int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -185,10 +186,12 @@ public class AbnormalController {
                 }else {
                     abnormalService.insert(abnormal);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[abnormalController|importExcel]保存数据发生异常。abnormal={}", JSON.toJSONString(dataItem), e);
             }
         }
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 

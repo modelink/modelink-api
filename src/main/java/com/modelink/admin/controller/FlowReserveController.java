@@ -79,6 +79,13 @@ public class FlowReserveController {
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("预约数据表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是预约数据表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             fieldFormatMap.put(9, "HH:mm:ss");
 
@@ -134,6 +141,7 @@ public class FlowReserveController {
         Area area;
         FlowReserve flowReserve;
         Merchant merchant;
+        int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -234,12 +242,13 @@ public class FlowReserveController {
                 }else {
                     flowReserveService.insert(flowReserve);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[flowReserveController|importExcel]保存数据发生异常。flowReserve={}", JSON.toJSONString(dataItem), e);
             }
 
         }
-
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 

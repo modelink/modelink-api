@@ -81,6 +81,13 @@ public class FlowAreaController {
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("地区流量表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是地区流量表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             fieldFormatMap.put(9, "HH:mm:ss");
 
@@ -137,6 +144,7 @@ public class FlowAreaController {
         FlowArea flowArea;
         Merchant merchant;
         int provinceId, cityId;
+        int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -194,12 +202,13 @@ public class FlowAreaController {
                 }else {
                     flowAreaService.insert(flowArea);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[flowAreaController|importExcel]保存数据发生异常。flowArea={}", JSON.toJSONString(dataItem), e);
             }
 
         }
-
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 

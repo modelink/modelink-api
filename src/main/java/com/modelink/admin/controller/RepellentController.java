@@ -78,6 +78,13 @@ public class RepellentController {
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("退保数据表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是退保数据表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             fieldFormatMap.put(0, "M月d日");
 
@@ -132,6 +139,7 @@ public class RepellentController {
         // 数据入库
         Merchant merchant;
         Repellent repellent;
+        int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -195,12 +203,13 @@ public class RepellentController {
                 }else {
                     repellentService.insert(repellent);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[repellentController|importExcel]保存数据发生异常。repellent={}", JSON.toJSONString(dataItem), e);
             }
 
         }
-
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 

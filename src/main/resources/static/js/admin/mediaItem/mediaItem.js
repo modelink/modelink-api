@@ -73,7 +73,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         },
         done: function(response){
             if(response.rtnCode == 200){
-                $("#upload-message").html("上传完成");
+                $("#upload-message").html("上传完成，共导入数据：" + response.rtnData);
                 $("#upload-message").attr("data-upload-status", "yes");
                 element.progress("upload-progress", 100 + "%");
             }else{

@@ -13,9 +13,7 @@ import com.modelink.reservation.bean.MediaItem;
 import com.modelink.reservation.service.MediaItemService;
 import com.modelink.reservation.vo.MediaItemParamPagerVo;
 import com.modelink.reservation.vo.MediaItemVo;
-import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.bean.Merchant;
-import com.modelink.usercenter.service.AreaService;
 import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +40,7 @@ import java.util.Map;
 public class MediaItemController {
 
     public static Logger logger = LoggerFactory.getLogger(MediaItemController.class);
-    public static String yyyyMMddFormat = "yyyy-MM-dd";
 
-    @Resource
-    private AreaService areaService;
     @Resource
     private MerchantService merchantService;
     @Resource
@@ -61,25 +56,32 @@ public class MediaItemController {
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<MediaItemVo> list(MediaItemParamPagerVo paramPagerVo){
+    public LayuiResultPagerVo<MediaItemVo> list(MediaItemParamPagerVo paramPagerVo) {
         LayuiResultPagerVo<MediaItemVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
         PageInfo<MediaItem> pageInfo = mediaItemService.findPagerByParam(paramPagerVo);
         List<MediaItem> mediaItemList = pageInfo.getList();
         List<MediaItemVo> advertiseAnalyseVoList = transformBean2VoList(mediaItemList);
 
-        layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
+        layuiResultPagerVo.setTotalCount((int) pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
         return layuiResultPagerVo;
     }
 
     @ResponseBody
     @RequestMapping("/importExcel")
-    public ResultVo importExcel(@RequestParam MultipartFile file){
+    public ResultVo importExcel(@RequestParam MultipartFile file) {
         ResultVo resultVo = new ResultVo();
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("媒体数据表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是媒体数据表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
@@ -91,11 +93,11 @@ public class MediaItemController {
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
         }
-        if(dataList == null){
+        if (dataList == null) {
             return resultVo;
         }
 
-        if(dataList.size() <= 0){
+        if (dataList.size() <= 0) {
             resultVo.setRtnCode(RetStatus.Fail.getValue());
             resultVo.setRtnMsg("excel中没有符合条件的数据");
             return resultVo;
@@ -107,23 +109,23 @@ public class MediaItemController {
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
-        for(List<String> dataItem : dataList){
-            if(dataItem.size() < 15){
+        for (List<String> dataItem : dataList) {
+            if (dataItem.size() < 15) {
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
-            for(String dataString : dataItem){
-                if(StringUtils.hasText(dataString)){
+            for (String dataString : dataItem) {
+                if (StringUtils.hasText(dataString)) {
                     isFullNull = false;
                 }
             }
-            if(isFullNull){
+            if (isFullNull) {
                 continue;
             }
 
-            rowIndex ++;
+            rowIndex++;
         }
-        if(StringUtils.hasText(messageBuilder.toString())){
+        if (StringUtils.hasText(messageBuilder.toString())) {
             resultVo.setRtnCode(RetStatus.Fail.getValue());
             resultVo.setRtnMsg(messageBuilder.toString());
             return resultVo;
@@ -132,36 +134,49 @@ public class MediaItemController {
         // 数据入库
         MediaItem mediaItem;
         Merchant merchant;
-        for(List<String> dataItem : dataList){
+        int totalCount = 0;
+        for (List<String> dataItem : dataList) {
 
             // 跳过空行
             isExist = true;
             isFullNull = true;
-            for(String dataString : dataItem){
-                if(StringUtils.hasText(dataString)){
+            for (String dataString : dataItem) {
+                if (StringUtils.hasText(dataString)) {
                     isFullNull = false;
                 }
             }
-            if(isFullNull){
+            if (isFullNull) {
                 continue;
             }
             try {
+                merchant = merchantService.findByName(dataItem.get(2));
                 // 重复数据校验
                 mediaItem = new MediaItem();
                 mediaItem.setDate(dataItem.get(1));
+                mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
+                // 渠道归属
                 mediaItem.setPlatformName(dataItem.get(3));
+                // 广告活动
                 mediaItem.setAdvertiseActive(dataItem.get(4));
-                mediaItem.setSpeedCost(dataItem.get(14));
+
+                mediaItem.setAdvertiseMedia(dataItem.get(5));
+                mediaItem.setAdvertiseSeries(dataItem.get(6));
+                mediaItem.setKeyWordGroup(dataItem.get(7));
+                mediaItem.setKeyWord(dataItem.get(8));
+                mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(10)));
+                mediaItem.setSpeedCost(dataItem.get(11));
+                mediaItem.setClickRate(dataItem.get(12));
+                mediaItem.setAverageClickPrice(dataItem.get(13));
+                mediaItem.setAverageRank(dataItem.get(14));
                 mediaItem = mediaItemService.findOneByParam(mediaItem);
-                if(mediaItem == null){
+                if (mediaItem == null) {
                     isExist = false;
                     mediaItem = new MediaItem();
-                }else{
-                    logger.info("[mediaItemController|importExcel]重复数据{}", JSON.toJSONString(mediaItem));
+                } else {
+                    logger.info("[mediaItemController|importExcel]重复数据{}", JSON.toJSONString(dataItem));
                 }
 
-
-                merchant = merchantService.findByName(dataItem.get(2));
                 // 保存数据
                 mediaItem.setDate(dataItem.get(1));
                 mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
@@ -181,26 +196,27 @@ public class MediaItemController {
                 mediaItem.setAverageClickPrice(dataItem.get(13));
                 mediaItem.setAverageRank(dataItem.get(14));
 
-                if(isExist){
+                if (isExist) {
                     mediaItemService.update(mediaItem);
-                }else {
+                } else {
                     mediaItemService.insert(mediaItem);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[mediaItemController|importExcel]保存数据发生异常。mediaItem={}", JSON.toJSONString(dataItem), e);
             }
 
         }
-
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 
 
-    private List<MediaItemVo> transformBean2VoList(List<MediaItem> mediaItemList){
+    private List<MediaItemVo> transformBean2VoList(List<MediaItem> mediaItemList) {
         Merchant merchant;
         MediaItemVo mediaItemVo;
         List<MediaItemVo> mediaItemVoList = new ArrayList<>();
-        for(MediaItem mediaItem : mediaItemList){
+        for (MediaItem mediaItem : mediaItemList) {
             merchant = merchantService.findById(mediaItem.getMerchantId());
             mediaItemVo = new MediaItemVo();
             BeanUtils.copyProperties(mediaItem, mediaItemVo);

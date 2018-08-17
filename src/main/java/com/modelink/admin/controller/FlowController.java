@@ -80,6 +80,13 @@ public class FlowController {
         List<List<String>> dataList;
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
+            String fileName = file.getOriginalFilename();
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("流量总表")){
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg("您导入表格不是流量总表");
+                return resultVo;
+            }
+
             Map<Integer, String> fieldFormatMap = new HashMap<>();
             fieldFormatMap.put(10, "HH:mm:ss");
 
@@ -135,6 +142,7 @@ public class FlowController {
         Area area;
         Flow flow;
         Merchant merchant;
+        int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -189,12 +197,13 @@ public class FlowController {
                 }else{
                     flowService.insert(flow);
                 }
+                totalCount ++;
             } catch (Exception e) {
                 logger.error("[flowController|importExcel]保存数据发生异常。flow={}", JSON.toJSONString(dataItem), e);
             }
 
         }
-
+        resultVo.setRtnData(totalCount);
         return resultVo;
     }
 
