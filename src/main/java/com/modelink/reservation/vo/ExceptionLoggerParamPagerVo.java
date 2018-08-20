@@ -2,10 +2,10 @@ package com.modelink.reservation.vo;
 
 import com.modelink.common.vo.PagerVo;
 
-public class AbnormalParamPagerVo extends PagerVo {
+public class ExceptionLoggerParamPagerVo extends PagerVo {
 
     private Long merchantId;
-    private String problemData;
+    private String loggerType;
     private String dateField;
     private String chooseDate;
     private String columnFieldIds;
@@ -18,12 +18,12 @@ public class AbnormalParamPagerVo extends PagerVo {
         this.merchantId = merchantId;
     }
 
-    public String getProblemData() {
-        return problemData;
+    public String getLoggerType() {
+        return loggerType;
     }
 
-    public void setProblemData(String problemData) {
-        this.problemData = problemData;
+    public void setLoggerType(String loggerType) {
+        this.loggerType = loggerType;
     }
 
     public String getDateField() {

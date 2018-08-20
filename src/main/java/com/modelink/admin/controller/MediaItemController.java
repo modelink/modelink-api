@@ -51,7 +51,7 @@ public class MediaItemController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/mediaItem/list");
+        modelAndView.setViewName("/admin/media/media-item-list");
         return modelAndView;
     }
 

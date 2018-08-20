@@ -2,10 +2,9 @@ package com.modelink.reservation.vo;
 
 import com.modelink.common.vo.PagerVo;
 
-public class AbnormalParamPagerVo extends PagerVo {
+public class MediaTacticsParamPagerVo extends PagerVo {
 
     private Long merchantId;
-    private String problemData;
     private String dateField;
     private String chooseDate;
     private String columnFieldIds;
@@ -16,14 +15,6 @@ public class AbnormalParamPagerVo extends PagerVo {
 
     public void setMerchantId(Long merchantId) {
         this.merchantId = merchantId;
-    }
-
-    public String getProblemData() {
-        return problemData;
-    }
-
-    public void setProblemData(String problemData) {
-        this.problemData = problemData;
     }
 
     public String getDateField() {

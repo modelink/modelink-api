@@ -314,8 +314,9 @@ public class DashboardController {
         AbnormalParamPagerVo paramPagerVo = new AbnormalParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setDateField("date");
-        paramPagerVo.setColumnFieldIds("id,date");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setProblemData("是");
+        paramPagerVo.setColumnFieldIds("id,reserveDate");
         List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);
 
         String dateKey;

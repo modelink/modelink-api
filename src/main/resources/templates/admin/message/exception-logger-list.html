@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>欢迎页面-X-admin2.0</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" th:href="@{/static/css/admin/home/font.css}">
+    <link rel="stylesheet" th:href="@{/static/css/admin/home/xadmin.css}">
+</head>
+<body>
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">选择时间</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">业务类型</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="loggerType" name="loggerType" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <button class="layui-btn" lay-submit="" lay-filter="search-btn">查询</button>
+                <a class="layui-btn layui-btn-primary reset-btn">重置</a>
+            </div>
+        </div>
+    </form>
+
+    <table class="layui-hide" id="exceptionLogger-table-grid"></table>
+
+    <script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
+    <script th:inline="javascript">
+        layui.config({
+            base: '/static/js/admin/message/' //你的模块目录
+        }).use('exceptionLogger'); //加载入口
+    </script>
+</div>
+
+</body>
+</html>
+

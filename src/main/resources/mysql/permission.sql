@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `permission`;
 CREATE TABLE `permission` (
   `id` bigint(20) NOT NULL COMMENT '权限ID',
   `name` varchar(32) NOT NULL DEFAULT '' COMMENT '权限名',
-  `loggerType` int(11) NOT NULL COMMENT '权限累心：1-菜单；2-按钮',
+  `type` int(11) NOT NULL COMMENT '权限累心：1-菜单；2-按钮',
   `value` varchar(45) NOT NULL DEFAULT '' COMMENT '权限值',
   `parent_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '父级权限ID',
   `description` varchar(255) NOT NULL DEFAULT '' COMMENT '权限描述',

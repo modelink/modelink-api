@@ -5,7 +5,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 /**
- * 承保效果
+ * 媒体数据表
  */
 public class MediaItem implements Serializable {
 

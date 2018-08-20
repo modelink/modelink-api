@@ -84,7 +84,9 @@ public class AbnormalServiceImpl implements AbnormalService {
             criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
-
+        if(StringUtils.hasText(paramPagerVo.getProblemData())){
+            criteria.andEqualTo("problemData", paramPagerVo.getProblemData());
+        }
         List<Abnormal> abnormalList = abnormalMapper.selectByExample(example);
         return abnormalList;
     }
@@ -101,10 +103,14 @@ public class AbnormalServiceImpl implements AbnormalService {
 
         Example example = new Example(Abnormal.class);
         Example.Criteria criteria = example.createCriteria();
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "date";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
         example.setOrderByClause("date desc");
         List<Abnormal> abnormalList = abnormalMapper.selectByExample(example);

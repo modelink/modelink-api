@@ -1,6 +1,8 @@
 package com.modelink.admin.service;
 
+import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.ExceptionLogger;
+import com.modelink.reservation.vo.ExceptionLoggerParamPagerVo;
 
 import java.util.List;
 
@@ -34,4 +36,10 @@ public interface ExceptionLoggerService {
      */
     public List<ExceptionLogger> findListByParam(ExceptionLogger exceptionLogger);
 
+    /**
+     * 查询符合条件的记录列表（分页查询）
+     * @param paramPagerVo
+     * @return
+     */
+    public PageInfo<ExceptionLogger> findPagerByParam(ExceptionLoggerParamPagerVo paramPagerVo);
 }
