@@ -2,6 +2,8 @@ package com.modelink.admin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.bean.ExceptionLogger;
+import com.modelink.admin.service.ExceptionLoggerService;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
@@ -29,10 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 承保效果数据Controller
@@ -50,6 +49,8 @@ public class FlowController {
     private MerchantService merchantService;
     @Resource
     private FlowService flowService;
+    @Resource
+    private ExceptionLoggerService exceptionLoggerService;
 
     @RequestMapping
     public ModelAndView index() {
@@ -173,6 +174,12 @@ public class FlowController {
                     flow = new Flow();
                 }else{
                     logger.info("[flowController|importExcel]重复数据{}", JSON.toJSONString(flow));
+                    ExceptionLogger exceptionLogger = new ExceptionLogger();
+                    exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
+                    exceptionLogger.setLoggerType("flow-base");
+                    exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
+                    exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+                    exceptionLoggerService.save(exceptionLogger);
                 }
 
 
@@ -196,10 +203,16 @@ public class FlowController {
                     flowService.update(flow);
                 }else{
                     flowService.insert(flow);
+                    totalCount ++;
                 }
-                totalCount ++;
             } catch (Exception e) {
                 logger.error("[flowController|importExcel]保存数据发生异常。flow={}", JSON.toJSONString(dataItem), e);
+                ExceptionLogger exceptionLogger = new ExceptionLogger();
+                exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据异常");
+                exceptionLogger.setLoggerType("flow-base");
+                exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
+                exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+                exceptionLoggerService.save(exceptionLogger);
             }
 
         }

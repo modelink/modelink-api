@@ -2,6 +2,8 @@ package com.modelink.admin.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.bean.ExceptionLogger;
+import com.modelink.admin.service.ExceptionLoggerService;
 import com.modelink.common.enums.AreaTypeEnum;
 import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.RetStatus;
@@ -31,10 +33,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 承保效果数据Controller
@@ -51,6 +50,8 @@ public class UnderwriteController {
     private MerchantService merchantService;
     @Resource
     private UnderwriteService underwriteService;
+    @Resource
+    private ExceptionLoggerService exceptionLoggerService;
 
     @RequestMapping
     public ModelAndView index() {
@@ -146,6 +147,7 @@ public class UnderwriteController {
         String reserveDate;
         int index;
         int totalCount = 0;
+        int provinceId, cityId;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -160,6 +162,19 @@ public class UnderwriteController {
                 continue;
             }
             try {
+                area = areaService.findByNameAndType(dataItem.get(18), AreaTypeEnum.省.getValue());
+                if(area == null){
+                    continue;
+                }
+                provinceId = area.getAreaId();
+                area = areaService.findByNameAndType(dataItem.get(19), AreaTypeEnum.市.getValue());
+                if(area == null){
+                    area = areaService.findByNameAndType(dataItem.get(19), AreaTypeEnum.区.getValue());
+                    if(area == null){
+                        continue;
+                    }
+                }
+                cityId = area.getAreaId();
                 // 重复数据校验
                 underwrite = new Underwrite();
 
@@ -177,6 +192,12 @@ public class UnderwriteController {
                     underwrite = new Underwrite();
                 }else{
                     logger.info("[underwriteController|importExcel]重复数据{}", JSON.toJSONString(underwrite));
+                    ExceptionLogger exceptionLogger = new ExceptionLogger();
+                    exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
+                    exceptionLogger.setLoggerType("underwrite");
+                    exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
+                    exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+                    exceptionLoggerService.save(exceptionLogger);
                 }
 
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
@@ -206,20 +227,24 @@ public class UnderwriteController {
                 }
                 underwrite.setAddress(dataItem.get(17));
                 // 查找省份数据
-                area = areaService.findByNameAndType(dataItem.get(18), AreaTypeEnum.省.getValue());
-                underwrite.setProvinceId(area == null ? 0 : area.getAreaId());
+                underwrite.setProvinceId(provinceId);
                 // 查找城市数据
-                area = areaService.findByNameAndType(dataItem.get(19), AreaTypeEnum.市.getValue());
-                underwrite.setCityId(area == null ? 0 : area.getAreaId());
+                underwrite.setCityId(cityId);
 
                 if(exist) {
                     underwriteService.update(underwrite);
                 }else{
                     underwriteService.insert(underwrite);
+                    totalCount ++;
                 }
-                totalCount ++;
             } catch (Exception e) {
                 logger.error("[adminAdvertiseController|importExcel]保存数据发生异常。underwrite={}", JSON.toJSONString(dataItem), e);
+                ExceptionLogger exceptionLogger = new ExceptionLogger();
+                exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据异常");
+                exceptionLogger.setLoggerType("underwrite");
+                exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
+                exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+                exceptionLoggerService.save(exceptionLogger);
             }
 
         }

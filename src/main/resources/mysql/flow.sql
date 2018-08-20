@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `flow`;
 CREATE TABLE `flow` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
 
-  `date` varchar(10) NOT NULL DEFAULT '' COMMENT '时间',
+  `loggerDate` varchar(10) NOT NULL DEFAULT '' COMMENT '时间',
   `merchant_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '合作商户（如小米、华夏）',
   `platform_name` varchar(20) NOT NULL DEFAULT '' COMMENT '渠道归属（PC、移动端）',
   `website` varchar(32) NOT NULL DEFAULT '' COMMENT '网站来源',

@@ -7,9 +7,9 @@
             parameterType="com.modelink.admin.vo.DashboardParamVo"
             resultType="com.modelink.reservation.bean.FlowReserve">
         <![CDATA[
-            select date, reserve_mobile from flow_reserve
-            where date >= #{startDate}
-            and date =< #{endDate}
+            select loggerDate, reserve_mobile from flow_reserve
+            where loggerDate >= #{startDate}
+            and loggerDate =< #{endDate}
             and merchantId = #{merchantId}
         ]]>
     </select>

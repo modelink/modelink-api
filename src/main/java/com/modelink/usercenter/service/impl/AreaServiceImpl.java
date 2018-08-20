@@ -1,8 +1,12 @@
 package com.modelink.usercenter.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.bean.ExceptionLogger;
+import com.modelink.admin.service.ExceptionLoggerService;
 import com.modelink.admin.vo.AreaParamPagerVo;
+import com.modelink.common.utils.DateUtils;
 import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.mapper.AreaMapper;
 import com.modelink.usercenter.service.AreaService;
@@ -13,6 +17,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -22,6 +27,8 @@ public class AreaServiceImpl implements AreaService {
 
     @Resource
     private AreaMapper areaMapper;
+    @Resource
+    private ExceptionLoggerService exceptionLoggerService;
 
     /**
      * 插入一条记录
@@ -76,15 +83,23 @@ public class AreaServiceImpl implements AreaService {
      * @param areaType
      **/
     public Area findByNameAndType(String areaName, int areaType) {
-        if("未知地区".equals(areaName) || "-".equals(areaName)){
-            return null;
-        }
         Area area = new Area();
+        if("未知地区".equals(areaName) || "-".equals(areaName)){
+            area.setAreaId(0);
+            area.setAreaName("未知地区");
+            return area;
+        }
         area.setAreaName(areaName);
         area.setAreaType(areaType);
         area = areaMapper.selectOne(area);
         if(area == null){
             logger.error("[areaService|findByNameAndType]{}不存在，地区类型为{}", areaName, areaType);
+            ExceptionLogger exceptionLogger = new ExceptionLogger();
+            exceptionLogger.setLoggerKey(areaName + "不存在");
+            exceptionLogger.setLoggerType("area");
+            exceptionLogger.setLoggerDesc(areaName + ":" + areaType);
+            exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
+            exceptionLoggerService.save(exceptionLogger);
         }
         return area;
     }

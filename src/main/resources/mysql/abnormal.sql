@@ -2,7 +2,7 @@ DROP TABLE IF EXISTS `abnormal`;
 CREATE TABLE `abnormal` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
 
-  `date` varchar(10) NOT NULL DEFAULT '' COMMENT '反馈时间',
+  `loggerDate` varchar(10) NOT NULL DEFAULT '' COMMENT '反馈时间',
   `org_name` varchar(20) NOT NULL DEFAULT '' COMMENT '机构名称',
   `tsr_name` varchar(20) NOT NULL DEFAULT '' COMMENT 'TSR姓名',
 
