@@ -101,12 +101,16 @@ public class MediaItemServiceImpl implements MediaItemService {
 
         Example example = new Example(MediaItem.class);
         Example.Criteria criteria = example.createCriteria();
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "date";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("createTime", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
-        example.setOrderByClause("create_time desc");
+        example.setOrderByClause(dateField + " desc");
         List<MediaItem> mediaItemList = mediaItemMapper.selectByExample(example);
         PageInfo<MediaItem> pageInfo = new PageInfo<>(mediaItemList);
         return pageInfo;

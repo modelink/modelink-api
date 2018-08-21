@@ -29,7 +29,7 @@ public class AliyunSmsServiceTest {
         templateValue.put("code", "123456");
 
         SmsParamVo smsParamVo = new SmsParamVo();
-        smsParamVo.setPhoneNumbers("15110100578,13810145297");
+        smsParamVo.setPhoneNumbers("15110100578,17746510757");
         smsParamVo.setTemplateCode("SMS_140035039");
         smsParamVo.setTemplateParam(JSON.toJSONString(templateValue));
         smsParamVo.setSignName("北京数驰科技");

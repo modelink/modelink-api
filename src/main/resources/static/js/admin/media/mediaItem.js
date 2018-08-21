@@ -142,6 +142,7 @@ var MediaItem = {
     fieldList: [
         '',
         'id',
+        'date',
         'merchantName',
         'platformName',
 
@@ -155,6 +156,7 @@ var MediaItem = {
     ],
     column: [
         {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
+        {field: 'date', title: '日期', minWidth: 100, align: 'center'},
         {field: 'merchantName', title: '合作商户', minWidth: 120, align: 'center'},
         {field: 'platformName', title: '渠道归属', minWidth: 100, align: 'center'},
 

@@ -5,7 +5,7 @@ CREATE TABLE `flow` (
   `date` varchar(10) NOT NULL DEFAULT '' COMMENT '时间',
   `merchant_id` bigint(20) NOT NULL DEFAULT 0 COMMENT '合作商户（如小米、华夏）',
   `platform_name` varchar(20) NOT NULL DEFAULT '' COMMENT '渠道归属（PC、移动端）',
-  `website` varchar(32) NOT NULL DEFAULT '' COMMENT '网站来源',
+  `website` varchar(128) NOT NULL DEFAULT '' COMMENT '网站来源',
   `source` varchar(20) NOT NULL DEFAULT '' COMMENT '来源类型',
 
   `browse_count` int(11) NOT NULL DEFAULT 0 COMMENT '浏览量',
