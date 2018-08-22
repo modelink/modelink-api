@@ -354,13 +354,20 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         var echartOption = {
             tooltip : {
-                formatter: "{a} <br/>{b} : {c}‱"
+                formatter: "{a} <br/>{b} : {c}‰"
             },
             series: [
                 {
                     name: '转化率',
                     type: 'gauge',
-                    detail: {formatter: '{value}‱'},
+                    detail: {
+                        fontSize: '14',
+                        formatter: function (value) {
+                            value = value / 10;
+                            value.toFixed(2);
+                            return value + '‰';
+                        }
+                    },
                     data: contentList
                 }
             ]
