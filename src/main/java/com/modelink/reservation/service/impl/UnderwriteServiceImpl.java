@@ -13,7 +13,9 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class UnderwriteServiceImpl implements UnderwriteService {
@@ -94,6 +96,32 @@ public class UnderwriteServiceImpl implements UnderwriteService {
         if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
             criteria.andEqualTo("reserveMobile", paramPagerVo.getMobile());
         }
+        if(StringUtils.hasText(paramPagerVo.getPlatformName())){
+            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+        }
+        if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
+            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
+        }
+        List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
+        return underwriteList;
+    }
+
+    /**
+     * 查询符合条件的记录列表
+     * @param insuranceNoSet
+     * @return
+     */
+    public List<Underwrite> findListByInsuranceNoSet(Set<String> insuranceNoSet, String filteFields) {
+        if(insuranceNoSet == null || insuranceNoSet.size() <= 0){
+            return new ArrayList<>();
+        }
+        Example example = new Example(Underwrite.class);
+        if(StringUtils.hasText(filteFields)) {
+            example.selectProperties(filteFields.split(","));
+        }
+
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("insuranceNo", insuranceNoSet);
 
         List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
         return underwriteList;

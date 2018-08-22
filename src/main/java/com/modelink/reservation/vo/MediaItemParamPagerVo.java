@@ -6,6 +6,9 @@ public class MediaItemParamPagerVo extends PagerVo {
 
     private String chooseDate;
     private Long merchantId;
+    private String platformName;
+    private String advertiseActive;
+
     private String dateField;
     private String columnFieldIds;
 
@@ -23,6 +26,22 @@ public class MediaItemParamPagerVo extends PagerVo {
 
     public void setMerchantId(Long merchantId) {
         this.merchantId = merchantId;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public String getAdvertiseActive() {
+        return advertiseActive;
+    }
+
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 
     public String getDateField() {

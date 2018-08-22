@@ -15,7 +15,7 @@ CREATE TABLE `media_item` (
   `show_count` int(11) NOT NULL DEFAULT 0 COMMENT '展现量',
   `click_count` int(11) NOT NULL DEFAULT 0 COMMENT '点击量',
   `speed_cost` varchar(32) NOT NULL DEFAULT '' COMMENT '花费成本',
-  `click_rate` varchar(10) NOT NULL DEFAULT '' COMMENT '点击率',
+  `click_rate` varchar(18) NOT NULL DEFAULT '' COMMENT '点击率',
   `average_click_price` varchar(32) NOT NULL DEFAULT '' COMMENT '平均点击价格',
   `average_rank` varchar(32) NOT NULL DEFAULT '' COMMENT '平均排名',
 

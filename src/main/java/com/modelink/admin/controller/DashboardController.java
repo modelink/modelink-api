@@ -6,6 +6,7 @@ import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.common.enums.AgePartEnum;
 import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
+import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
@@ -59,9 +60,9 @@ public class DashboardController {
 
         String dateKey;
         int reserveCount;
-        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (FlowReserve flowReserve : flowReserveList) {
-            dateKey = getDateKeyByDateType(flowReserve.getDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), paramVo.getDateType());
             reserveCount = 0;
             if(statCountMap.get(dateKey) != null){
                 reserveCount = (Integer)statCountMap.get(dateKey);
@@ -96,9 +97,9 @@ public class DashboardController {
 
         String dateKey;
         int reserveCount;
-        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
             reserveCount = 0;
             if(statCountMap.get(dateKey) != null){
                 reserveCount = (Integer)statCountMap.get(dateKey);
@@ -135,9 +136,9 @@ public class DashboardController {
         paramPagerVo.setDateField("finishDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
         double insuranceTotalAmount;
-        Map<String, Object> totalAmountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        Map<String, Object> totalAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
             insuranceTotalAmount = 0.00;
             if(totalAmountMap.get(dateKey) != null){
                 insuranceTotalAmount = (double)totalAmountMap.get(dateKey);
@@ -155,9 +156,9 @@ public class DashboardController {
         List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
 
         double refundTotalAmount;
-        Map<String, Object> refundAmountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        Map<String, Object> refundAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         for (Repellent repellent : repellentList) {
-            dateKey = getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
             refundTotalAmount = 0.00;
             if(refundAmountMap.get(dateKey) != null){
                 refundTotalAmount = (double)refundAmountMap.get(dateKey);
@@ -206,9 +207,9 @@ public class DashboardController {
         List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
 
         double refundTotalAmount;
-        Map<String, Object> refundAmountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        Map<String, Object> refundAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         for (Repellent repellent : repellentList) {
-            dateKey = getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
             refundTotalAmount = 0.00;
             if(refundAmountMap.get(dateKey) != null){
                 refundTotalAmount = (double)refundAmountMap.get(dateKey);
@@ -242,9 +243,9 @@ public class DashboardController {
 
         String dateKey;
         int totalCount;
-        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
             totalCount = 0;
             if(statCountMap.get(dateKey) != null){
                 totalCount = (int)statCountMap.get(dateKey);
@@ -259,9 +260,9 @@ public class DashboardController {
         mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
         mediaItemParamPagerVo.setColumnFieldIds("date,speedCost");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
-        Map<String, Object> statAmountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        Map<String, Object> statAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         for (MediaItem mediaItem : mediaItemList) {
-            dateKey = getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
             totalAmount = 0.00;
             if(statAmountMap.get(dateKey) != null){
                 totalAmount = (double)statAmountMap.get(dateKey);
@@ -321,10 +322,10 @@ public class DashboardController {
 
         String dateKey;
         int reserveCount;
-        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Abnormal abnormal : abnormalList) {
             if("是".equals(abnormal.getProblemData())){
-                dateKey = getDateKeyByDateType(abnormal.getDate(), paramVo.getDateType());
+                dateKey = DataUtils.getDateKeyByDateType(abnormal.getDate(), paramVo.getDateType());
                 reserveCount = 0;
                 if(statCountMap.get(dateKey) != null){
                     reserveCount = (Integer)statCountMap.get(dateKey);
@@ -363,7 +364,7 @@ public class DashboardController {
         List<Underwrite> tempList;
         Map<String, List<Underwrite>> underwriteListMap = new HashMap<>();
         for(Underwrite underwrite : underwriteList) {
-            dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
             tempList = underwriteListMap.get(dateKey);
             if(tempList == null){
                 tempList = new ArrayList<>();
@@ -382,7 +383,7 @@ public class DashboardController {
         Map<String, String> mobile2DateMap;
         Iterator<String> iterator = underwriteListMap.keySet().iterator();
 
-        Map<String, Object> statResultMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        Map<String, Object> statResultMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         while (iterator.hasNext()) {
             dateKey = iterator.next();
             tempList = underwriteListMap.get(dateKey);
@@ -443,9 +444,9 @@ public class DashboardController {
         paramPagerVo.setDateField("finishDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
         int totalCount;
-        Map<String, Object> totalCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> totalCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
             totalCount = (int)totalCountMap.get(dateKey);
             totalCount ++;
             totalCountMap.put(dateKey, totalCount);
@@ -460,9 +461,9 @@ public class DashboardController {
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
         int clickTotalCount;
-        Map<String, Object> clickTotalMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> clickTotalMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (MediaItem mediaItem : mediaItemList) {
-            dateKey = getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
             clickTotalCount = (int)clickTotalMap.get(dateKey);
             clickTotalCount += mediaItem.getClickCount();
             clickTotalMap.put(dateKey, clickTotalCount);
@@ -511,9 +512,9 @@ public class DashboardController {
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         int reserveCount;
-        Map<String, Object> statCountMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (FlowReserve flowReserve : flowReserveList) {
-            dateKey = getDateKeyByDateType(flowReserve.getDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), paramVo.getDateType());
             reserveCount = 0;
             if(statCountMap.get(dateKey) != null){
                 reserveCount = (Integer)statCountMap.get(dateKey);
@@ -531,9 +532,9 @@ public class DashboardController {
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
         int clickTotalCount;
-        Map<String, Object> clickTotalMap = initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
+        Map<String, Object> clickTotalMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (MediaItem mediaItem : mediaItemList) {
-            dateKey = getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
             clickTotalCount = (int)clickTotalMap.get(dateKey);
             clickTotalCount += mediaItem.getClickCount();
             clickTotalMap.put(dateKey, clickTotalCount);
@@ -818,8 +819,9 @@ public class DashboardController {
                 searchCount = 0;
             } else {
                 searchCount = searchWordMap.get(flowReserve.getSearchWord());
-                searchCount++;
             }
+
+            searchCount++;
             searchWordMap.put(flowReserve.getSearchWord(), searchCount);
         }
 
@@ -954,57 +956,4 @@ public class DashboardController {
         return ageMap;
     }
 
-    /**
-     * 根据选择的日期初始化Map集合
-     * @param chooseDate
-     * @param dateType
-     * @return
-     */
-    private Map<String, Object> initResultMap(String chooseDate, int dateType, String dataType){
-        Map<String, Object> resultMap = new HashMap<>();
-        String[] dateArray = chooseDate.split(" - ");
-
-        Object initValue = "";
-        if("int".equals(dataType)){
-            initValue = 0;
-        }else if("double".equals(dataType)){
-            initValue = 0.00;
-        }
-
-        String dateKey = getDateKeyByDateType(dateArray[0], dateType);
-        resultMap.put(dateKey, initValue);
-
-        if(dateArray[0].equals(dateArray[1])){
-            return resultMap;
-        }
-        Date startDate = DateUtils.formatDate(dateArray[0], "yyyy-MM-dd");
-        String nextDate = DateUtils.calculateDate(startDate, Calendar.DAY_OF_YEAR, 1, "yyyy-MM-dd");
-        while(!dateArray[1].equals(nextDate)){
-            dateKey = getDateKeyByDateType(nextDate, dateType);
-            resultMap.put(dateKey, initValue);
-            startDate = DateUtils.formatDate(nextDate, "yyyy-MM-dd");
-            nextDate = DateUtils.calculateDate(startDate, Calendar.DAY_OF_YEAR, 1, "yyyy-MM-dd");
-        }
-        dateKey = getDateKeyByDateType(nextDate, dateType);
-        resultMap.put(dateKey, initValue);
-        return resultMap;
-    }
-
-    private String getDateKeyByDateType(String dateString, int dateType){
-        String format = "yyyyMMdd";
-        Date date = DateUtils.formatDate(dateString, "yyyy-MM-dd");
-        if(dateType == DateTypeEnum.年.getValue()){
-            format = "yyyy";
-        }else if(dateType == DateTypeEnum.季度.getValue()){
-            format = "yyyy";
-            return DateUtils.formatDate(date, format) + "0" + DateUtils.getSeasonByDate(date);
-        }else if(dateType == DateTypeEnum.月.getValue()){
-            format = "yyyyMM";
-        }else if(dateType == DateTypeEnum.周.getValue()){
-            format = "yyyyww";
-        }else if(dateType == DateTypeEnum.日.getValue()){
-            format = "yyyyMMdd";
-        }
-        return DateUtils.formatDate(date, format);
-    }
 }

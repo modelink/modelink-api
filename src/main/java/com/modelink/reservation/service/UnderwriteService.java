@@ -7,6 +7,7 @@ import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import com.modelink.reservation.bean.Underwrite;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 承保数据服务接口
@@ -47,6 +48,13 @@ public interface UnderwriteService {
      * @return
      */
     public List<Underwrite> findListByParam(UnderwriteParamPagerVo paramPagerVo);
+
+    /**
+     * 查询符合条件的记录列表
+     * @param insuranceNoSet
+     * @return
+     */
+    public List<Underwrite> findListByInsuranceNoSet(Set<String> insuranceNoSet, String filteFields);
 
     /**
      * 查询符合条件的记录列表（分页查询）

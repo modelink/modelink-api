@@ -93,7 +93,7 @@ public class ExceptionLoggerServiceImpl implements ExceptionLoggerService {
         if(StringUtils.hasText(paramPagerVo.getLoggerType())){
             criteria.andEqualTo("loggerType", paramPagerVo.getLoggerType());
         }
-        example.setOrderByClause("logger_date desc");
+        example.setOrderByClause("create_time desc");
         List<ExceptionLogger> abnormalList = exceptionLoggerMapper.selectByExample(example);
         PageInfo<ExceptionLogger> pageInfo = new PageInfo<>(abnormalList);
         return pageInfo;

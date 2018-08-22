@@ -64,7 +64,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         }
     }
 
-    exports('insurance-echarts', {});
+    exports('dashboard', {});
 });
 
 var insuranceEcharts = {

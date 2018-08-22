@@ -8,6 +8,8 @@ public class RepellentParamPagerVo extends PagerVo {
     private String dateField;
     private String chooseDate;
     private String columnFieldIds;
+    private String platformName;
+    private String advertiseActive;
 
     public Long getMerchantId() {
         return merchantId;
@@ -39,5 +41,21 @@ public class RepellentParamPagerVo extends PagerVo {
 
     public void setColumnFieldIds(String columnFieldIds) {
         this.columnFieldIds = columnFieldIds;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public String getAdvertiseActive() {
+        return advertiseActive;
+    }
+
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 }

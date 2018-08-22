@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -95,11 +96,12 @@ public class FlowReserveServiceImpl implements FlowReserveService {
      */
     @Override
     public List<FlowReserve> findListByMobiles(Set<String> mobileSet, String sortField) {
+        if(mobileSet == null || mobileSet.size() <= 0){
+            return new ArrayList<>();
+        }
         Example example = new Example(FlowReserve.class);
         Example.Criteria criteria = example.createCriteria();
-        if(!StringUtils.isEmpty(mobileSet) && mobileSet.size() > 0){
-            criteria.andIn("reserveMobile", mobileSet);
-        }
+        criteria.andIn("reserveMobile", mobileSet);
         example.setOrderByClause(sortField);
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;

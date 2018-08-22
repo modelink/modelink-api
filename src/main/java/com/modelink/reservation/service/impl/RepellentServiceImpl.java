@@ -84,7 +84,6 @@ public class RepellentServiceImpl implements RepellentService {
             criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
-
         List<Repellent> repellentList = repellentMapper.selectByExample(example);
         return repellentList;
     }

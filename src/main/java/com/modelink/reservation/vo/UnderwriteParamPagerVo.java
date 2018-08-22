@@ -9,6 +9,8 @@ public class UnderwriteParamPagerVo extends PagerVo {
     private String mobile;
     private Long merchantId;
     private String columnFieldIds;
+    private String platformName;
+    private String advertiseActive;
 
     public String getChooseDate() {
         return chooseDate;
@@ -48,5 +50,21 @@ public class UnderwriteParamPagerVo extends PagerVo {
 
     public void setColumnFieldIds(String columnFieldIds) {
         this.columnFieldIds = columnFieldIds;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public String getAdvertiseActive() {
+        return advertiseActive;
+    }
+
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 }
