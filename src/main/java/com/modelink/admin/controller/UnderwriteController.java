@@ -182,16 +182,16 @@ public class UnderwriteController {
                 underwrite.setReserveDate(reserveDate);
                 merchant = merchantService.findByName(dataItem.get(1));
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
-                underwrite.setPlatformName(dataItem.get(2));
-                underwrite.setAdvertiseActive(dataItem.get(3));
                 underwrite.setInsuranceNo(dataItem.get(6));
                 underwrite.setReserveMobile(dataItem.get(7));
+                underwrite.setInsuranceAmount(dataItem.get(12));
+                underwrite.setInsuranceFee(dataItem.get(13));
                 underwrite = underwriteService.findOneByParam(underwrite);
                 if(underwrite == null){
                     exist = false;
                     underwrite = new Underwrite();
                 }else{
-                    logger.info("[underwriteController|importExcel]重复数据{}", JSON.toJSONString(underwrite));
+                    logger.info("[underwriteController|importExcel]重复数据{}", JSON.toJSONString(dataItem));
                     ExceptionLogger exceptionLogger = new ExceptionLogger();
                     exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
                     exceptionLogger.setLoggerType("underwrite");

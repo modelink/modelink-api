@@ -10,7 +10,7 @@
             select loggerDate, reserve_mobile from flow_reserve
             where loggerDate >= #{startDate}
             and loggerDate =< #{endDate}
-            and merchantId = #{merchantId}
+            and merchantName = #{merchantName}
         ]]>
     </select>
 

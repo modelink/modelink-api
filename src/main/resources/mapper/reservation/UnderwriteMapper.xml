@@ -10,7 +10,7 @@
             select * from underwrite
             where finish_date >= #{startDate}
             and finish_date <= #{endDate}
-            and merchant_id = #{merchantId}
+            and merchant_id = #{merchantName}
         ]]>
     </select>
 
