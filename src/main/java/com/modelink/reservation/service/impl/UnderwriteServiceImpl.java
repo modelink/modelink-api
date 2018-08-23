@@ -108,6 +108,27 @@ public class UnderwriteServiceImpl implements UnderwriteService {
 
     /**
      * 查询符合条件的记录列表
+     * @param mobileSet
+     * @param sortField
+     * @return
+     */
+    @Override
+    public List<Underwrite> findListByMobiles(Set<String> mobileSet, String sortField) {
+        if(mobileSet == null || mobileSet.size() <= 0){
+            return new ArrayList<>();
+        }
+        Example example = new Example(Underwrite.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andIn("reserveMobile", mobileSet);
+        if(StringUtils.hasText(sortField)) {
+            example.setOrderByClause(sortField);
+        }
+        List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
+        return underwriteList;
+    }
+
+    /**
+     * 查询符合条件的记录列表
      * @param insuranceNoSet
      * @return
      */

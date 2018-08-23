@@ -51,6 +51,14 @@ public interface UnderwriteService {
 
     /**
      * 查询符合条件的记录列表
+     * @param mobileSet
+     * @param sortField
+     * @return
+     */
+    public List<Underwrite> findListByMobiles(Set<String> mobileSet, String sortField);
+
+    /**
+     * 查询符合条件的记录列表
      * @param insuranceNoSet
      * @return
      */

@@ -78,12 +78,21 @@ public class FlowReserveServiceImpl implements FlowReserveService {
     public List<FlowReserve> findListByParam(FlowReserveParamPagerVo paramPagerVo) {
         Example example = new Example(FlowReserve.class);
         Example.Criteria criteria = example.createCriteria();
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "date";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
-
+        if(StringUtils.hasText(paramPagerVo.getPlatformName())){
+            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+        }
+        if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
+            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
+        }
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;
     }
@@ -102,7 +111,9 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         Example example = new Example(FlowReserve.class);
         Example.Criteria criteria = example.createCriteria();
         criteria.andIn("reserveMobile", mobileSet);
-        example.setOrderByClause(sortField);
+        if(StringUtils.hasText(sortField)) {
+            example.setOrderByClause(sortField);
+        }
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;
     }

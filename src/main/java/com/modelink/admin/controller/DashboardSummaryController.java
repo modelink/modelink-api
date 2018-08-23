@@ -97,7 +97,10 @@ public class DashboardSummaryController {
         FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
         flowReserveParamPagerVo.setChooseDate(paramVo.getChooseDate());
         flowReserveParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
+        flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
         int reserveCount, reserveTotalCount = 0;

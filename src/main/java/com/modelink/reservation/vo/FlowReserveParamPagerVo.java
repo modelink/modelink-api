@@ -4,9 +4,12 @@ import com.modelink.common.vo.PagerVo;
 
 public class FlowReserveParamPagerVo extends PagerVo {
 
+    private String dateField;
     private String chooseDate;
     private String mobile;
     private Long merchantId;
+    private String platformName;
+    private String advertiseActive;
     private String columnFieldIds;
 
     public String getChooseDate() {
@@ -39,5 +42,29 @@ public class FlowReserveParamPagerVo extends PagerVo {
 
     public void setColumnFieldIds(String columnFieldIds) {
         this.columnFieldIds = columnFieldIds;
+    }
+
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public String getAdvertiseActive() {
+        return advertiseActive;
+    }
+
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
     }
 }
