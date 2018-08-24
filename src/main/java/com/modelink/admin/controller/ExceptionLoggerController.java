@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.ExceptionLogger;
 import com.modelink.admin.service.ExceptionLoggerService;
 import com.modelink.common.vo.LayuiResultPagerVo;
+import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.vo.ExceptionLoggerParamPagerVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,14 @@ public class ExceptionLoggerController {
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(pageInfo.getList());
         return layuiResultPagerVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/delete")
+    public ResultVo delete(){
+        ResultVo resultVo = new ResultVo();
+        exceptionLoggerService.delete(new ExceptionLogger());
+        return resultVo;
     }
 
 }

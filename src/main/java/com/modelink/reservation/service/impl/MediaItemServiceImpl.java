@@ -75,6 +75,9 @@ public class MediaItemServiceImpl implements MediaItemService {
     public List<MediaItem> findListByParam(MediaItemParamPagerVo paramPagerVo) {
         Example example = new Example(MediaItem.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())){
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         String dateField = paramPagerVo.getDateField();
         if(StringUtils.isEmpty(dateField)){
             dateField = "date";

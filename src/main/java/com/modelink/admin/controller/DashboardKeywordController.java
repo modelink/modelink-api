@@ -4,7 +4,10 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.admin.vo.DashboardSummaryParamVo;
+import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
+import com.modelink.common.enums.TransformCycleEnum;
+import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.FlowReserve;
@@ -15,6 +18,7 @@ import com.modelink.reservation.service.MediaItemService;
 import com.modelink.reservation.service.UnderwriteService;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 import com.modelink.reservation.vo.MediaItemParamPagerVo;
+import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,7 +88,7 @@ public class DashboardKeywordController {
 
         });
 
-        int count = 0;
+        int count = 1;
         JSONObject wordCloud;
         JSONArray wordCloudArray = new JSONArray();
         for (Map.Entry<String, Integer> mapping : list) {
@@ -143,7 +147,7 @@ public class DashboardKeywordController {
 
         });
 
-        int count = 0;
+        int count = 1;
         JSONObject wordCloud;
         JSONArray wordCloudArray = new JSONArray();
         for (Map.Entry<String, Integer> mapping : list) {
@@ -226,7 +230,7 @@ public class DashboardKeywordController {
 
         });
 
-        int count = 0;
+        int count = 1;
         JSONObject wordCloud;
         JSONArray wordCloudArray = new JSONArray();
         for (Map.Entry<String, Double> mapping : list) {
@@ -257,7 +261,7 @@ public class DashboardKeywordController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,searchWord");
+        paramPagerVo.setColumnFieldIds("date,advertiseActive,clickCount,showCount,speedCost");
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -325,6 +329,475 @@ public class DashboardKeywordController {
         resultJson.put("titleList", titleArray);
         resultJson.put("clickRateList", clickRateArray);
         resultJson.put("clickCostList", clickCostArray);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getClickRateAndCostByKeyword")
+    public ResultVo getClickRateAndCostByKeyword(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+        if(StringUtils.isEmpty(paramVo.getAdvertiseActive())){
+            return resultVo;
+        }
+        initDashboardParam(paramVo);
+
+        MediaItemParamPagerVo paramPagerVo = new MediaItemParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setPlatformName(paramVo.getPlatformName());
+        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setColumnFieldIds("date,keyWord,clickCount,showCount,speedCost");
+        paramPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
+
+
+        int showCount, clickCount;
+        double consumeAmount;
+        Map<String, Integer> showCountMap = new HashMap<>();
+        Map<String, Integer> clickCountMap = new HashMap<>();
+        Map<String, Double> consumeAmountMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            if (StringUtils.isEmpty(mediaItem.getKeyWord())) {
+                continue;
+            }
+            showCount = 0;
+            if (showCountMap.get(mediaItem.getKeyWord()) != null) {
+                showCount = showCountMap.get(mediaItem.getKeyWord());
+            }
+            showCount += mediaItem.getShowCount();
+            showCountMap.put(mediaItem.getKeyWord(), showCount);
+
+            clickCount = 0;
+            if (clickCountMap.get(mediaItem.getKeyWord()) != null) {
+                clickCount = clickCountMap.get(mediaItem.getKeyWord());
+            }
+            clickCount += mediaItem.getClickCount();
+            clickCountMap.put(mediaItem.getKeyWord(), clickCount);
+
+            consumeAmount = 0.0d;
+            if (consumeAmountMap.get(mediaItem.getKeyWord()) != null) {
+                consumeAmount = consumeAmountMap.get(mediaItem.getKeyWord());
+            }
+            if (StringUtils.hasText(mediaItem.getSpeedCost())) {
+                consumeAmount += Double.parseDouble(mediaItem.getSpeedCost());
+            }
+            consumeAmountMap.put(mediaItem.getKeyWord(), consumeAmount);
+        }
+
+
+        // 挑选点击量前30的关键字
+        int idx = 1;
+        Set<String> keywordSet = new HashSet<>();
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(clickCountMap.entrySet());
+        Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        for (Map.Entry<String, Integer> mapping : list) {
+            if(idx >= 30){
+                break;
+            }
+            keywordSet.add(mapping.getKey());
+            idx ++;
+        }
+
+
+        String keyword;
+        JSONArray titleArray, clickRateArray, clickCostArray;
+        titleArray = new JSONArray();
+        clickRateArray = new JSONArray();
+        clickCostArray = new JSONArray();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        Iterator<String> iterator = showCountMap.keySet().iterator();
+        while(iterator.hasNext()){
+            keyword = iterator.next();
+            if(!keywordSet.contains(keyword)){
+                continue;
+            }
+            if(StringUtils.isEmpty(clickCountMap.get(keyword))){
+                continue;
+            }
+            if(showCountMap.get(keyword) == 0){
+                continue;
+            }
+
+            clickCount = clickCountMap.get(keyword);
+            if(clickCount == 0) clickCount = 1;
+            showCount = showCountMap.get(keyword);
+            if(showCount == 0) showCount = 1;
+            consumeAmount = consumeAmountMap.get(keyword);
+            titleArray.add(keyword);
+            clickRateArray.add(decimalFormat.format(clickCount * 100 / showCount));
+            clickCostArray.add(decimalFormat.format(consumeAmount / clickCount));
+        }
+
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("titleList", titleArray);
+        resultJson.put("clickRateList", clickRateArray);
+        resultJson.put("clickCostList", clickCostArray);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getUnderwriteSummaryByKeyword")
+    public ResultVo getUnderwriteSummaryByKeyword(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        initDashboardParam(paramVo);
+
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setPlatformName(paramVo.getPlatformName());
+        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setColumnFieldIds("date,reserveMobile,advertiseDesc");
+        paramPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+
+        int reserveCount;
+        Set<String> mobileSet = new HashSet<>();
+        Map<String, Integer> reserveCountMap = new HashMap<>();
+        Map<String, String> mobile2SearchKeyMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            mobileSet.add(flowReserve.getReserveMobile());
+            mobile2SearchKeyMap.put(flowReserve.getReserveMobile(), flowReserve.getAdvertiseDesc());
+
+            reserveCount = 0;
+            if (reserveCountMap.get(flowReserve.getAdvertiseDesc()) != null) {
+                reserveCount = reserveCountMap.get(flowReserve.getAdvertiseDesc());
+            }
+            reserveCount ++;
+            reserveCountMap.put(flowReserve.getAdvertiseDesc(), reserveCount);
+        }
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(reserveCountMap.entrySet());
+        Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+
+        int idx = 1;
+        List<String> keywordList = new ArrayList<>();
+        for (Map.Entry<String, Integer> entry : entryList) {
+            if(idx > 30) break;
+            keywordList.add(entry.getKey());
+            idx ++;
+        }
+
+        UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
+        underwriteParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        underwriteParamPagerVo.setMobiles(mobileSet);
+        underwriteParamPagerVo.setColumnFieldIds("id,reserveMobile,insuranceFee");
+        underwriteParamPagerVo.setDateField("reserveDate");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
+
+        int underwriteCount;
+        double underwriteAmount;
+        String keyword; // 媒体表中的关键词相当于预约表中的广告描述
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, Double> underwriteAmountMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            if(mobile2SearchKeyMap.get(underwrite.getReserveMobile()) == null) continue;
+            keyword = mobile2SearchKeyMap.get(underwrite.getReserveMobile());
+
+            underwriteCount = 0;
+            if(underwriteCountMap.get(keyword) != null){
+                underwriteCount = underwriteCountMap.get(keyword);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(keyword, underwriteCount);
+
+            underwriteAmount = 0.0d;
+            if(underwriteAmountMap.get(keyword) != null){
+                underwriteAmount = underwriteAmountMap.get(keyword);
+            }
+            if (StringUtils.hasText(underwrite.getInsuranceFee())
+                    && !"-".equals(underwrite.getInsuranceFee())) {
+                underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+            }
+            underwriteAmountMap.put(keyword, underwriteAmount);
+        }
+
+        List<Integer> reserveCountList = new ArrayList<>();
+        List<Integer> underwriteCountList = new ArrayList<>();
+        List<Double> underwriteAmountList = new ArrayList<>();
+        for(String keywordStr : keywordList){
+            reserveCountList.add(reserveCountMap.get(keywordStr));
+            underwriteCountList.add(underwriteCountMap.get(keywordStr));
+            underwriteAmountList.add(underwriteAmountMap.get(keywordStr));
+        }
+
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("titleList", keywordList);
+        resultJson.put("reserveCountList", reserveCountList);
+        resultJson.put("underwriteCountList", underwriteCountList);
+        resultJson.put("underwriteAmountList", underwriteAmountList);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getCostSummaryByKeyword")
+    public ResultVo getCostSummaryByKeyword(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        initDashboardParam(paramVo);
+
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setPlatformName(paramVo.getPlatformName());
+        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setColumnFieldIds("date,advertiseDesc");
+        paramPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+
+        String keyword;
+        int reserveCount;
+        Map<String, Integer> reserveCountMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            keyword = flowReserve.getAdvertiseDesc();
+            reserveCount = 0;
+            if(reserveCountMap.get(keyword) != null){
+                reserveCount = reserveCountMap.get(keyword);
+            }
+            reserveCount ++;
+            reserveCountMap.put(keyword, reserveCount);
+        }
+
+        int clickCount;
+        double consumeAmount;
+        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+        mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        mediaItemParamPagerVo.setColumnFieldIds("date,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
+        Map<String, Double> consumeAmountMap = new HashMap<>();
+        Map<String, Integer> clickCountMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            keyword = mediaItem.getKeyWord();
+            clickCount = 0;
+            if(clickCountMap.get(keyword) != null) {
+                clickCount = clickCountMap.get(keyword);
+            }
+            if(mediaItem.getClickCount() != null) {
+                clickCount += mediaItem.getClickCount();
+            }
+            clickCountMap.put(keyword, clickCount);
+
+            consumeAmount = 0.0d;
+            if(consumeAmountMap.get(keyword) != null) {
+                consumeAmount = consumeAmountMap.get(keyword);
+            }
+            if(StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                consumeAmount += Double.valueOf(mediaItem.getSpeedCost());
+            }
+            consumeAmountMap.put(keyword, consumeAmount);
+        }
+
+
+        Map<String, Double> clickCostResultMap = new HashMap<>();
+        Map<String, Double> transformCostResultMap = new HashMap<>();
+        Iterator<String> iterator = consumeAmountMap.keySet().iterator();
+        while(iterator.hasNext()){
+            keyword = iterator.next();
+
+            if(StringUtils.isEmpty(consumeAmountMap.get(keyword))){
+                consumeAmount = 0.0d;
+            }else{
+                consumeAmount = consumeAmountMap.get(keyword);
+            }
+            // 计算转化成本
+            if(StringUtils.isEmpty(reserveCountMap.get(keyword))){
+                reserveCount = 0;
+            }else{
+                reserveCount = reserveCountMap.get(keyword);
+            }
+            if(reserveCount == 0){
+                transformCostResultMap.put(keyword, 0.0d);
+            }else{
+                transformCostResultMap.put(keyword, consumeAmount / reserveCount);
+            }
+            // 计算点击成本
+            if(StringUtils.isEmpty(clickCountMap.get(keyword))){
+                clickCount = 0;
+            }else{
+                clickCount = (int)clickCountMap.get(keyword);
+            }
+            if(clickCount == 0){
+                clickCostResultMap.put(keyword, 0.0d);
+            }else{
+                clickCostResultMap.put(keyword, consumeAmount / clickCount);
+            }
+        }
+
+
+        List<Map.Entry<String, Double>> entryList = new ArrayList(transformCostResultMap.entrySet());
+        Collections.sort(entryList, new Comparator<Map.Entry<String, Double>>() {
+            @Override
+            public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        int idx = 1;
+        List<String> titleList = new ArrayList<>();
+        List<Double> transformCostList = new ArrayList<>();
+        List<Double> clickCostList = new ArrayList<>();
+        for (Map.Entry<String, Double> entry : entryList) {
+            if(idx > 30) break;
+            titleList.add(entry.getKey());
+            transformCostList.add(entry.getValue());
+            clickCostList.add(clickCostResultMap.get(entry.getKey()));
+            idx ++;
+        }
+
+
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("titleList", titleList);
+        resultJson.put("clickCostList", clickCostList);
+        resultJson.put("transformCostList", transformCostList);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getTransformCycleAndRate")
+    public ResultVo getTransformCycleAndRate(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        initDashboardParam(paramVo);
+
+        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setColumnFieldIds("id,reserveDate,finishDate,keyword");
+        paramPagerVo.setPlatformName(paramVo.getPlatformName());
+        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setDateField("reserveDate");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+
+        List<Underwrite> tempUnderwriteList;
+        Map<String, List<Underwrite>> underwriteMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            if(StringUtils.isEmpty(underwrite.getKeyword())) continue;
+            tempUnderwriteList = new ArrayList<>();
+            if(underwriteMap.get(underwrite.getKeyword()) != null){
+                tempUnderwriteList = underwriteMap.get(underwrite.getKeyword());
+            }
+            tempUnderwriteList.add(underwrite);
+            underwriteMap.put(underwrite.getKeyword(), tempUnderwriteList);
+        }
+
+        String keyword;
+        String transformCycle;
+        int difference, totalDifference;
+        String reserveDate, finishDate;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, String> transformCycleMap = new HashMap<>();
+        Iterator<String> iterator = underwriteMap.keySet().iterator();
+        while(iterator.hasNext()){
+            keyword = iterator.next();
+            tempUnderwriteList = underwriteMap.get(keyword);
+            if(tempUnderwriteList == null || tempUnderwriteList.size() <= 0){
+                continue;
+            }
+
+            totalDifference = 0;
+            for(Underwrite underwrite : tempUnderwriteList){
+                finishDate = underwrite.getFinishDate();
+                reserveDate = underwrite.getReserveDate();
+                difference = DateUtils.getDateDifference(reserveDate, finishDate);
+                totalDifference += difference;
+            }
+            transformCycle = decimalFormat.format(totalDifference / tempUnderwriteList.size());
+            transformCycleMap.put(keyword, transformCycle);
+            underwriteCountMap.put(keyword, tempUnderwriteList.size());
+        }
+
+        // 查询符合条件的数据
+        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+        mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setColumnFieldIds("id,keyWord,clickCount");
+        paramPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
+
+        String transformRate;
+        int clickCount, underwriteCount;
+        Map<String, Integer> clickCountMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            if(mediaItem.getKeyWord() == null){
+                continue;
+            }
+            if(StringUtils.isEmpty(mediaItem.getClickCount())){
+                continue;
+            }
+            clickCount = 0;
+            if(clickCountMap.get(mediaItem.getKeyWord()) != null){
+                clickCount = clickCountMap.get(mediaItem.getKeyWord());
+            }
+            clickCount += mediaItem.getClickCount();
+            clickCountMap.put(mediaItem.getKeyWord(), clickCount);
+        }
+        Iterator<String> clickCountIter = clickCountMap.keySet().iterator();
+        Map<String, String> transformRateMap = new HashMap<>();
+        while(clickCountIter.hasNext()){
+            keyword = clickCountIter.next();
+            underwriteCount = 0;
+            if(underwriteCountMap.get(keyword) != null){
+                underwriteCount = underwriteCountMap.get(keyword);
+            }
+
+            if(clickCountMap.get(keyword) == 0){
+                transformRate = "0";
+            }else {
+                transformRate = decimalFormat.format(underwriteCount * 100 / clickCountMap.get(keyword));
+            }
+            transformRateMap.put(keyword, transformRate);
+        }
+
+        // 计算出转化率最高的TOP30
+        List<Map.Entry<String, String>> entryList = new ArrayList<>(transformRateMap.entrySet());
+        Collections.sort(entryList, new Comparator<Map.Entry<String, String>>() {
+            @Override
+            public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        int idx = 1;
+        List<String> titleList = new ArrayList<>();
+        List<String> transformRateList = new ArrayList<>();
+        List<String> transformCycleList = new ArrayList<>();
+        for (Map.Entry<String, String> entry : entryList) {
+            if(idx > 30) break;
+            titleList.add(entry.getKey());
+            transformRateList.add(transformRateMap.get(entry.getKey()));
+            transformCycleList.add(transformCycleMap.get(entry.getKey()));
+            idx ++;
+        }
+
+
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("titleList", titleList);
+        resultJson.put("transformRateList", transformRateList);
+        resultJson.put("transformCycleList", transformCycleList);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;

@@ -97,6 +97,9 @@ public class FlowAreaServiceImpl implements FlowAreaService {
 
         Example example = new Example(FlowArea.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
             criteria.andLessThanOrEqualTo("date", chooseDates[1]);

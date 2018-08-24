@@ -2,11 +2,14 @@ package com.modelink.reservation.vo;
 
 import com.modelink.common.vo.PagerVo;
 
+import java.util.Set;
+
 public class UnderwriteParamPagerVo extends PagerVo {
 
     private String chooseDate;
     private String dateField;
     private String mobile;
+    private Set<String> mobiles;
     private Long merchantId;
     private String columnFieldIds;
     private String platformName;
@@ -66,5 +69,13 @@ public class UnderwriteParamPagerVo extends PagerVo {
 
     public void setAdvertiseActive(String advertiseActive) {
         this.advertiseActive = advertiseActive;
+    }
+
+    public Set<String> getMobiles() {
+        return mobiles;
+    }
+
+    public void setMobiles(Set<String> mobiles) {
+        this.mobiles = mobiles;
     }
 }

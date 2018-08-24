@@ -59,6 +59,8 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setColumnFieldIds("id,date,speedCost");
+        paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
         // 处理数据
@@ -186,9 +188,9 @@ public class DashboardSummaryController {
         AbnormalParamPagerVo paramPagerVo = new AbnormalParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setColumnFieldIds("id,reserveDate");
         paramPagerVo.setDateField("reserveDate");
         paramPagerVo.setProblemData("是");
-        paramPagerVo.setColumnFieldIds("id,reserveDate");
         List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);
 
         Set<String> mobileSet = new HashSet<>();
@@ -309,10 +311,7 @@ public class DashboardSummaryController {
         paramPagerVo.setColumnFieldIds("finishDate,insuranceNo");
         paramPagerVo.setDateField("finishDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
-        int totalCount = 0;
-        for (Underwrite underwrite : underwriteList) {
-            totalCount ++;
-        }
+        int totalCount = underwriteList.size();
 
         // 计算统计周期内点击量总数
         MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
@@ -476,20 +475,20 @@ public class DashboardSummaryController {
 
         initDashboardParam(paramVo);
 
-        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("finishDate");
-        paramPagerVo.setColumnFieldIds("id,finishDate");
-        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+        paramPagerVo.setColumnFieldIds("date,searchWord");
+        paramPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         String dateKey;
         int reserveCount, reserveTotalCount = 0;
         Map<String, Object> reserveCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
-        for (Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), DateTypeEnum.日.getValue());
+        for (FlowReserve flowReserve : flowReserveList) {
+            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), DateTypeEnum.日.getValue());
             reserveCount = 0;
             if(reserveCountMap.get(dateKey) != null){
                 reserveCount = (int)reserveCountMap.get(dateKey);
@@ -506,7 +505,7 @@ public class DashboardSummaryController {
         mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        mediaItemParamPagerVo.setColumnFieldIds("date,speedCost");
+        mediaItemParamPagerVo.setColumnFieldIds("date,clickCount,speedCost");
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Object> statAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
@@ -514,7 +513,9 @@ public class DashboardSummaryController {
         for (MediaItem mediaItem : mediaItemList) {
             dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), DateTypeEnum.日.getValue());
             clickCount = (int)clickCountMap.get(dateKey);
-            clickCount += mediaItem.getClickCount();
+            if(mediaItem.getClickCount() != null) {
+                clickCount += mediaItem.getClickCount();
+            }
             clickCountMap.put(dateKey, clickCount);
 
             totalAmount = (double)statAmountMap.get(dateKey);

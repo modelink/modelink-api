@@ -19,6 +19,20 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
             }});
         return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
     });
+    form.on('submit(delete-btn)', function(data){
+        $.ajax({
+            url: "/admin/exceptionLogger/delete",
+            success: function () {
+                table.reload('exceptionLogger-table-reload',{
+                    page: { curr: 1 },
+                    where: {
+                        chooseDate: data.field.chooseDate,
+                        loggerType: data.field.loggerType
+                    }});
+            }
+        });
+        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+    });
 
     //选择日期
     laydate.render({

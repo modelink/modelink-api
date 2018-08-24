@@ -23,6 +23,13 @@ public interface ExceptionLoggerService {
     public boolean update(ExceptionLogger exceptionLogger);
 
     /**
+     * 删除信息
+     * @param exceptionLogger
+     * @return
+     */
+    public boolean delete(ExceptionLogger exceptionLogger);
+
+    /**
      * 根据指定条件查询信息
      * @param exceptionLogger
      * @return

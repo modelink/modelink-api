@@ -96,6 +96,9 @@ public class UnderwriteServiceImpl implements UnderwriteService {
         if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
             criteria.andEqualTo("reserveMobile", paramPagerVo.getMobile());
         }
+        if(paramPagerVo.getMobiles() != null && paramPagerVo.getMobiles().size() > 0){
+            criteria.andIn("reserveMobile", paramPagerVo.getMobiles());
+        }
         if(StringUtils.hasText(paramPagerVo.getPlatformName())){
             criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
         }
@@ -160,10 +163,17 @@ public class UnderwriteServiceImpl implements UnderwriteService {
 
         Example example = new Example(Underwrite.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "finishDate";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("createTime", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("createTime", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
         if(!StringUtils.isEmpty(paramPagerVo.getMobile())) {
             criteria.andEqualTo("mobile", paramPagerVo.getMobile());

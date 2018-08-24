@@ -75,6 +75,9 @@ public class PermiumsServiceImpl implements PermiumsService {
     public List<Permiums> findListByParam(PermiumsParamPagerVo paramPagerVo) {
         Example example = new Example(Permiums.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         String dateField = paramPagerVo.getDateField();
         if(StringUtils.isEmpty(dateField)){
             dateField = "date";

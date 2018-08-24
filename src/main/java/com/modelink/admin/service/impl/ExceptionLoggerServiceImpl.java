@@ -48,6 +48,15 @@ public class ExceptionLoggerServiceImpl implements ExceptionLoggerService {
     }
 
     /**
+     * 删除信息
+     * @param exceptionLogger
+     * @return
+     */
+    public boolean delete(ExceptionLogger exceptionLogger) {
+        return exceptionLoggerMapper.delete(exceptionLogger) > 0;
+    }
+
+    /**
      * 根据指定条件查询信息
      *
      * @param exceptionLogger

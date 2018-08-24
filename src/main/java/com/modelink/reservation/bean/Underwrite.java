@@ -26,10 +26,14 @@ public class Underwrite {
     private String platformName;
     /** 广告活动 **/
     private String advertiseActive;
+    /** 关键词 **/
+    private String keyword;
     /** 数据来源 **/
     private String source;
-    /** 来源日期 **/
+    /** 预约日期 **/
     private String reserveDate;
+    /** 来源日期 **/
+    private String sourceDate;
     /** 成单日期 **/
     private String finishDate;
     /** 缴费方式 **/
@@ -127,12 +131,28 @@ public class Underwrite {
         this.source = source;
     }
 
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
+    }
+
     public String getReserveDate() {
         return reserveDate;
     }
 
     public void setReserveDate(String reserveDate) {
         this.reserveDate = reserveDate;
+    }
+
+    public String getSourceDate() {
+        return sourceDate;
+    }
+
+    public void setSourceDate(String sourceDate) {
+        this.sourceDate = sourceDate;
     }
 
     public String getFinishDate() {

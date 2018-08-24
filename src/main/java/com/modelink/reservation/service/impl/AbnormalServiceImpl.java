@@ -75,6 +75,9 @@ public class AbnormalServiceImpl implements AbnormalService {
     public List<Abnormal> findListByParam(AbnormalParamPagerVo paramPagerVo) {
         Example example = new Example(Abnormal.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         String dateField = paramPagerVo.getDateField();
         if(StringUtils.isEmpty(dateField)){
             dateField = "date";

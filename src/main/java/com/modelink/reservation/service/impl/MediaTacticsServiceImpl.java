@@ -75,6 +75,9 @@ public class MediaTacticsServiceImpl implements MediaTacticsService {
     public List<MediaTactics> findListByParam(MediaTacticsParamPagerVo paramPagerVo) {
         Example example = new Example(MediaTactics.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         String dateField = paramPagerVo.getDateField();
         if(StringUtils.isEmpty(dateField)){
             dateField = "month";

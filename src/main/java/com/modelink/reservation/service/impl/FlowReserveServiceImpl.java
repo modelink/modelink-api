@@ -78,6 +78,9 @@ public class FlowReserveServiceImpl implements FlowReserveService {
     public List<FlowReserve> findListByParam(FlowReserveParamPagerVo paramPagerVo) {
         Example example = new Example(FlowReserve.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
         String dateField = paramPagerVo.getDateField();
         if(StringUtils.isEmpty(dateField)){
             dateField = "date";

@@ -833,7 +833,7 @@ public class DashboardController {
 
         });
 
-        int count = 0;
+        int count = 1;
         JSONObject wordCloud;
         JSONArray wordCloudArray = new JSONArray();
         for (Map.Entry<String, Integer> mapping : list) {

@@ -13,8 +13,12 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
+import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.bean.Underwrite;
+import com.modelink.reservation.service.FlowReserveService;
+import com.modelink.reservation.service.FlowService;
 import com.modelink.reservation.service.UnderwriteService;
+import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import com.modelink.reservation.vo.UnderwriteVo;
 import com.modelink.usercenter.bean.Area;
@@ -51,6 +55,8 @@ public class UnderwriteController {
     @Resource
     private UnderwriteService underwriteService;
     @Resource
+    private FlowReserveService flowReserveService;
+    @Resource
     private ExceptionLoggerService exceptionLoggerService;
 
     @RequestMapping
@@ -59,6 +65,33 @@ public class UnderwriteController {
 
         modelAndView.setViewName("/admin/underwrite/list");
         return modelAndView;
+    }
+
+    @ResponseBody
+    @RequestMapping("/modify")
+    public ResultVo modify() {
+        FlowReserveParamPagerVo flowReserveParamPagerVo;
+        List<FlowReserve> flowReserveList;
+        UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
+        List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
+        for(Underwrite underwrite : underwriteList){
+            flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+            flowReserveParamPagerVo.setMobile(underwrite.getReserveMobile());
+            flowReserveParamPagerVo.setDateField("date");
+            flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+
+
+            underwrite.setSourceDate(underwrite.getReserveDate());
+            if(flowReserveList.size() > 0) {
+                underwrite.setReserveDate(flowReserveList.get(0).getDate());
+                underwrite.setKeyword(flowReserveList.get(0).getAdvertiseDesc());
+            }else{
+                underwrite.setReserveDate("");
+            }
+            underwriteService.update(underwrite);
+        }
+
+        return new ResultVo();
     }
 
     @ResponseBody
@@ -143,8 +176,11 @@ public class UnderwriteController {
         Area area;
         boolean exist;
         Underwrite underwrite;
+        FlowReserve flowReserve;
+        Set<String> mobileSet;
+        List<FlowReserve> flowReserveList;
         Merchant merchant;
-        String reserveDate;
+        String sourceDate;
         int index;
         int totalCount = 0;
         int provinceId, cityId;
@@ -178,8 +214,8 @@ public class UnderwriteController {
                 // 重复数据校验
                 underwrite = new Underwrite();
 
-                reserveDate = dataItem.get(9);
-                underwrite.setReserveDate(reserveDate);
+                sourceDate = dataItem.get(9);
+                underwrite.setSourceDate(sourceDate);
                 merchant = merchantService.findByName(dataItem.get(1));
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
                 underwrite.setInsuranceNo(dataItem.get(6));
@@ -212,7 +248,7 @@ public class UnderwriteController {
                 underwrite.setInsuranceNo(dataItem.get(6));
                 underwrite.setReserveMobile(dataItem.get(7));
                 underwrite.setSource(dataItem.get(8));
-                underwrite.setReserveDate(dataItem.get(9));
+                underwrite.setSourceDate(dataItem.get(9));
                 underwrite.setFinishDate(dataItem.get(10));
                 underwrite.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(11)));
                 underwrite.setInsuranceAmount(dataItem.get(12));
@@ -230,6 +266,15 @@ public class UnderwriteController {
                 underwrite.setProvinceId(provinceId);
                 // 查找城市数据
                 underwrite.setCityId(cityId);
+
+                // 插入预约日期
+                mobileSet = new HashSet<>();
+                mobileSet.add(underwrite.getReserveMobile());
+                flowReserveList = flowReserveService.findListByMobiles(mobileSet, "date");
+                if(flowReserveList != null && flowReserveList.size() > 0) {
+                    underwrite.setReserveDate(flowReserveList.get(0).getDate());
+                    underwrite.setKeyword(flowReserveList.get(0).getAdvertiseDesc());
+                }
 
                 if(exist) {
                     underwriteService.update(underwrite);

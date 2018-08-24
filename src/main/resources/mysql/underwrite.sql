@@ -19,6 +19,7 @@ CREATE TABLE `underwrite` (
   `city_id` int(11) NOT NULL DEFAULT '0' COMMENT '城市ID',
 
   `reserve_date` varchar(10) NOT NULL DEFAULT '' COMMENT '预约时间',
+  `source_date` varchar(10) NOT NULL DEFAULT '' COMMENT '来源日期',
   `finish_date` varchar(10) NOT NULL DEFAULT '' COMMENT '成单日期',
 
   `pay_type` int(11) NOT NULL DEFAULT '0' COMMENT '缴费方式（年交、月交）',
