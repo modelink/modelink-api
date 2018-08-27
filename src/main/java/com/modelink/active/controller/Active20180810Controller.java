@@ -7,23 +7,23 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.jws.WebParam;
 
 @Controller
-@RequestMapping("/active/weixin")
-public class WeixinActiveController {
+@RequestMapping("/active/20180810")
+public class Active20180810Controller {
 
-    @RequestMapping("/reserve-index-20180810")
-    public ModelAndView reserveIndex20180810(){
+    @RequestMapping("/index")
+    public ModelAndView index(){
         ModelAndView modelAndView = new ModelAndView();
 
 
-        modelAndView.setViewName("/active/weixin/reserve-index-20180810.html");
+        modelAndView.setViewName("/active/20180810/index");
         return modelAndView;
     }
 
-    @RequestMapping("/reserve-result-20180810")
+    @RequestMapping("/result")
     public ModelAndView result(){
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/active/weixin/reserve-result-20180810");
+        modelAndView.setViewName("/active/20180810/result");
         return modelAndView;
     }
 }

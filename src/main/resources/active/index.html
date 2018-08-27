@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
     <meta name="format-detection" content="telephone=no">
-    <link th:href="@{/static/css/active/weixin/reserve-20180810/media.base.css}">
+    <link href="/static/css/active/weixin/reserve-20180810/media.base.css">
     <style>
         .bimg100 {
             background-size: 100% 100%;
@@ -91,10 +91,12 @@
     <div class="r-btn" onclick="lingqu()">领取红包，参与活动</div>
     <p class="r-desc">活的时间:3月15日</p>
 </div>
-<script th:src="@{//code.jquery.com/jquery-latest.min.js}"></script>
+<script src="//code.jquery.com/jquery-latest.min.js"></script>
+<!--<script th:src="@{https://qzonestyle.gtimg.cn/qzone/qzact/common/share/share.js}"></script>-->
+<script src="/static/js/common/share.js"></script>
 <script>
     document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
-        WeixinJSBridge.call('hideOptionMenu');
+        WeixinJSBridge.call('showOptionMenu');
     });
 
     function lingqu() {
@@ -102,6 +104,30 @@
             window.location.href = '/Mobile/Index/redRule';
         });
     }
+
+    var url = window.location.href;
+    //获取签名
+    $.ajax({
+        type: "GET",
+        url: "/weixin/getSignature",
+        data: {url: url},
+        success: function (data) {
+            setShareInfo({
+                title: '精真估专业版全民享优惠', // 分享标题
+                summary: '通过此链接注册即送16枚精币（=16人民币），维保记录、出险记录、车史定价等可任意查询', // 分享内容
+                pic: 'http://d.jingzhengu.com/dealer/logo.jpg', // 分享图片
+                url: url, // 分享链接
+                // 微信权限验证配置信息，若不在微信传播，可忽略
+                WXconfig: {
+                    swapTitleInWX: true, // 是否标题内容互换（仅朋友圈，因朋友圈内只显示标题）
+                    appId: data.appid, // 公众号的唯一标识
+                    timestamp: data.timestamp, // 生成签名的时间戳
+                    nonceStr: data.nonceStr, // 生成签名的随机串
+                    signature: data.signature // 签名
+                }
+            });
+        }
+    });
 </script>
 </body>
 </html>

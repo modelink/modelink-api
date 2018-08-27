@@ -49,6 +49,7 @@ public class WebInterceptorConfigurer extends WebMvcConfigurationSupport {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**").addResourceLocations("classpath:/static/");
+        registry.addResourceHandler("/active/**").addResourceLocations("classpath:/active/");
     }
 
     @Bean

@@ -803,6 +803,208 @@ public class DashboardKeywordController {
         return resultVo;
     }
 
+    @ResponseBody
+    @RequestMapping("/keywordTableGrid")
+    public ResultVo keywordTableGrid(DashboardParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        initDashboardParam(paramVo);
+        Set<String> keywordSet = new HashSet<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setPlatformName(paramVo.getPlatformName());
+        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setColumnFieldIds("date,advertiseDesc");
+        paramPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+
+        String keyword;
+        int reserveCount;
+        Map<String, Integer> reserveCountMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            keyword = flowReserve.getAdvertiseDesc();
+            reserveCount = 0;
+            if(reserveCountMap.get(keyword) != null){
+                reserveCount = reserveCountMap.get(keyword);
+            }
+            reserveCount ++;
+            reserveCountMap.put(keyword, reserveCount);
+            keywordSet.add(keyword);
+        }
+
+
+        /** 转化周期计算 **/
+        UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
+        underwriteParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        underwriteParamPagerVo.setColumnFieldIds("id,reserveDate,finishDate,keyword");
+        underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        underwriteParamPagerVo.setDateField("reserveDate");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
+
+        List<Underwrite> tempUnderwriteList;
+        Map<String, List<Underwrite>> underwriteListMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            if(StringUtils.isEmpty(underwrite.getKeyword())) continue;
+            keyword = underwrite.getKeyword();
+            keywordSet.add(keyword);
+            tempUnderwriteList = new ArrayList<>();
+            if(underwriteListMap.get(keyword) != null){
+                tempUnderwriteList = underwriteListMap.get(keyword);
+            }
+            tempUnderwriteList.add(underwrite);
+            underwriteListMap.put(keyword, tempUnderwriteList);
+        }
+        String transformCycle;
+        double insuranceAmount;
+        int difference, totalDifference;
+        String reserveDate, finishDate;
+
+        Map<String, Double> underwriteAmountMap = new HashMap<>();
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, String> transformCycleMap = new HashMap<>();
+        Iterator<String> iterator = underwriteListMap.keySet().iterator();
+        while(iterator.hasNext()){
+            keyword = iterator.next();
+            tempUnderwriteList = underwriteListMap.get(keyword);
+            if(tempUnderwriteList == null || tempUnderwriteList.size() <= 0){
+                continue;
+            }
+
+            totalDifference = 0;
+            insuranceAmount = 0.0d;
+            for(Underwrite underwrite : tempUnderwriteList){
+                finishDate = underwrite.getFinishDate();
+                reserveDate = underwrite.getReserveDate();
+                difference = DateUtils.getDateDifference(reserveDate, finishDate);
+                totalDifference += difference;
+                if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                    insuranceAmount += Double.parseDouble(underwrite.getInsuranceFee());
+                }
+            }
+            transformCycle = decimalFormat.format(totalDifference / tempUnderwriteList.size());
+            transformCycleMap.put(keyword, transformCycle);
+            underwriteCountMap.put(keyword, tempUnderwriteList.size());
+            underwriteAmountMap.put(keyword, insuranceAmount);
+        }
+        /** 转化周期计算 **/
+
+
+
+        /** 计算转化成本与点击成本 **/
+        int clickCount;
+        double consumeAmount;
+        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+        mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        mediaItemParamPagerVo.setColumnFieldIds("date,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
+        Map<String, Double> consumeAmountMap = new HashMap<>();
+        Map<String, Integer> clickCountMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            keyword = mediaItem.getKeyWord();
+            keywordSet.add(keyword);
+
+            clickCount = 0;
+            if(clickCountMap.get(keyword) != null) {
+                clickCount = clickCountMap.get(keyword);
+            }
+            if(mediaItem.getClickCount() != null) {
+                clickCount += mediaItem.getClickCount();
+            }
+            clickCountMap.put(keyword, clickCount);
+
+            consumeAmount = 0.0d;
+            if(consumeAmountMap.get(keyword) != null) {
+                consumeAmount = consumeAmountMap.get(keyword);
+            }
+            if(StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                consumeAmount += Double.valueOf(mediaItem.getSpeedCost());
+            }
+            consumeAmountMap.put(keyword, consumeAmount);
+        }
+
+
+        int underwriteCount = 0;
+        Map<String, String> transformRateMap = new HashMap<>();
+        Map<String, String> clickCostResultMap = new HashMap<>();
+        Map<String, String> transformCostResultMap = new HashMap<>();
+        Iterator<String> consumeAmountIterator = consumeAmountMap.keySet().iterator();
+        while(consumeAmountIterator.hasNext()){
+            keyword = consumeAmountIterator.next();
+
+            if(StringUtils.isEmpty(consumeAmountMap.get(keyword))){
+                consumeAmount = 0.0d;
+            }else{
+                consumeAmount = consumeAmountMap.get(keyword);
+            }
+            // 计算转化成本
+            if(StringUtils.isEmpty(reserveCountMap.get(keyword))){
+                reserveCount = 0;
+            }else{
+                reserveCount = reserveCountMap.get(keyword);
+            }
+            if(reserveCount == 0){
+                transformCostResultMap.put(keyword, "0.00");
+            }else{
+                transformCostResultMap.put(keyword, decimalFormat.format(consumeAmount / reserveCount));
+            }
+            // 计算点击成本
+            if(StringUtils.isEmpty(clickCountMap.get(keyword))){
+                clickCount = 0;
+            }else{
+                clickCount = (int)clickCountMap.get(keyword);
+            }
+            if(clickCount == 0){
+                clickCostResultMap.put(keyword, "0.00");
+            }else{
+                clickCostResultMap.put(keyword, decimalFormat.format(consumeAmount / clickCount));
+            }
+            // 计算转化率
+            if(StringUtils.isEmpty(clickCountMap.get(keyword))){
+                clickCount = 0;
+            }else{
+                clickCount = (int)clickCountMap.get(keyword);
+            }
+            if(clickCount == 0 || underwriteCountMap.get(keyword) == null){
+                transformRateMap.put(keyword, "0.00");
+            }else{
+                underwriteCount = underwriteCountMap.get(keyword);
+                transformRateMap.put(keyword, decimalFormat.format(underwriteCount * 100.00d / clickCount));
+            }
+        }
+        /** 计算转化成本与点击成本 **/
+
+
+        /** 汇总结果 **/
+        Map<String, String> resultBean;
+        List<Map<String, String>> resultList = new ArrayList<>();
+        for (String keywordBean : keywordSet) {
+            resultBean = new HashMap<>();
+            resultBean.put("keyword", keywordBean);
+            resultBean.put("clickCount", clickCountMap.get(keywordBean).toString());
+            resultBean.put("reserveCount", reserveCountMap.get(keywordBean).toString());
+            resultBean.put("underwriteCount", underwriteCountMap.get(keywordBean).toString());
+            resultBean.put("underwriteAmount", underwriteAmountMap.get(keywordBean).toString());
+            resultBean.put("transformCost", transformCostResultMap.get(keywordBean));
+            resultBean.put("clickCost", clickCostResultMap.get(keywordBean));
+            resultBean.put("transformCycle", transformCycleMap.get(keywordBean));
+            resultBean.put("transformRate", transformRateMap.get(keywordBean));
+            resultList.add(resultBean);
+        }
+        /** 汇总结果 **/
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultList);
+        return resultVo;
+    }
+
 
 
 
