@@ -3,11 +3,7 @@ package com.modelink.admin.controller;
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.modelink.admin.vo.DashboardParamVo;
-import com.modelink.admin.vo.DashboardSummaryParamVo;
-import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
-import com.modelink.common.enums.TransformCycleEnum;
-import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.FlowReserve;
@@ -19,6 +15,8 @@ import com.modelink.reservation.service.UnderwriteService;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 import com.modelink.reservation.vo.MediaItemParamPagerVo;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
+import com.modelink.usercenter.bean.Merchant;
+import com.modelink.usercenter.service.MerchantService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +31,8 @@ import java.util.*;
 @RequestMapping("/admin/dashboard/keyword")
 public class DashboardKeywordController {
 
+    @Resource
+    private MerchantService merchantService;
     @Resource
     private MediaItemService mediaItemService;
     @Resource
@@ -989,6 +989,7 @@ public class DashboardKeywordController {
 
         /** 汇总结果 **/
         int indexNo = 0;
+        Merchant merchant;
         String[] merchantList;
         Map<String, String> resultBean;
         List<Map<String, String>> resultList = new ArrayList<>();
@@ -1000,7 +1001,8 @@ public class DashboardKeywordController {
 
             if(merchantMap.get(keywordBean) != null){
                 merchantList = merchantMap.get(keywordBean).split("\\|");
-                resultBean.put("merchantName", merchantList[0]);
+                merchant = merchantService.findById(Long.parseLong(merchantList[0]));
+                resultBean.put("merchantName", merchant == null ? "" : merchant.getName());
                 resultBean.put("platformName", merchantList[1]);
                 resultBean.put("advertiseActive", merchantList[2]);
             }
