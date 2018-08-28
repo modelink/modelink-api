@@ -90,6 +90,9 @@ public class FlowReserveServiceImpl implements FlowReserveService {
             criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
+        if(StringUtils.hasText(paramPagerVo.getMobile())){
+            criteria.andEqualTo("reserveMobile", paramPagerVo.getMobile());
+        }
         if(StringUtils.hasText(paramPagerVo.getPlatformName())){
             criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
         }

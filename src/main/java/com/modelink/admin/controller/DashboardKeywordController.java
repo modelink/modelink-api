@@ -810,6 +810,7 @@ public class DashboardKeywordController {
 
         initDashboardParam(paramVo);
         Set<String> keywordSet = new HashSet<>();
+        Map<String, String> merchantMap = new HashMap<>();
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
         FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
@@ -817,7 +818,7 @@ public class DashboardKeywordController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,advertiseDesc");
+        paramPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,advertiseDesc");
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -833,6 +834,7 @@ public class DashboardKeywordController {
             reserveCount ++;
             reserveCountMap.put(keyword, reserveCount);
             keywordSet.add(keyword);
+            merchantMap.put(keyword, flowReserve.getMerchantId() + "|" + flowReserve.getPlatformName() + "|" + flowReserve.getAdvertiseActive());
         }
 
 
@@ -840,7 +842,7 @@ public class DashboardKeywordController {
         UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
         underwriteParamPagerVo.setChooseDate(paramVo.getChooseDate());
         underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        underwriteParamPagerVo.setColumnFieldIds("id,reserveDate,finishDate,keyword");
+        underwriteParamPagerVo.setColumnFieldIds("id,merchantId,platformName,advertiseActive,reserveDate,finishDate,keyword");
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
@@ -852,6 +854,7 @@ public class DashboardKeywordController {
             if(StringUtils.isEmpty(underwrite.getKeyword())) continue;
             keyword = underwrite.getKeyword();
             keywordSet.add(keyword);
+            merchantMap.put(keyword, underwrite.getMerchantId() + "|" + underwrite.getPlatformName() + "|" + underwrite.getAdvertiseActive());
             tempUnderwriteList = new ArrayList<>();
             if(underwriteListMap.get(keyword) != null){
                 tempUnderwriteList = underwriteListMap.get(keyword);
@@ -903,7 +906,7 @@ public class DashboardKeywordController {
         mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        mediaItemParamPagerVo.setColumnFieldIds("date,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,keyWord,clickCount,speedCost");
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Double> consumeAmountMap = new HashMap<>();
@@ -911,6 +914,7 @@ public class DashboardKeywordController {
         for (MediaItem mediaItem : mediaItemList) {
             keyword = mediaItem.getKeyWord();
             keywordSet.add(keyword);
+            merchantMap.put(keyword, mediaItem.getMerchantId() + "|" + mediaItem.getPlatformName() + "|" + mediaItem.getAdvertiseActive());
 
             clickCount = 0;
             if(clickCountMap.get(keyword) != null) {
@@ -984,19 +988,30 @@ public class DashboardKeywordController {
 
 
         /** 汇总结果 **/
+        int indexNo = 0;
+        String[] merchantList;
         Map<String, String> resultBean;
         List<Map<String, String>> resultList = new ArrayList<>();
         for (String keywordBean : keywordSet) {
+            indexNo ++;
             resultBean = new HashMap<>();
             resultBean.put("keyword", keywordBean);
-            resultBean.put("clickCount", clickCountMap.get(keywordBean).toString());
-            resultBean.put("reserveCount", reserveCountMap.get(keywordBean).toString());
-            resultBean.put("underwriteCount", underwriteCountMap.get(keywordBean).toString());
-            resultBean.put("underwriteAmount", underwriteAmountMap.get(keywordBean).toString());
-            resultBean.put("transformCost", transformCostResultMap.get(keywordBean));
-            resultBean.put("clickCost", clickCostResultMap.get(keywordBean));
-            resultBean.put("transformCycle", transformCycleMap.get(keywordBean));
-            resultBean.put("transformRate", transformRateMap.get(keywordBean));
+            resultBean.put("indexNo", String.valueOf(indexNo));
+
+            if(merchantMap.get(keywordBean) != null){
+                merchantList = merchantMap.get(keywordBean).split("\\|");
+                resultBean.put("merchantName", merchantList[0]);
+                resultBean.put("platformName", merchantList[1]);
+                resultBean.put("advertiseActive", merchantList[2]);
+            }
+            resultBean.put("clickCount", clickCountMap.get(keywordBean) == null ? "0" : clickCountMap.get(keywordBean).toString());
+            resultBean.put("reserveCount", reserveCountMap.get(keywordBean) == null ? "0" : reserveCountMap.get(keywordBean).toString());
+            resultBean.put("underwriteCount", underwriteCountMap.get(keywordBean) == null ? "0" : underwriteCountMap.get(keywordBean).toString());
+            resultBean.put("underwriteAmount", underwriteAmountMap.get(keywordBean) == null ? "0" : underwriteAmountMap.get(keywordBean).toString());
+            resultBean.put("transformCost", transformCostResultMap.get(keywordBean) == null ? "0" : transformCostResultMap.get(keywordBean));
+            resultBean.put("clickCost", clickCostResultMap.get(keywordBean) == null ? "0" : clickCostResultMap.get(keywordBean));
+            resultBean.put("transformCycle", transformCycleMap.get(keywordBean) == null ? "0" : transformCycleMap.get(keywordBean));
+            resultBean.put("transformRate", transformRateMap.get(keywordBean) == null ? "0" : transformRateMap.get(keywordBean));
             resultList.add(resultBean);
         }
         /** 汇总结果 **/

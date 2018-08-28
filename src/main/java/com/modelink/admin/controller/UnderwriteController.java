@@ -74,6 +74,9 @@ public class UnderwriteController {
         List<FlowReserve> flowReserveList;
         UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
+
+        int difference;
+        String reserveDate, finishDate;
         for(Underwrite underwrite : underwriteList){
             flowReserveParamPagerVo = new FlowReserveParamPagerVo();
             flowReserveParamPagerVo.setMobile(underwrite.getReserveMobile());
@@ -82,11 +85,27 @@ public class UnderwriteController {
 
 
             underwrite.setSourceDate(underwrite.getReserveDate());
+            underwrite.setReserveDate("");
+            underwrite.setKeyword("");
             if(flowReserveList.size() > 0) {
-                underwrite.setReserveDate(flowReserveList.get(0).getDate());
-                underwrite.setKeyword(flowReserveList.get(0).getAdvertiseDesc());
-            }else{
-                underwrite.setReserveDate("");
+                for(FlowReserve flowReserve : flowReserveList){
+                    reserveDate = flowReserve.getDate();
+                    if(reserveDate.contains("/")){
+                        reserveDate = DateUtils.dateFormatTransform(reserveDate, "yyyy/M/d", "yyyy-MM-dd");
+                    }
+                    finishDate = underwrite.getFinishDate();
+                    if(finishDate.contains("/")){
+                        finishDate = DateUtils.dateFormatTransform(finishDate, "yyyy/M/d", "yyyy-MM-dd");
+                        underwrite.setFinishDate(finishDate);
+                    }
+                    difference = DateUtils.getDateDifference(reserveDate, finishDate);
+                    if(difference > 0){
+                        underwrite.setReserveDate(reserveDate);
+                        underwrite.setKeyword(flowReserve.getAdvertiseDesc());
+                        logger.info("[underwriteController|modify]承保数据更新成功。id={}, oldNum={}", underwrite.getId(), flowReserveList.size());
+                        break;
+                    }
+                }
             }
             underwriteService.update(underwrite);
         }

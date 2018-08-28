@@ -65,6 +65,11 @@ public class AdminHomeController {
 
         AdminVo adminVo = new AdminVo();
         Admin admin = adminService.findByUserName(adminLoginParamVo.getUserName());
+        if(admin == null){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg("该用户不存在");
+            return resultVo;
+        }
         if(!admin.getPassword().equals(adminLoginParamVo.getPassword())){
             resultVo.setRtnCode(RetStatus.Fail.getValue());
             resultVo.setRtnMsg("用户名密码错误");

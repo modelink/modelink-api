@@ -61,6 +61,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         insuranceEcharts.getDataJson2DrawCostSummary($, "transform-summary-keyword", "/admin/dashboard/keyword/getCostSummaryByKeyword");
 
         insuranceEcharts.getDataJson2DrawTransformRateAndCycle($, "transform-rate-cycle", "/admin/dashboard/keyword/getTransformCycleAndRate");
+        insuranceEcharts.getDataJson2DrawKeywordTableGrid($, "keyword-table-body", "/admin/dashboard/keyword/keywordTableGrid");
     });
     $("#search-btn").trigger("click");
 
@@ -183,6 +184,27 @@ var insuranceEcharts = {
                 }
                 insuranceEcharts.drawTransformRateAndCycleEchart(selectedPrefix + "-echart",
                     response.rtnData.titleList, response.rtnData.transformRateList, response.rtnData.transformCycleList);
+            }
+        });
+    },
+    getDataJson2DrawKeywordTableGrid: function($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    insuranceEcharts.drawKeywordTableGridTable($, selectedPrefix, []);
+                    return;
+                }
+                insuranceEcharts.drawKeywordTableGridTable($, selectedPrefix, response.rtnData);
+            },
+            error: function () {
+                insuranceEcharts.drawKeywordTableGridTable($, selectedPrefix, []);
             }
         });
     },
@@ -504,4 +526,42 @@ var insuranceEcharts = {
 
 
     },
+    drawKeywordTableGridTable: function ($, selectedId, gridDataList) {
+        var tableHtml = "";
+        if(!gridDataList || gridDataList.length <= 0){
+            tableHtml += "<tr>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "</tr>";
+        }
+        for(var index in gridDataList){
+            tableHtml += "<tr>";
+            tableHtml += "<td>" + gridDataList[index].indexNo + "</td>";
+            tableHtml += "<td>" + gridDataList[index].merchantName + "</td>";
+            tableHtml += "<td>" + gridDataList[index].platformName + "</td>";
+            tableHtml += "<td>" + gridDataList[index].advertiseActive + "</td>";
+            tableHtml += "<td>" + gridDataList[index].keyword + "</td>";
+            tableHtml += "<td>" + gridDataList[index].clickCount + "</td>";
+            tableHtml += "<td>" + gridDataList[index].reserveCount + "</td>";
+            tableHtml += "<td>" + gridDataList[index].underwriteCount + "</td>";
+            tableHtml += "<td>" + gridDataList[index].underwriteAmount + "</td>";
+            tableHtml += "<td>" + gridDataList[index].transformCost + "</td>";
+            tableHtml += "<td>" + gridDataList[index].clickCost + "</td>";
+            tableHtml += "<td>" + gridDataList[index].transformCycle + "</td>";
+            tableHtml += "<td>" + gridDataList[index].transformRate + "</td>";
+            tableHtml += "</tr>";
+        }
+        $("#" + selectedId).html(tableHtml);
+    }
 };
