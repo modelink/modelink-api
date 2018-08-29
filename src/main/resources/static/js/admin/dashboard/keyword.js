@@ -187,7 +187,7 @@ var insuranceEcharts = {
             }
         });
     },
-    getDataJson2DrawKeywordTableGrid: function($, selectedPrefix, dataUrl) {
+    getDataJson2DrawAreaTableGrid: function($, selectedPrefix, dataUrl) {
         $.ajax({
             url: dataUrl,
             data: {
@@ -526,7 +526,7 @@ var insuranceEcharts = {
 
 
     },
-    drawKeywordTableGridTable: function ($, selectedId, gridDataList) {
+    drawAreaTableGridTable: function ($, selectedId, gridDataList) {
         var tableHtml = "";
         if(!gridDataList || gridDataList.length <= 0){
             tableHtml += "<tr>";

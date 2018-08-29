@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>地域分析</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="stylesheet" th:href="@{/static/css/admin/home/font.css}">
+    <link rel="stylesheet" th:href="@{/static/css/admin/home/xadmin.css}">
+    <link rel="stylesheet" th:href="@{//at.alicdn.com/t/font_604626_m0xm8ye4zbj.css}">
+    <style>
+        .layui-card {
+            background-color: #FBFBFB;
+            border: solid 1px #E6E6E6;
+        }
+        .layui-card-header {
+            height: 38px;
+            line-height: 38px;
+            border-color: #E6E6E6;
+        }
+        .echart-header {
+            height: 48px;
+            text-align: center;
+            line-height: 48px;
+            background-color: white;
+            border-bottom: solid 1px #E6E6E6;
+        }
+        .echart-header label {
+            font-size: 32px;
+        }
+        .echart-header i {
+            margin-left: 50px;
+            font-size: 16px;
+        }
+        .layui-card-body {
+            background-color: white;
+        }
+        .layui-label label {
+            height: 38px;
+            line-height: 38px;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+        .layui-label input {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<div class="x-body layui-anim layui-anim-up">
+    <form class="layui-form layui-form-pane">
+        <div class="layui-form-item">
+            <div class="layui-inline">
+                <label class="layui-form-label">项目选择</label>
+                <div class="layui-input-inline">
+                    <select id="merchant" name="merchant" lay-filter="merchant">
+                        <option value="2" selected="">华夏</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-inline choose-date date">
+                <label class="layui-form-label">选择日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">渠道归属</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="platformName" name="platformName" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <label class="layui-form-label">广告活动</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="advertiseActive" name="advertiseActive" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-inline">
+                <a class="layui-btn" id="search-btn" lay-filter="search-btn">查询</a>
+                <a class="layui-btn layui-btn-primary reset-btn">重置</a>
+            </div>
+        </div>
+    </form>
+
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">保费总额排行榜TOP10</div>
+                <div class="layui-card-body">
+                    <div id="underwrite-amount-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">预约数量排行榜TOP10</div>
+                <div class="layui-card-body">
+                    <div id="reserve-count-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">承保件数排行榜TOP10</div>
+                <div class="layui-card-body">
+                    <div id="underwrite-count-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">各省份保费总额</div>
+                <div class="layui-card-body">
+                    <div id="underwrite-map-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">各省份二跳率</div>
+                <div class="layui-card-body">
+                    <div id="again-rate-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">各省份用户数</div>
+                <div class="layui-card-body">
+                    <div id="user-count-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">各省份用户平均停留时长（小时）</div>
+                <div class="layui-card-body">
+                    <div id="user-stay-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md4">
+            <div class="layui-card">
+                <div class="layui-card-header">各省份承保用户性别分布情况</div>
+                <div class="layui-card-body">
+                    <div id="user-gender-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <table class="layui-table" lay-filter="area-table">
+        <thead>
+            <tr>
+                <th lay-data="{field: 'indexNo'}">序号</th>
+                <th lay-data="{field: 'merchantName'}">合作商户</th>
+                <th lay-data="{field: 'platformName'}">渠道归属</th>
+                <th lay-data="{field: 'advertiseActive'}">广告活动</th>
+                <th lay-data="{field: 'provinceName'}">地区名称</th>
+                <th lay-data="{field: 'cityName'}">城市名称</th>
+                <th lay-data="{field: 'browseCount'}">浏览量</th>
+                <th lay-data="{field: 'reserveCount'}">预约数量</th>
+                <th lay-data="{field: 'underwriteCount'}">承保件数</th>
+                <th lay-data="{field: 'underwriteAmount'}">保费</th>
+                <th lay-data="{field: 'transformCycle'}">转化周期</th>
+            </tr>
+        </thead>
+        <tbody id="area-table-body">
+
+        </tbody>
+    </table>
+
+</div>
+
+
+<script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/static/js/common/echarts.min.js}" type="text/javascript" charset="utf-8"></script>
+<script th:src="@{/static/js/common/china.js}" type="text/javascript" charset="utf-8"></script>
+<script th:inline="javascript">
+    layui.config({
+        base: '/static/js/admin/dashboard/' //你的模块目录
+    }).use('area'); //加载入口
+</script>
+
+</body>
+</html>
+

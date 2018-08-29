@@ -75,12 +75,27 @@ public class FlowAreaServiceImpl implements FlowAreaService {
     public List<FlowArea> findListByParam(FlowAreaParamPagerVo paramPagerVo) {
         Example example = new Example(FlowArea.class);
         Example.Criteria criteria = example.createCriteria();
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "date";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
-
+        if(!StringUtils.isEmpty(paramPagerVo.getMerchantId())){
+            criteria.andEqualTo("merchantId", paramPagerVo.getMerchantId());
+        }
+        if(StringUtils.hasText(paramPagerVo.getPlatformName())){
+            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+        }
+        if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
+            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
+        }
+        if(StringUtils.hasText(paramPagerVo.getSource())){
+            criteria.andEqualTo("source", paramPagerVo.getSource());
+        }
         List<FlowArea> flowAreaList = flowAreaMapper.selectByExample(example);
         return flowAreaList;
     }

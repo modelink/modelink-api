@@ -2,10 +2,17 @@ package com.modelink.reservation.vo;
 
 import com.modelink.common.vo.PagerVo;
 
+import java.util.Set;
+
 public class FlowAreaParamPagerVo extends PagerVo {
 
     private String chooseDate;
     private String columnFieldIds;
+    private String dateField;
+    private Long merchantId;
+    private String platformName;
+    private String advertiseActive;
+    private String source;
 
     public String getChooseDate() {
         return chooseDate;
@@ -21,5 +28,45 @@ public class FlowAreaParamPagerVo extends PagerVo {
 
     public void setColumnFieldIds(String columnFieldIds) {
         this.columnFieldIds = columnFieldIds;
+    }
+
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
+    }
+
+    public Long getMerchantId() {
+        return merchantId;
+    }
+
+    public void setMerchantId(Long merchantId) {
+        this.merchantId = merchantId;
+    }
+
+    public String getPlatformName() {
+        return platformName;
+    }
+
+    public void setPlatformName(String platformName) {
+        this.platformName = platformName;
+    }
+
+    public String getAdvertiseActive() {
+        return advertiseActive;
+    }
+
+    public void setAdvertiseActive(String advertiseActive) {
+        this.advertiseActive = advertiseActive;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

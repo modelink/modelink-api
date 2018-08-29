@@ -14,6 +14,8 @@ public class DashboardParamVo implements Serializable {
     private String advertiseActive;
     /** 日期值 **/
     private String chooseDate;
+    /** 来源 **/
+    private String source;
 
     public Long getMerchantId() {
         return merchantId;
@@ -53,5 +55,13 @@ public class DashboardParamVo implements Serializable {
 
     public void setChooseDate(String chooseDate) {
         this.chooseDate = chooseDate;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }
