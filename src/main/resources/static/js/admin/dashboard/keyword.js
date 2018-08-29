@@ -1,6 +1,6 @@
 layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], function (exports) {
     var $ = layui.jquery;
-    var form = layui.form;
+    var table = layui.table;
     var laydate = layui.laydate;
 
     //时间选择器
@@ -61,7 +61,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         insuranceEcharts.getDataJson2DrawCostSummary($, "transform-summary-keyword", "/admin/dashboard/keyword/getCostSummaryByKeyword");
 
         insuranceEcharts.getDataJson2DrawTransformRateAndCycle($, "transform-rate-cycle", "/admin/dashboard/keyword/getTransformCycleAndRate");
-        insuranceEcharts.getDataJson2DrawKeywordTableGrid($, "keyword-table-body", "/admin/dashboard/keyword/keywordTableGrid");
+        insuranceEcharts.getDataJson2DrawKeywordTableGrid($, table, "keyword-table-body", "/admin/dashboard/keyword/keywordTableGrid");
     });
     $("#search-btn").trigger("click");
 
@@ -187,7 +187,7 @@ var insuranceEcharts = {
             }
         });
     },
-    getDataJson2DrawAreaTableGrid: function($, selectedPrefix, dataUrl) {
+    getDataJson2DrawKeywordTableGrid: function($, table, selectedPrefix, dataUrl) {
         $.ajax({
             url: dataUrl,
             data: {
@@ -198,13 +198,13 @@ var insuranceEcharts = {
             },
             success: function (response) {
                 if(!response || response.rtnCode != 200 || !response.rtnData){
-                    insuranceEcharts.drawKeywordTableGridTable($, selectedPrefix, []);
+                    insuranceEcharts.drawKeywordTableGridTable($, table, selectedPrefix, []);
                     return;
                 }
-                insuranceEcharts.drawKeywordTableGridTable($, selectedPrefix, response.rtnData);
+                insuranceEcharts.drawKeywordTableGridTable($, table, selectedPrefix, response.rtnData);
             },
             error: function () {
-                insuranceEcharts.drawKeywordTableGridTable($, selectedPrefix, []);
+                insuranceEcharts.drawKeywordTableGridTable($, table, selectedPrefix, []);
             }
         });
     },
@@ -526,7 +526,7 @@ var insuranceEcharts = {
 
 
     },
-    drawAreaTableGridTable: function ($, selectedId, gridDataList) {
+    drawKeywordTableGridTable: function ($, table, selectedId, gridDataList) {
         var tableHtml = "";
         if(!gridDataList || gridDataList.length <= 0){
             tableHtml += "<tr>";
@@ -563,5 +563,10 @@ var insuranceEcharts = {
             tableHtml += "</tr>";
         }
         $("#" + selectedId).html(tableHtml);
+
+        table.init("keyword-table", {
+            limit: 10,
+            page: true
+        });
     }
 };

@@ -159,22 +159,22 @@
         </div>
     </div>
 
-    <table class="layui-table">
+    <table class="layui-table" lay-filter="keyword-table">
         <thead>
             <tr>
-                <th>序号</th>
-                <th>合作商户</th>
-                <th>渠道归属</th>
-                <th>广告活动</th>
-                <th>关键词</th>
-                <th>点击量（媒体）</th>
-                <th>预约数量</th>
-                <th>承保件数</th>
-                <th>保费</th>
-                <th>转化成本</th>
-                <th>点击成本</th>
-                <th>转化周期</th>
-                <th>转化率</th>
+                <th lay-data="{field: 'indexNo'}">序号</th>
+                <th lay-data="{field: 'merchantName'}">合作商户</th>
+                <th lay-data="{field: 'platformName'}">渠道归属</th>
+                <th lay-data="{field: 'advertiseActive'}">广告活动</th>
+                <th lay-data="{field: 'keyword'}">关键词</th>
+                <th lay-data="{field: 'clickCount'}">点击量（媒体）</th>
+                <th lay-data="{field: 'reserveCount'}">预约数量</th>
+                <th lay-data="{field: 'underwriteCount'}">承保件数</th>
+                <th lay-data="{field: 'underwriteAmount'}">保费</th>
+                <th lay-data="{field: 'transformCost'}">转化成本</th>
+                <th lay-data="{field: 'clickCost'}">点击成本</th>
+                <th lay-data="{field: 'transformCycle'}">转化周期</th>
+                <th lay-data="{field: 'transformRate'}">转化率</th>
             </tr>
         </thead>
         <tbody id="keyword-table-body">
