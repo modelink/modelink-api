@@ -151,6 +151,7 @@ var FlowBase = {
         'reserveMobile',
         'provinceName',
         'cityName',
+        'feeType',
 
         'createTime',
         'updateTime'
@@ -205,6 +206,7 @@ var FlowBase = {
         {field: 'browser', title: '浏览器', minWidth: 120, align: 'center'},
         {field: 'resolutionRatio', title: '分辨率', minWidth: 120, align: 'center'},
         {field: 'deviceType', title: '设备类型', minWidth: 120, align: 'center'},
+        {field: 'feeType', title: '数据来源', minWidth: 120, align: 'center'},
 
         {field: 'themePage', title: '专题页面', minWidth: 120, align: 'center'},
         {field: 'last2ThemePage', title: '最后2次专题页面', minWidth: 150, align: 'center'},

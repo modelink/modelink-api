@@ -72,6 +72,8 @@ public class DataUtils {
             format = "yyyyww";
         }else if(dateType == DateTypeEnum.日.getValue()){
             format = "yyyyMMdd";
+        }else if(dateType == DateTypeEnum.时.getValue()){
+
         }
         return DateUtils.formatDate(date, format);
     }

@@ -111,7 +111,7 @@ public class MediaItemController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for (List<String> dataItem : dataList) {
-            if (dataItem.size() < 15) {
+            if (dataItem.size() < 16) {
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -170,6 +170,7 @@ public class MediaItemController {
                 mediaItem.setClickRate(dataItem.get(12));
                 mediaItem.setAverageClickPrice(dataItem.get(13));
                 mediaItem.setAverageRank(dataItem.get(14));
+                mediaItem.setFeeType(dataItem.get(15));
                 mediaItem = mediaItemService.findOneByParam(mediaItem);
                 if (mediaItem == null) {
                     isExist = false;
@@ -202,7 +203,7 @@ public class MediaItemController {
                 mediaItem.setClickRate(dataItem.get(12));
                 mediaItem.setAverageClickPrice(dataItem.get(13));
                 mediaItem.setAverageRank(dataItem.get(14));
-
+                mediaItem.setFeeType(dataItem.get(15));
                 if (isExist) {
                     mediaItemService.update(mediaItem);
                 } else {

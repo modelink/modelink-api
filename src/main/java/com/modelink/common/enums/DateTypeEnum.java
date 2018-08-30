@@ -9,7 +9,8 @@ public enum DateTypeEnum {
     季度(2, "季度"),
     月(3, "月"),
     周(4, "周"),
-    日(5, "日");
+    日(5, "日"),
+    时(6, "时");
 
     private int value;
     private String text;

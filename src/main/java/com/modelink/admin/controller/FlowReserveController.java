@@ -117,7 +117,7 @@ public class FlowReserveController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 48){
+            if(dataItem.size() < 49){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -244,6 +244,7 @@ public class FlowReserveController {
                 flowReserve.setOs(dataItem.get(39));
                 flowReserve.setResolutionRatio(dataItem.get(40));
                 flowReserve.setDeviceType(dataItem.get(41));
+                flowReserve.setFeeType(dataItem.get(48));
 
                 flowReserve.setThemePage(dataItem.get(42));
                 flowReserve.setLast2ThemePage(dataItem.get(43));

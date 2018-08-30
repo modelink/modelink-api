@@ -152,7 +152,8 @@ var MediaItem = {
         'keyWordGroup',
 
         'keyWord',
-        'speedCost'
+        'speedCost',
+        'feeType'
     ],
     column: [
         {field: 'id', title: 'ID', width: 100, sort: false, align: 'center', fixed: true},
@@ -172,6 +173,7 @@ var MediaItem = {
         {field: 'clickRate', title: '点击率', minWidth: 100, align: 'center'},
         {field: 'averageClickPrice', title: '平均点击成本', minWidth: 150, align: 'center'},
         {field: 'averageRank', title: '平均排名', minWidth: 100, align: 'center'},
+        {field: 'feeType', title: '费用归属', minWidth: 100, align: 'center'},
 
         {field: 'createTime', title: '创建时间', minWidth: 180, align: 'center'},
         {field: 'updateTime', title: '更新时间', minWidth: 180, align: 'center'}

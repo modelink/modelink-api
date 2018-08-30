@@ -70,6 +70,7 @@ public class FlowReserveVo implements Serializable {
     private String browser;
     private String resolutionRatio;
     private String deviceType;
+    private String feeType;
 
     private String themePage;
     private String last2ThemePage;
@@ -417,6 +418,14 @@ public class FlowReserveVo implements Serializable {
 
     public void setDeviceType(String deviceType) {
         this.deviceType = deviceType;
+    }
+
+    public String getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(String feeType) {
+        this.feeType = feeType;
     }
 
     public String getThemePage() {

@@ -36,6 +36,7 @@ CREATE TABLE `flow_reserve` (
   `search_word` varchar(56) NOT NULL DEFAULT '' COMMENT '搜索词',
   `key_word_group` varchar(56) NOT NULL DEFAULT '' COMMENT '关键词组',
   `device_type` varchar(20) NOT NULL DEFAULT '' COMMENT '设备类型',
+  `fee_type` varchar(8) NOT NULL DEFAULT '' COMMENT '费用归属',
   `transform_type` varchar(20) NOT NULL DEFAULT '' COMMENT '转化类型',
   `resolution_ratio` varchar(20) NOT NULL DEFAULT '' COMMENT '分辨率',
   `is_advertise` varchar(10) NOT NULL DEFAULT '' COMMENT '是否广告',

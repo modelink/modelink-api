@@ -39,6 +39,8 @@ public class MediaItem implements Serializable {
     private String averageClickPrice;
     /** 平均排名 **/
     private String averageRank;
+    /** 费用归属 **/
+    private String feeType;
     /** 创建时间 **/
     private Date createTime;
     /** 修改时间 **/
@@ -162,6 +164,14 @@ public class MediaItem implements Serializable {
 
     public void setAverageRank(String averageRank) {
         this.averageRank = averageRank;
+    }
+
+    public String getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(String feeType) {
+        this.feeType = feeType;
     }
 
     public Date getCreateTime() {

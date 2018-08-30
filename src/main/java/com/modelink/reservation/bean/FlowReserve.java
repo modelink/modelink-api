@@ -70,6 +70,7 @@ public class FlowReserve implements Serializable {
     private String browser;
     private String resolutionRatio;
     private String deviceType;
+    private String feeType;
 
     private String themePage;
     private String last2ThemePage;
@@ -385,6 +386,14 @@ public class FlowReserve implements Serializable {
 
     public void setLast3AdvertiseTime(String last3AdvertiseTime) {
         this.last3AdvertiseTime = last3AdvertiseTime;
+    }
+
+    public String getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(String feeType) {
+        this.feeType = feeType;
     }
 
     public String getOs() {
