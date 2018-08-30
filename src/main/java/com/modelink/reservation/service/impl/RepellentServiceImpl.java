@@ -11,7 +11,9 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Service
 public class RepellentServiceImpl implements RepellentService {
@@ -112,5 +114,23 @@ public class RepellentServiceImpl implements RepellentService {
         List<Repellent> repellentList = repellentMapper.selectByExample(example);
         PageInfo<Repellent> pageInfo = new PageInfo<>(repellentList);
         return pageInfo;
+    }
+
+    /**
+     * 查询符合条件的列表
+     *
+     * @param insuranceNoList
+     * @return
+     */
+    @Override
+    public List<Repellent> findListByInsuranceNoList(Set<String> insuranceNoList) {
+        Example example = new Example(Repellent.class);
+        Example.Criteria criteria = example.createCriteria();
+        if(insuranceNoList == null || insuranceNoList.size() <= 0){
+            return new ArrayList<>();
+        }
+        criteria.andIn("insuranceNo", insuranceNoList);
+        List<Repellent> repellentList = repellentMapper.selectByExample(example);
+        return repellentList;
     }
 }

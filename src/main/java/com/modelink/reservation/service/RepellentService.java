@@ -6,6 +6,7 @@ import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.vo.RepellentParamPagerVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 异常数据服务接口
@@ -53,4 +54,11 @@ public interface RepellentService {
      * @return
      */
     public PageInfo<Repellent> findPagerByParam(RepellentParamPagerVo paramPagerVo);
+
+    /**
+     * 查询符合条件的列表
+     * @param insuranceNoList
+     * @return
+     */
+    public List<Repellent> findListByInsuranceNoList(Set<String> insuranceNoList);
 }
