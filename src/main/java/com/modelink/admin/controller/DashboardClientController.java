@@ -95,7 +95,7 @@ public class DashboardClientController {
             reserveCountMap.put(chooseItems.toString(), reserveCount);
         }
 
-        String chooseItem;
+        String chooseItem, key;
         JSONObject tableItem;
         String proportion;
         List<String> titleList = new ArrayList<>();
@@ -105,16 +105,17 @@ public class DashboardClientController {
         Iterator<String> iterator = reserveCountMap.keySet().iterator();
         while (iterator.hasNext()) {
             chooseItem = iterator.next();
-            chooseItem = chooseItem.replaceAll("\\|", "");
-            titleList.add(chooseItem);
+            key = chooseItem.replaceAll("\\|", "");
+            titleList.add(key);
 
             tableItem = new JSONObject();
-            tableItem.put("chooseItem", chooseItem);
+            tableItem.put("chooseItem", key);
 
             reserveCount = 0;
             if (reserveCountMap.get(chooseItem) != null) {
                 reserveCount = reserveCountMap.get(chooseItem);
             }
+            contentList.add(reserveCount);
             tableItem.put("reserveCount", reserveCount);
 
             proportion = "0.00";
@@ -122,7 +123,6 @@ public class DashboardClientController {
                 proportion = decimalFormat.format(reserveCount * 100.0d / totalCount);
             }
             tableItem.put("proportion", proportion + "%");
-            contentList.add(reserveCount);
 
             tableItemList.add(tableItem);
         }

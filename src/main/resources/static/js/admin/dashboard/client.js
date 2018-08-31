@@ -123,7 +123,7 @@ var insuranceEcharts = {
             tableHtml += "<tr>";
             tableHtml += "<td>" + tableItemList[index].chooseItem + "</td>";
             tableHtml += "<td>" + tableItemList[index].reserveCount + "</td>";
-            tableHtml += "<td>" + tableItemList[index].transformCost + "</td>";
+            tableHtml += "<td>" + tableItemList[index].proportion + "</td>";
             tableHtml += "</tr>";
         }
         $("#" + selectedId + "-table-body").html(tableHtml);
