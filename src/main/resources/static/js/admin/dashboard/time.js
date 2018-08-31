@@ -65,7 +65,7 @@ var insuranceEcharts = {
             }
         });
     },
-    getDataJson2DrawDate: function ($, table, selectedPrefix, dataUrl) {
+    getDataJson: function ($, table, selectedPrefix, dataUrl) {
         $.ajax({
             url: dataUrl,
             data: {
@@ -159,7 +159,7 @@ var insuranceEcharts = {
         });
     },
 
-    drawDateEchart: function (selectedId, titleList, reserveCountList, underwriteCountList) {
+    drawEchart: function (selectedId, titleList, reserveCountList, underwriteCountList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
@@ -214,7 +214,7 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawDateTable: function ($, table, selectedId, tableItemList) {
+    drawTable: function ($, table, selectedId, tableItemList) {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'date'}\">日期</th>";

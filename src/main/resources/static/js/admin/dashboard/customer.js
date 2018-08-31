@@ -142,7 +142,7 @@ var insuranceEcharts = {
             },
             series : [
                 {
-                    name: '姓名',
+                    name: '地区',
                     type: 'pie',
                     radius : '55%',
                     center: ['40%', '50%'],
