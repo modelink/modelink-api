@@ -205,6 +205,7 @@ var insuranceEcharts = {
     drawLineEchart: function (selectedId, xData, data) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             tooltip: {
                 show: true
@@ -330,6 +331,7 @@ var insuranceEcharts = {
     drawTransformCycleEchart: function (selectedId, titleList, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             xAxis: {
                 type: 'value'
@@ -352,6 +354,7 @@ var insuranceEcharts = {
     drawTransformRateEchart: function (selectedId, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             tooltip : {
                 formatter: "{a} <br/>{b} : {c}‰"
@@ -378,6 +381,7 @@ var insuranceEcharts = {
     drawCostSummaryEchart: function (selectedId, titleList, clickCostList, transformCostList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,
@@ -439,6 +443,7 @@ var insuranceEcharts = {
     drawBarRankEchart: function (selectedId, titleList, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,//是否显示直角坐标系网格。[ default: false ]

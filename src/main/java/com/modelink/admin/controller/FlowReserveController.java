@@ -88,7 +88,7 @@ public class FlowReserveController {
             }
 
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            fieldFormatMap.put(9, "HH:mm:ss");
+            fieldFormatMap.put(3, "HH:mm:ss");
 
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);

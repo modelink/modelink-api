@@ -170,6 +170,7 @@ var insuranceEcharts = {
     drawMapEchart: function (selectedId, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             backgroundColor: '#FFFFFF',
             tooltip : {
@@ -201,6 +202,7 @@ var insuranceEcharts = {
 
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,
@@ -242,6 +244,7 @@ var insuranceEcharts = {
     drawGenderBarEchart: function (selectedId, titleList, manList, womanList, unknowList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,

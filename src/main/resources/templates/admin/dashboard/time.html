@@ -89,12 +89,8 @@
         <div class="layui-col-sm12 layui-col-md6">
             <div class="ml-card">
                 <table class="layui-table" lay-size="sm" lay-filter="reserve-count-table">
-                    <thead>
-                        <tr>
-                            <th lay-data="{align: 'center', field: 'provinceName'}">地域</th>
-                            <th lay-data="{align: 'center', field: 'underwriteCount'}">承保数</th>
-                            <th lay-data="{align: 'center', field: 'proportion'}">占比</th>
-                        </tr>
+                    <thead id="reserve-count-table-head">
+
                     </thead>
                     <tbody id="reserve-count-table-body">
 
@@ -111,7 +107,7 @@
 <script th:inline="javascript">
     layui.config({
         base: '/static/js/admin/dashboard/' //你的模块目录
-    }).use('client'); //加载入口
+    }).use('time'); //加载入口
 </script>
 
 </body>

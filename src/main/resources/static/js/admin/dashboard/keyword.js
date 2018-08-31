@@ -213,6 +213,7 @@ var insuranceEcharts = {
     drawWordCloudsEchart: function (selectedId, wordCloudsData) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             tooltip: {},
             series: [{
@@ -245,6 +246,7 @@ var insuranceEcharts = {
 
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,
@@ -405,6 +407,7 @@ var insuranceEcharts = {
     drawCostSummaryEchart: function (selectedId, titleList, clickCostList, transformCostList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,
@@ -467,6 +470,7 @@ var insuranceEcharts = {
 
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,

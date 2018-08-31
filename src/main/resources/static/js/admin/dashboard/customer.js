@@ -126,6 +126,7 @@ var insuranceEcharts = {
     drawArea2CountEchart: function (selectedId, titleList, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             tooltip : {
                 trigger: 'item',
@@ -159,7 +160,7 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawArea2CountTable: function ($, table, selectedId, contentList) {
+    drawHourTable: function ($, table, selectedId, contentList) {
         var tableHtml = "";
         if(!contentList || contentList.length <= 0){
             tableHtml += "<tr>";
@@ -186,6 +187,7 @@ var insuranceEcharts = {
     drawAge2AmountEchart: function (selectedId, titleList, manAmountList, womanAmountList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             grid: {
                 show: true,

@@ -196,6 +196,7 @@ var insuranceEcharts = {
     drawLineEchart: function (selectedId, xData, data) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             tooltip: {
                 show: true
@@ -218,6 +219,7 @@ var insuranceEcharts = {
     },
     drawAgeBarEchart: function (selectedId, labelData, leftData, rightData) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        selectedEchart.clear();
         var echartOption = {
             xAxis: [
                 {
@@ -279,6 +281,7 @@ var insuranceEcharts = {
     drawMapEchart: function (selectedId, provinceData) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             backgroundColor: '#FFFFFF',
             tooltip : {
@@ -309,6 +312,7 @@ var insuranceEcharts = {
     drawWordCloudsEchart: function (selectedId, wordCloudsData) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
+        selectedEchart.clear();
         var echartOption = {
             tooltip: {},
             series: [{
