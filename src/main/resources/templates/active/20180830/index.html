@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>家家保▪少儿年金知多少</title>
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="viewport" content=" initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
+    <meta name="format-detection" content="telephone=no">
+    <link th:href="@{/static/css/active/weixin/reserve-20180810/media.base.css}">
+    <style>
+        .bimg100 {
+            background-size: 100% 100%;
+            height: 100%;
+            width: 100%;
+            background-repeat: no-repeat;
+        }
+
+        .rbg {
+            background-image: url('/static/image/active/weixin/reserve-20180810/m1-bg.jpg');
+            position: fixed;
+            top: 0;
+            left: 0;
+            overflow: auto;
+        }
+
+        .r-bg {
+            width: 12rem;
+            height: 15rem;
+            background-image: url('/static/image/active/weixin/reserve-20180810/m1-red2.png');
+            position: relative;
+            margin-top: 10.665rem; /*margin-left: 3.8425rem;*/
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .r-bg .r-bg-title {
+            width: 100%;
+            height: 1rem;
+            font-family: MicrosoftYaHei;
+            font-size: 1rem;
+            line-height: 1rem;
+            color: #fcefdf;
+            text-align: center;
+            position: absolute;
+            left: 0;
+            bottom: 1rem;
+        }
+
+        /*.r-btn{width: 17.778rem;height: 2.259rem;line-height: 2.259rem;text-align:center;background-color: #ee6e00;border-radius: 0.185rem;margin: 1.556rem auto;color:#fff;	font-family: MicrosoftYaHei;font-size: 0.889rem;}*/
+        .r-desc {
+            width: 100%;
+            height: 0.926rem;
+            font-family: MicrosoftYaHei;
+            font-size: 0.926rem;
+            line-height: 0.926rem;
+            color: #e1003c;
+            text-align: center;
+        }
+
+        .r-btn {
+            margin: 0.741rem auto;
+            color: #fff;
+            text-align: center;
+            font-family: MicrosoftYaHei;
+            font-size: 0.889rem;
+            width: 17.778rem;
+            height: 2.259rem;
+            line-height: 2.259rem;
+            background-image: linear-gradient(180deg, #d4002c 0%, #ea0046 59%, #ff0060 100%), linear-gradient(#e1003c, #e1003c);
+            background-blend-mode: normal, normal;
+            border-radius: 0.185rem;
+        }
+
+        @media screen and (min-width: 375px) and (min-height: 750px) {
+            .r-bg {
+                margin-top: 14rem;
+            }
+
+            .r-btn {
+                margin: 1.741rem auto;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="bimg100 rbg">
+    <div class="r-bg bimg100">
+        <span class="r-bg-title">你收到一个微信红包</span>
+    </div>
+    <div class="r-btn" onclick="lingqu()">领取红包，参与活动</div>
+    <p class="r-desc">活的时间:3月15日</p>
+</div>
+<script th:src="@{//code.jquery.com/jquery-latest.min.js}"></script>
+<!--<script th:src="@{https://qzonestyle.gtimg.cn/qzone/qzact/common/share/share.js}"></script>-->
+<script th:src="@{/static/js/common/share.js}"></script>
+<script>
+    document.addEventListener('WeixinJSBridgeReady', function onBridgeReady() {
+        WeixinJSBridge.call('showOptionMenu');
+    });
+
+    function lingqu() {
+        $.post('/Mobile/Index/getRedPackage', function (res) {
+            window.location.href = '/Mobile/Index/redRule';
+        });
+    }
+
+    var url = window.location.href;
+    //获取签名
+    $.ajax({
+        type: "GET",
+        url: "/weixin/getSignature",
+        data: {url: url},
+        success: function (data) {
+            setShareInfo({
+                title: '精真估专业版全民享优惠', // 分享标题
+                summary: '通过此链接注册即送16枚精币（=16人民币），维保记录、出险记录、车史定价等可任意查询', // 分享内容
+                pic: 'http://d.jingzhengu.com/dealer/logo.jpg', // 分享图片
+                url: url, // 分享链接
+                // 微信权限验证配置信息，若不在微信传播，可忽略
+                WXconfig: {
+                    swapTitleInWX: true, // 是否标题内容互换（仅朋友圈，因朋友圈内只显示标题）
+                    appId: data.appid, // 公众号的唯一标识
+                    timestamp: data.timestamp, // 生成签名的时间戳
+                    nonceStr: data.nonceStr, // 生成签名的随机串
+                    signature: data.signature // 签名
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>
