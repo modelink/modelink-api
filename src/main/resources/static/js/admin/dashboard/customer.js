@@ -160,7 +160,7 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawHourTable: function ($, table, selectedId, contentList) {
+    drawArea2CountTable: function ($, table, selectedId, contentList) {
         var tableHtml = "";
         if(!contentList || contentList.length <= 0){
             tableHtml += "<tr>";

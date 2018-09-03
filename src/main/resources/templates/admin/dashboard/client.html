@@ -72,7 +72,7 @@
 
 
     <div class="layui-row ml-row">
-        <div class="layui-label">
+        <div class="layui-label reserve-count">
             <div style="float:left;">客户端分析</div>
             <div style="float:right;" class="layui-btn-group">
                 <button data-value="browser" class="layui-btn layui-btn-sm">浏览器</button>
@@ -93,6 +93,30 @@
 
                     </thead>
                     <tbody id="reserve-count-table-body">
+
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-row ml-row">
+        <div class="layui-label reserve-item">
+            <div style="float:left;">客户端数据明细</div>
+            <div style="float:right;" class="layui-btn-group">
+                <button data-value="browser" class="layui-btn layui-btn-sm">浏览器</button>
+                <button data-value="os" class="layui-btn layui-btn-primary layui-btn-sm">操作系统</button>
+                <button data-value="resolutionRatio" class="layui-btn layui-btn-primary layui-btn-sm">屏幕分辨率</button>
+                <button data-value="deviceType" class="layui-btn layui-btn-primary layui-btn-sm">设备类型</button>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md12">
+            <div class="ml-card">
+                <table class="layui-table" lay-size="sm" lay-filter="reserve-item-table">
+                    <thead id="reserve-item-table-head">
+
+                    </thead>
+                    <tbody id="reserve-item-table-body">
 
                     </tbody>
                 </table>

@@ -188,7 +188,7 @@ public class DashboardSummaryController {
         AbnormalParamPagerVo paramPagerVo = new AbnormalParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("id,reserveDate");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,problemData");
         paramPagerVo.setDateField("reserveDate");
         paramPagerVo.setProblemData("是");
         List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);

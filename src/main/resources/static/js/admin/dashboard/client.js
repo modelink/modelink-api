@@ -13,15 +13,29 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 
     //搜索表单提交
     $("#search-btn").on("click", function () {
-        insuranceEcharts.getDataJson($, table, "reserve-count", "/admin/dashboard/client/getReserveSummary");
+        insuranceEcharts.getClientEchartJson($, table, "reserve-count", "/admin/dashboard/client/getReserveSummary");
+        insuranceEcharts.getTableItemJson($, table, "reserve-item", "/admin/dashboard/client/getReserveItem");
     });
     $("#search-btn").trigger("click");
 
-    $(".layui-label .layui-btn-group button").on("click", function (selected) {
-        $(".layui-label .layui-btn-group button").addClass("layui-btn-primary");
+    $(".layui-label.reserve-count .layui-btn-group button").on("click", function (selected) {
+        $(".layui-label.reserve-count .layui-btn-group button").addClass("layui-btn-primary");
         $(this).removeClass("layui-btn-primary");
 
-        insuranceEcharts.getDataJson($, table, "reserve-count", "/admin/dashboard/client/getReserveSummary");
+        insuranceEcharts.chooseItem = [];
+        insuranceEcharts.chooseItem.push($(this).attr("data-value"));
+        insuranceEcharts.getClientEchartJson($, table, "reserve-count", "/admin/dashboard/client/getReserveSummary");
+
+    });
+    $(".layui-label.reserve-item .layui-btn-group button").on("click", function (selected) {
+        if($(this).hasClass("layui-btn-primary")){
+            $(this).removeClass("layui-btn-primary");
+            insuranceEcharts.chooseTableItem.push($(this).attr("data-value"));
+        }else{
+            $(this).addClass("layui-btn-primary");
+            insuranceEcharts.chooseTableItem.pop($(this).attr("data-value"));
+        }
+        insuranceEcharts.getTableItemJson($, table, "reserve-item", "/admin/dashboard/client/getReserveItem");
 
     });
     window.onresize = function () {
@@ -34,30 +48,50 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 });
 
 var insuranceEcharts = {
-    chooseItem: "browser",
+    chooseItem: ["browser"],
+    chooseTableItem: ["browser"],
     echartsMap: {},
 
-    getDataJson: function ($, table, selectedPrefix, dataUrl) {
+    getClientEchartJson: function ($, table, selectedPrefix, dataUrl) {
         $.ajax({
             url: dataUrl,
             data: {
-                chooseItems: insuranceEcharts.chooseItem,
+                chooseItems: insuranceEcharts.chooseItem.join(","),
                 merchantId: $("#merchant").val(),
                 chooseDate: $("#chooseDate").val(),
                 platformName: $("#platformName").val(),
                 advertiseActive: $("#advertiseActive").val()
             },
             success: function (response) {
-                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.tableItemList.length <= 0){
                     return;
                 }
-                insuranceEcharts.drawTable($, table, selectedPrefix, response.rtnData.tableItemList);
-                insuranceEcharts.drawEchart(selectedPrefix + "-echart", response.rtnData.titleList, response.rtnData.contentList);
+                insuranceEcharts.drawClientTable($, table, selectedPrefix, response.rtnData.tableItemList);
+                insuranceEcharts.drawClientEchart(selectedPrefix + "-echart", response.rtnData.titleList, response.rtnData.tableItemList);
+
+            }
+        });
+    },
+    getTableItemJson: function ($, table, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                chooseItems: insuranceEcharts.chooseTableItem.join(","),
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.tableItemList.length <= 0){
+                    return;
+                }
+                insuranceEcharts.drawItemTable($, table, selectedPrefix, response.rtnData.tableItemList);
             }
         });
     },
 
-    drawEchart: function (selectedId, titleList, contentList) {
+    drawClientEchart: function (selectedId, titleList, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
@@ -76,7 +110,7 @@ var insuranceEcharts = {
             },
             series : [
                 {
-                    name: '地区',
+                    name: '名称',
                     type: 'pie',
                     radius : '55%',
                     center: ['40%', '50%'],
@@ -94,19 +128,19 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawTable: function ($, table, selectedId, tableItemList) {
+    drawClientTable: function ($, table, selectedId, tableItemList) {
         var tableHtml = "";
         tableHtml += "<tr>";
-        if(insuranceEcharts.chooseItem == "browser"){
-            tableHtml += "<th lay-data=\"{align: 'center', field: 'date'}\">浏览器</th>";
-        }else if(insuranceEcharts.chooseItem == "os"){
-            tableHtml += "<th lay-data=\"{align: 'center', field: 'date'}\">操作系统</th>";
-        }else if(insuranceEcharts.chooseItem == "resolutionRatio"){
-            tableHtml += "<th lay-data=\"{align: 'center', field: 'date'}\">屏幕分辨率</th>";
-        }else if(insuranceEcharts.chooseItem == "deviceType"){
-            tableHtml += "<th lay-data=\"{align: 'center', field: 'date'}\">设备类别</th>";
+        if(insuranceEcharts.chooseItem.indexOf("browser") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'browser'}\">浏览器</th>";
+        }else if(insuranceEcharts.chooseItem.indexOf("os") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'os'}\">操作系统</th>";
+        }else if(insuranceEcharts.chooseItem.indexOf("resolutionRatio") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'resolutionRatio'}\">屏幕分辨率</th>";
+        }else if(insuranceEcharts.chooseItem.indexOf("deviceType") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'deviceType'}\">设备类别</th>";
         }
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'reserveCount'}\">预约数量</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">预约数量</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
@@ -114,15 +148,85 @@ var insuranceEcharts = {
         tableHtml = "";
         if(!tableItemList || tableItemList.length <= 0){
             tableHtml += "<tr>";
-            tableHtml += "<td></td>";
+            for(var i in insuranceEcharts.chooseItem){
+                tableHtml += "<td></td>";
+            }
             tableHtml += "<td></td>";
             tableHtml += "<td></td>";
             tableHtml += "</tr>";
         }
         for(var index in tableItemList){
             tableHtml += "<tr>";
-            tableHtml += "<td>" + tableItemList[index].chooseItem + "</td>";
-            tableHtml += "<td>" + tableItemList[index].reserveCount + "</td>";
+            for(var i in insuranceEcharts.chooseItem){
+                if(insuranceEcharts.chooseItem[i] == "browser"){
+                    tableHtml += "<td>" + tableItemList[index].browser + "</td>";
+                }else if(insuranceEcharts.chooseItem[i] == "os"){
+                    tableHtml += "<td>" + tableItemList[index].os + "</td>";
+                }else if(insuranceEcharts.chooseItem[i] == "resolutionRatio"){
+                    tableHtml += "<td>" + tableItemList[index].resolutionRatio + "</td>";
+                }else if(insuranceEcharts.chooseItem[i] == "deviceType"){
+                    tableHtml += "<td>" + tableItemList[index].deviceType + "</td>";
+                }
+            }
+            tableHtml += "<td>" + tableItemList[index].value + "</td>";
+            tableHtml += "<td>" + tableItemList[index].proportion + "</td>";
+            tableHtml += "</tr>";
+        }
+        $("#" + selectedId + "-table-body").html(tableHtml);
+
+        table.init(selectedId + "-table", {
+            limit: 10,
+            page: true
+        });
+    },
+
+    drawItemTable: function ($, table, selectedId, tableItemList) {
+        var tableHtml = "";
+        tableHtml += "<tr>";
+        if(insuranceEcharts.chooseTableItem.indexOf("browser") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'browser'}\">浏览器</th>";
+        }
+        if(insuranceEcharts.chooseTableItem.indexOf("os") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'os'}\">操作系统</th>";
+        }
+        if(insuranceEcharts.chooseTableItem.indexOf("resolutionRatio") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'resolutionRatio'}\">屏幕分辨率</th>";
+        }
+        if(insuranceEcharts.chooseTableItem.indexOf("deviceType") != -1){
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'deviceType'}\">设备类别</th>";
+        }
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">预约数量</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";
+        tableHtml += "</tr>";
+        $("#" + selectedId + "-table-head").html(tableHtml);
+
+        tableHtml = "";
+        if(!tableItemList || tableItemList.length <= 0){
+            tableHtml += "<tr>";
+            for(var i in insuranceEcharts.chooseTableItem){
+                tableHtml += "<td></td>";
+            }
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "</tr>";
+        }
+        for(var index in tableItemList){
+            tableHtml += "<tr>";
+            for(var i in insuranceEcharts.chooseTableItem){
+                if(insuranceEcharts.chooseTableItem[i].indexOf("browser") != -1){
+                    tableHtml += "<td>" + tableItemList[index].browser + "</td>";
+                }
+                if(insuranceEcharts.chooseTableItem[i].indexOf("os") != -1){
+                    tableHtml += "<td>" + tableItemList[index].os + "</td>";
+                }
+                if(insuranceEcharts.chooseTableItem[i].indexOf("resolutionRatio") != -1){
+                    tableHtml += "<td>" + tableItemList[index].resolutionRatio + "</td>";
+                }
+                if(insuranceEcharts.chooseTableItem[i].indexOf("deviceType") != -1){
+                    tableHtml += "<td>" + tableItemList[index].deviceType + "</td>";
+                }
+            }
+            tableHtml += "<td>" + tableItemList[index].value + "</td>";
             tableHtml += "<td>" + tableItemList[index].proportion + "</td>";
             tableHtml += "</tr>";
         }
