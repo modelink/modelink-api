@@ -99,6 +99,7 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
         }
+        criteria.andEqualTo("isMakeUp", 0);
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;
     }
@@ -120,6 +121,7 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         if(StringUtils.hasText(sortField)) {
             example.setOrderByClause(sortField);
         }
+        criteria.andEqualTo("isMakeUp", 0);
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;
     }
@@ -145,22 +147,5 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         PageInfo<FlowReserve> pageInfo = new PageInfo<>(flowReserveList);
         return pageInfo;
-    }
-
-    /**
-     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
-     * @param paramVo
-     * @return
-     */
-    @Override
-    public List<FlowReserve> findListWithLimitColumnByDateRange(DashboardParamVo paramVo) {
-        String startDate = "";
-        String endDate = "";
-        if(!StringUtils.isEmpty(paramVo.getChooseDate()) && paramVo.getChooseDate().contains(" - ")){
-            String[] chooseDates = paramVo.getChooseDate().split(" - ");
-            startDate = chooseDates[0];
-            endDate = chooseDates[1];
-        }
-        return flowReserveMapper.findListWithLimitColumnByDateRange(startDate, endDate, paramVo.getMerchantId());
     }
 }

@@ -87,6 +87,12 @@ public class MediaTacticsServiceImpl implements MediaTacticsService {
             criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
+        if(StringUtils.hasText(paramPagerVo.getPlatformName())){
+            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+        }
+        if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
+            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
+        }
 
         List<MediaTactics> mediaTacticsList = mediaTacticsMapper.selectByExample(example);
         return mediaTacticsList;

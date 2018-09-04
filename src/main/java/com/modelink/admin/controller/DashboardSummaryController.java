@@ -129,14 +129,14 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("finishDate");
-        paramPagerVo.setColumnFieldIds("id,finishDate,platformName,advertiseActive,insuranceFee");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,platformName,advertiseActive,insuranceFee");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         int insuranceCount, underwriteTotalCount = 0;
         statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), DateTypeEnum.日.getValue());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), DateTypeEnum.日.getValue());
             insuranceCount = 0;
             if(statCountMap.get(dateKey) != null){
                 insuranceCount = (Integer)statCountMap.get(dateKey);
@@ -155,7 +155,7 @@ public class DashboardSummaryController {
         double insuranceTotalAmount, underwriteTotalAmount = 0.0d;
         Map<String, Object> totalAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), DateTypeEnum.日.getValue());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), DateTypeEnum.日.getValue());
             insuranceTotalAmount = 0.00;
             if(totalAmountMap.get(dateKey) != null){
                 insuranceTotalAmount = (double)totalAmountMap.get(dateKey);
@@ -353,10 +353,10 @@ public class DashboardSummaryController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("id,finishDate,reserveMobile");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,reserveMobile");
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setDateField("reserveDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         Set<String> mobileSet = new HashSet<>();
@@ -393,7 +393,7 @@ public class DashboardSummaryController {
                 continue;
             }
             finishDate = underwrite.getFinishDate();
-            reserveDate = mobile2DateMap.get(underwrite.getReserveMobile());
+            reserveDate = underwrite.getReserveDate();
             difference = DateUtils.getDateDifference(reserveDate, finishDate);
             if(difference <= 0){
                 difference = 0;

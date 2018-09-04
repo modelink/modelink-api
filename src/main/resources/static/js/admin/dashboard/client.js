@@ -193,7 +193,7 @@ var insuranceEcharts = {
             tableHtml += "<th lay-data=\"{align: 'center', field: 'resolutionRatio'}\">屏幕分辨率</th>";
         }
         if(insuranceEcharts.chooseTableItem.indexOf("deviceType") != -1){
-            tableHtml += "<th lay-data=\"{align: 'center', field: 'deviceType'}\">设备类别</th>";
+            tableHtml += "<th tactics\">设备类别</th>";
         }
         tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">预约数量</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";

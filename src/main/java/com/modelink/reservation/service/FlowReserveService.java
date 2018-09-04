@@ -61,11 +61,4 @@ public interface FlowReserveService {
      * @return
      */
     public PageInfo<FlowReserve> findPagerByParam(FlowReserveParamPagerVo paramPagerVo);
-
-    /**
-     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
-     * @param paramVo
-     * @return
-     */
-    public List<FlowReserve> findListWithLimitColumnByDateRange(DashboardParamVo paramVo);
 }
