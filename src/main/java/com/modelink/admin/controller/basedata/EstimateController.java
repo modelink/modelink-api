@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
@@ -164,8 +164,8 @@ public class EstimateController {
 
                 // 保存数据
                 estimate.setDate(dataItem.get(1));
-                estimate.setPlatformName(dataItem.get(2));
-                estimate.setAdvertiseActive(dataItem.get(3));
+                estimate.setPlatformName(dataItem.get(2).toUpperCase());
+                estimate.setAdvertiseActive(dataItem.get(3).toUpperCase());
                 estimate.setTransformCount(DataUtils.tranform2Integer(dataItem.get(4)));
                 estimate.setWebBrowseCount(DataUtils.tranform2Integer(dataItem.get(5)));
                 estimate.setWebClickCount(DataUtils.tranform2Integer(dataItem.get(6)));

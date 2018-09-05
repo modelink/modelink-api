@@ -5,3 +5,5 @@ alter table `underwrite` add column `source_date` varchar(10) not null default '
 alter table `underwrite` add column `keyword` varchar(128) not null default '' after `advertise_active`;
 alter table `media_item` add column `fee_type` varchar(8) not null default '预约' after `average_rank`;
 alter table `flow_reserve` add column `fee_type` varchar(8) not null default '预约' after `device_type`;
+
+update flow as a, flow as b set a.average_stay_time = b.average_browse_page_count, a.average_browse_page_count = b.average_stay_time where a.id=b.id;

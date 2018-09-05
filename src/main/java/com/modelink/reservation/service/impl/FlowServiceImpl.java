@@ -75,12 +75,24 @@ public class FlowServiceImpl implements FlowService {
     public List<Flow> findListByParam(FlowParamPagerVo paramPagerVo) {
         Example example = new Example(Flow.class);
         Example.Criteria criteria = example.createCriteria();
+        if(StringUtils.hasText(paramPagerVo.getColumnFieldIds())) {
+            example.selectProperties(paramPagerVo.getColumnFieldIds().split(","));
+        }
+        String dateField = paramPagerVo.getDateField();
+        if(StringUtils.isEmpty(dateField)){
+            dateField = "date";
+        }
         if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
-            criteria.andLessThanOrEqualTo("date", chooseDates[1]);
-            criteria.andGreaterThanOrEqualTo("date", chooseDates[0]);
+            criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
+            criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
-
+        if(StringUtils.hasText(paramPagerVo.getPlatformName())){
+            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+        }
+        if(StringUtils.hasText(paramPagerVo.getSource())){
+            criteria.andEqualTo("source", paramPagerVo.getSource());
+        }
         List<Flow> flowList = flowMapper.selectByExample(example);
         return flowList;
     }

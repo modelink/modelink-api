@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
@@ -11,12 +11,10 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.reservation.bean.Permiums;
-import com.modelink.reservation.service.PermiumsService;
-import com.modelink.reservation.vo.PermiumsParamPagerVo;
-import com.modelink.reservation.vo.PermiumsVo;
-import com.modelink.usercenter.bean.Merchant;
-import com.modelink.usercenter.service.MerchantService;
+import com.modelink.reservation.bean.Abnormal;
+import com.modelink.reservation.service.AbnormalService;
+import com.modelink.reservation.vo.AbnormalParamPagerVo;
+import com.modelink.reservation.vo.AbnormalVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -32,18 +30,16 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * 保费数据Controller
+ * 异常数据Controller
  */
 @Controller
-@RequestMapping("/admin/permiums")
-public class PermiumsController {
+@RequestMapping("/admin/abnormal")
+public class AbnormalController {
 
-    public static Logger logger = LoggerFactory.getLogger(PermiumsController.class);
+    public static Logger logger = LoggerFactory.getLogger(AbnormalController.class);
 
     @Resource
-    private MerchantService merchantService;
-    @Resource
-    private PermiumsService permiumsService;
+    private AbnormalService abnormalService;
     @Resource
     private ExceptionLoggerService exceptionLoggerService;
 
@@ -51,18 +47,18 @@ public class PermiumsController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/permiums/permiums-list");
+        modelAndView.setViewName("/admin/abnormal/abnormal-list");
         return modelAndView;
     }
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<PermiumsVo> list(PermiumsParamPagerVo paramPagerVo){
-        LayuiResultPagerVo<PermiumsVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
+    public LayuiResultPagerVo<AbnormalVo> list(AbnormalParamPagerVo paramPagerVo){
+        LayuiResultPagerVo<AbnormalVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
-        PageInfo<Permiums> pageInfo = permiumsService.findPagerByParam(paramPagerVo);
-        List<Permiums> permiumsList = pageInfo.getList();
-        List<PermiumsVo> advertiseAnalyseVoList = transformBean2VoList(permiumsList);
+        PageInfo<Abnormal> pageInfo = abnormalService.findPagerByParam(paramPagerVo);
+        List<Abnormal> abnormalList = pageInfo.getList();
+        List<AbnormalVo> advertiseAnalyseVoList = transformBean2VoList(abnormalList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -77,9 +73,9 @@ public class PermiumsController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("合作方提供的保费数据表")){
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("异常数据表")){
                 resultVo.setRtnCode(RetStatus.Fail.getValue());
-                resultVo.setRtnMsg("您导入表格不是合作方提供的保费数据表");
+                resultVo.setRtnMsg("您导入表格不是异常数据表");
                 return resultVo;
             }
 
@@ -91,7 +87,7 @@ public class PermiumsController {
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
-            logger.error("[permiumsController|importExcel]发生异常", e);
+            logger.error("[abnormalController|importExcel]发生异常", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
@@ -112,7 +108,7 @@ public class PermiumsController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 11){
+            if(dataItem.size() < 15){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -135,7 +131,7 @@ public class PermiumsController {
 
         // 数据入库
         boolean exist;
-        Permiums permiums;
+        Abnormal abnormal;
         int totalCount = 0;
         for(List<String> dataItem : dataList){
 
@@ -151,51 +147,59 @@ public class PermiumsController {
                 continue;
             }
             try {
-
-                Merchant merchant = merchantService.findByName(dataItem.get(1));
                 // 重复数据校验
-                permiums = new Permiums();
-                permiums.setDate(dataItem.get(2));
-                permiums.setConsumeAmount(dataItem.get(6));
-                permiums.setInsuranceFee(dataItem.get(10));
-                permiums = permiumsService.findOneByParam(permiums);
-                if(permiums == null){
+                abnormal = new Abnormal();
+                abnormal.setDate(dataItem.get(1));
+                abnormal.setSource(dataItem.get(4));
+                abnormal.setMobile(dataItem.get(5));
+                abnormal.setCallResult(dataItem.get(9));
+                abnormal.setLastResult(dataItem.get(10));
+                abnormal = abnormalService.findOneByParam(abnormal);
+                if(abnormal == null){
                     exist = false;
-                    permiums = new Permiums();
+                    abnormal = new Abnormal();
                 }else{
-                    logger.info("[permiumsController|importExcel]重复数据{}", JSON.toJSONString(permiums));
+                    logger.info("[abnormalController|importExcel]重复数据{}", JSON.toJSONString(abnormal));
                     ExceptionLogger exceptionLogger = new ExceptionLogger();
                     exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
-                    exceptionLogger.setLoggerType("permiums");
+                    exceptionLogger.setLoggerType("abnormal");
                     exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                     exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                     exceptionLoggerService.save(exceptionLogger);
                 }
 
                 // 保存数据
-                permiums.setDate(dataItem.get(2));
-                permiums.setMerchantId(merchant == null ? 0 : merchant.getId());
-                permiums.setValidCount(DataUtils.tranform2Integer(dataItem.get(3)));
-                permiums.setTransformCount(DataUtils.tranform2Integer(dataItem.get(4)));
-                permiums.setTransformCountNowx(DataUtils.tranform2Integer(dataItem.get(5)));
-                permiums.setConsumeAmount(dataItem.get(6));
-                permiums.setDirectTransformCost(dataItem.get(7));
-                permiums.setTotalTransformCost(dataItem.get(8));
-                permiums.setInsuranceCount(DataUtils.tranform2Integer(dataItem.get(9)));
-                permiums.setInsuranceFee(dataItem.get(10));
+                abnormal.setDate(dataItem.get(1));
+                abnormal.setOrgName(dataItem.get(2));
+                abnormal.setTsrName(dataItem.get(3));
+                abnormal.setSource(dataItem.get(4));
+                abnormal.setMobile(dataItem.get(5));
+                abnormal.setReserveDate(dataItem.get(6));
+                abnormal.setArrangeDate(dataItem.get(7));
+                abnormal.setCallDate(dataItem.get(8));
+                abnormal.setCallResult(dataItem.get(9));
+                abnormal.setLastResult(dataItem.get(10));
+                abnormal.setProblemData(dataItem.get(11));
+                if("-".trim().equals(dataItem.get(12))) {
+                    abnormal.setCallCount(1);
+                }else{
+                    abnormal.setCallCount(DataUtils.tranform2Integer(dataItem.get(12)));
+                }
+                abnormal.setSourceMedia(dataItem.get(13));
+                abnormal.setDeviceName(dataItem.get(14));
 
                 if(exist) {
-                    permiumsService.update(permiums);
+                    abnormalService.update(abnormal);
                 }else {
-                    permiumsService.insert(permiums);
+                    abnormalService.insert(abnormal);
                     totalCount ++;
                 }
 
             } catch (Exception e) {
-                logger.error("[permiumsController|importExcel]保存数据发生异常。permiums={}", JSON.toJSONString(dataItem), e);
+                logger.error("[abnormalController|importExcel]保存数据发生异常。abnormal={}", JSON.toJSONString(dataItem), e);
                 ExceptionLogger exceptionLogger = new ExceptionLogger();
                 exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据异常");
-                exceptionLogger.setLoggerType("permiums");
+                exceptionLogger.setLoggerType("abnormal");
                 exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                 exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                 exceptionLoggerService.save(exceptionLogger);
@@ -206,19 +210,16 @@ public class PermiumsController {
     }
 
 
-    private List<PermiumsVo> transformBean2VoList(List<Permiums> permiumsList){
-        Merchant merchant;
-        PermiumsVo permiumsVo;
-        List<PermiumsVo> permiumsVoList = new ArrayList<>();
-        for(Permiums permiums : permiumsList){
-            permiumsVo = new PermiumsVo();
-            merchant = merchantService.findById(permiums.getMerchantId());
-            BeanUtils.copyProperties(permiums, permiumsVo);
-            permiumsVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            permiumsVo.setCreateTime(DateUtils.formatDate(permiums.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            permiumsVo.setUpdateTime(DateUtils.formatDate(permiums.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
-            permiumsVoList.add(permiumsVo);
+    private List<AbnormalVo> transformBean2VoList(List<Abnormal> abnormalList){
+        AbnormalVo abnormalVo;
+        List<AbnormalVo> abnormalVoList = new ArrayList<>();
+        for(Abnormal abnormal : abnormalList){
+            abnormalVo = new AbnormalVo();
+            BeanUtils.copyProperties(abnormal, abnormalVo);
+            abnormalVo.setCreateTime(DateUtils.formatDate(abnormal.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            abnormalVo.setUpdateTime(DateUtils.formatDate(abnormal.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            abnormalVoList.add(abnormalVo);
         }
-        return permiumsVoList;
+        return abnormalVoList;
     }
 }

@@ -11,13 +11,6 @@
     <link rel="stylesheet" th:href="@{/static/css/admin/home/xadmin.css}">
     <link rel="stylesheet" th:href="@{//at.alicdn.com/t/font_604626_m0xm8ye4zbj.css}">
     <style>
-        .layui-row.ml-row {
-            border: 1px solid #E6E6E6;
-            margin-bottom: 15px;
-        }
-        .ml-card {
-            margin: 15px;
-        }
         .layui-label {
             padding-left: 15px;
             padding-right: 15px;
@@ -46,17 +39,16 @@
                     </select>
                 </div>
             </div>
-
+            <div class="layui-inline choose-date">
+                <label class="layui-form-label">选择日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
+                </div>
+            </div>
             <div class="layui-inline">
                 <label class="layui-form-label">渠道归属</label>
                 <div class="layui-input-inline">
                     <input type="text" id="platformName" name="platformName" autocomplete="off" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">广告活动</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="advertiseActive" name="advertiseActive" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -66,70 +58,135 @@
         </div>
     </form>
 
-    <div class="layui-row ml-row">
-        <div class="layui-label reserve-count">
-            <div style="float:left;">媒体渠道关键指标分析</div>
-            <div style="float:right;" class="layui-form layui-form-pane">
-                <div class="layui-inline">
-                    <label class="layui-form-label">选择日期</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
-                    </div>
-                </div>
+    <div class="layui-row layui-col-space15 ml-table">
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>浏览量</label>
+                <input type="text" readonly id="browseTotalCount"></input>
             </div>
         </div>
-        <div class="layui-col-sm12 layui-col-md6">
-            <div class="ml-card">
-                <div id="media-summary-echart" style="height: 600px;"></div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>访问次数</label>
+                <input type="text" readonly id="inflowTotalCount"></input>
             </div>
         </div>
-        <div class="layui-col-sm12 layui-col-md6">
-
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>用户数</label>
+                <input type="text" readonly id="userTotalCount"></input>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>二跳量</label>
+                <input type="text" readonly id="againTotalCount"></input>
+            </div>
         </div>
     </div>
-    <div class="layui-row ml-row">
-        <div class="layui-label reserve-count">
-            <div style="float:left;">媒体渠道月度动作与保费的关系</div>
-            <div style="float:right;" class="layui-form layui-form-pane">
-                <div class="layui-inline">
-                    <label class="layui-form-label">选择年份</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="chooseYear" name="chooseYear" class="layui-input">
+    <div class="layui-row layui-col-space15 ml-table">
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>二跳率</label>
+                <input type="text" readonly id="againTotalRate"></input>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>平均停留时间</label>
+                <input type="text" readonly id="averageStayTime"></input>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>平均浏览页面</label>
+                <input type="text" readonly id="averageBrowsePage"></input>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md12">
+            <div class="layui-card">
+                <div class="layui-card-header">流量概览</div>
+                <div class="layui-card-body">
+                    <div id="flow-summary-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm12 layui-col-md6">
+            <div class="layui-card">
+                <div class="layui-card-header">地域分布</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12 layui-col-md12">
+                            <div id="flow-user-echart" style="height: 300px;"></div>
+                        </div>
+                        <div class="layui-col-sm12 layui-col-md12">
+                            <table class="layui-table" lay-size="sm" lay-filter="flow-user-table">
+                                <thead id="flow-user-table-head">
+
+                                </thead>
+                                <tbody id="flow-user-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
         <div class="layui-col-sm12 layui-col-md6">
-            <div class="ml-card">
-                <div id="media-tactics-echart" style="height: 300px;"></div>
+            <div class="layui-card">
+                <div class="layui-card-header">
+                    <div style="float:left;">外部来源</div>
+                    <div style="float:right;" class="layui-form layui-form-pane">
+                        <div class="layui-form-item">
+                            <label class="layui-form-label">来源类型</label>
+                            <div class="layui-input-block">
+                                <input type="radio" name="source" value="0" title="全部" checked>
+                                <input type="radio" name="source" value="1" title="推介网站">
+                                <input type="radio" name="source" value="2" title="搜索引擎">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <table class="layui-table" lay-size="sm" lay-filter="flow-source-table">
+                        <thead id="flow-source-table-head">
+
+                        </thead>
+                        <tbody id="flow-source-table-body">
+
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
         <div class="layui-col-sm12 layui-col-md6">
-            <table class="layui-table" lay-size="sm" lay-filter="media-tactics-table" style="margin-right:15px;">
-                <thead id="media-tactics-table-head">
-                    <tr>
-                        <th lay-data="{align: 'center'}" colspan="13">媒体渠道策略调整分析</th>
-                    </tr>
-                    <tr>
-                        <th lay-data="{align: 'center', field: 'operate', width: 150}">月份</th>
-                        <th lay-data="{align: 'center', field: 'month1', width: 100}">1月</th>
-                        <th lay-data="{align: 'center', field: 'month2', width: 100}">2月</th>
-                        <th lay-data="{align: 'center', field: 'month3', width: 100}">3月</th>
-                        <th lay-data="{align: 'center', field: 'month4', width: 100}">4月</th>
-                        <th lay-data="{align: 'center', field: 'month5', width: 100}">5月</th>
-                        <th lay-data="{align: 'center', field: 'month6', width: 100}">6月</th>
-                        <th lay-data="{align: 'center', field: 'month7', width: 100}">7月</th>
-                        <th lay-data="{align: 'center', field: 'month8', width: 100}">8月</th>
-                        <th lay-data="{align: 'center', field: 'month9', width: 100}">9月</th>
-                        <th lay-data="{align: 'center', field: 'month10', width: 100}">10月</th>
-                        <th lay-data="{align: 'center', field: 'month11', width: 100}">11月</th>
-                        <th lay-data="{align: 'center', field: 'month12', width: 100}">12月</th>
-                    </tr>
-                </thead>
-                <tbody id="media-tactics-table-body">
+            <div class="layui-card">
+                <div class="layui-card-header">访问来源</div>
+                <div class="layui-card-body">
+                    <div class="layui-row layui-col-space15">
+                        <div class="layui-col-sm12 layui-col-md12">
+                            <div id="inflow-source-echart" style="height: 300px;"></div>
+                        </div>
+                        <div class="layui-col-sm12 layui-col-md12">
+                            <table class="layui-table" lay-size="sm" lay-filter="inflow-source-table">
+                                <thead id="inflow-source-table-head">
 
-                </tbody>
-            </table>
+                                </thead>
+                                <tbody id="inflow-source-table-body">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -140,7 +197,7 @@
 <script th:inline="javascript">
     layui.config({
         base: '/static/js/admin/dashboard/' //你的模块目录
-    }).use('flow'); //加载入口
+    }).use('flow-base'); //加载入口
 </script>
 
 </body>

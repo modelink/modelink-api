@@ -1,12 +1,9 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.ExceptionLogger;
 import com.modelink.admin.service.ExceptionLoggerService;
-import com.modelink.common.enums.InsuranceChildStatusEnum;
-import com.modelink.common.enums.InsurancePayTypeEnum;
-import com.modelink.common.enums.InsuranceStatusEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
@@ -14,10 +11,10 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.reservation.bean.Repellent;
-import com.modelink.reservation.service.RepellentService;
-import com.modelink.reservation.vo.RepellentParamPagerVo;
-import com.modelink.reservation.vo.RepellentVo;
+import com.modelink.reservation.bean.Permiums;
+import com.modelink.reservation.service.PermiumsService;
+import com.modelink.reservation.vo.PermiumsParamPagerVo;
+import com.modelink.reservation.vo.PermiumsVo;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
@@ -34,18 +31,19 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import java.util.*;
 
-/** 退保数据Controller **/
+/**
+ * 保费数据Controller
+ */
 @Controller
-@RequestMapping("/admin/repellent")
-public class RepellentController {
+@RequestMapping("/admin/permiums")
+public class PermiumsController {
 
-
-    public static Logger logger = LoggerFactory.getLogger(RepellentController.class);
+    public static Logger logger = LoggerFactory.getLogger(PermiumsController.class);
 
     @Resource
     private MerchantService merchantService;
     @Resource
-    private RepellentService repellentService;
+    private PermiumsService permiumsService;
     @Resource
     private ExceptionLoggerService exceptionLoggerService;
 
@@ -53,18 +51,18 @@ public class RepellentController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/repellent/repellent-list");
+        modelAndView.setViewName("/admin/permiums/permiums-list");
         return modelAndView;
     }
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<RepellentVo> list(RepellentParamPagerVo paramPagerVo){
-        LayuiResultPagerVo<RepellentVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
+    public LayuiResultPagerVo<PermiumsVo> list(PermiumsParamPagerVo paramPagerVo){
+        LayuiResultPagerVo<PermiumsVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
-        PageInfo<Repellent> pageInfo = repellentService.findPagerByParam(paramPagerVo);
-        List<Repellent> repellentList = pageInfo.getList();
-        List<RepellentVo> advertiseAnalyseVoList = transformBean2VoList(repellentList);
+        PageInfo<Permiums> pageInfo = permiumsService.findPagerByParam(paramPagerVo);
+        List<Permiums> permiumsList = pageInfo.getList();
+        List<PermiumsVo> advertiseAnalyseVoList = transformBean2VoList(permiumsList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -79,9 +77,9 @@ public class RepellentController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("退保数据表")){
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("合作方提供的保费数据表")){
                 resultVo.setRtnCode(RetStatus.Fail.getValue());
-                resultVo.setRtnMsg("您导入表格不是退保数据表");
+                resultVo.setRtnMsg("您导入表格不是合作方提供的保费数据表");
                 return resultVo;
             }
 
@@ -93,7 +91,7 @@ public class RepellentController {
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
-            logger.error("[repellentController|importExcel]发生异常", e);
+            logger.error("[permiumsController|importExcel]发生异常", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
@@ -110,12 +108,11 @@ public class RepellentController {
 
 
         // 校验Excel数据是否符合规定
-        boolean isExist;
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 26){
+            if(dataItem.size() < 11){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -137,13 +134,13 @@ public class RepellentController {
         }
 
         // 数据入库
-        Merchant merchant;
-        Repellent repellent;
+        boolean exist;
+        Permiums permiums;
         int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
-            isExist = true;
+            exist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -154,95 +151,74 @@ public class RepellentController {
                 continue;
             }
             try {
+
+                Merchant merchant = merchantService.findByName(dataItem.get(1));
                 // 重复数据校验
-                repellent = new Repellent();
-                repellent.setInsuranceNo(dataItem.get(4));
-                repellent.setStatus(InsuranceStatusEnum.getValueByText(dataItem.get(5)));
-                repellent = repellentService.findOneByParam(repellent);
-                if(repellent == null){
-                    isExist = false;
-                    repellent = new Repellent();
+                permiums = new Permiums();
+                permiums.setDate(dataItem.get(2));
+                permiums.setConsumeAmount(dataItem.get(6));
+                permiums.setInsuranceFee(dataItem.get(10));
+                permiums = permiumsService.findOneByParam(permiums);
+                if(permiums == null){
+                    exist = false;
+                    permiums = new Permiums();
                 }else{
-                    logger.info("[repellentController|importExcel]重复数据{}", JSON.toJSONString(repellent));
+                    logger.info("[permiumsController|importExcel]重复数据{}", JSON.toJSONString(permiums));
                     ExceptionLogger exceptionLogger = new ExceptionLogger();
                     exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
-                    exceptionLogger.setLoggerType("repellent");
+                    exceptionLogger.setLoggerType("permiums");
                     exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                     exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                     exceptionLoggerService.save(exceptionLogger);
                 }
 
-                merchant = merchantService.findByName(dataItem.get(1));
                 // 保存数据
-                repellent.setMerchantId(merchant == null ? 0 : merchant.getId());
-                repellent.setExportOrgName(dataItem.get(2));
-                repellent.setRepellentNo(dataItem.get(3));
-                repellent.setInsuranceNo(dataItem.get(4));
-                repellent.setStatus(InsuranceStatusEnum.getValueByText(dataItem.get(5)));
-                repellent.setChildStatus(InsuranceChildStatusEnum.getValueByText(dataItem.get(6)));
-                repellent.setInsuranceName(dataItem.get(7));
-                repellent.setProductName(dataItem.get(8));
-                repellent.setExtraInsurance(dataItem.get(9));
-                repellent.setInsuranceAmount(dataItem.get(10));
-                repellent.setYearInsuranceFee(dataItem.get(11));
-                repellent.setInsuranceFee(dataItem.get(12));
-                repellent.setTsrNumber(dataItem.get(13));
-                repellent.setTsrName(dataItem.get(14));
-                repellent.setTlNumber(dataItem.get(15));
-                repellent.setTlName(dataItem.get(16));
-                repellent.setOrgName(dataItem.get(17));
-                repellent.setDepartment(dataItem.get(18));
-                repellent.setRegionName(dataItem.get(19));
-                repellent.setGroupName(dataItem.get(20));
-                repellent.setSpecialCaseName(dataItem.get(21));
-                repellent.setInsuranceDate(dataItem.get(22));
-                repellent.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(23)));
-                repellent.setHesitateDate(dataItem.get(24));
-                if("-".equals(dataItem.get(25)) || "".equals(dataItem.get(25))){
-                    repellent.setPayInterval(0);
-                }else {
-                    repellent.setPayInterval(DataUtils.tranform2Integer(dataItem.get(25)));
-                }
+                permiums.setDate(dataItem.get(2));
+                permiums.setMerchantId(merchant == null ? 0 : merchant.getId());
+                permiums.setValidCount(DataUtils.tranform2Integer(dataItem.get(3)));
+                permiums.setTransformCount(DataUtils.tranform2Integer(dataItem.get(4)));
+                permiums.setTransformCountNowx(DataUtils.tranform2Integer(dataItem.get(5)));
+                permiums.setConsumeAmount(dataItem.get(6));
+                permiums.setDirectTransformCost(dataItem.get(7));
+                permiums.setTotalTransformCost(dataItem.get(8));
+                permiums.setInsuranceCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                permiums.setInsuranceFee(dataItem.get(10));
 
-                if(isExist){
-                    repellentService.update(repellent);
+                if(exist) {
+                    permiumsService.update(permiums);
                 }else {
-                    repellentService.insert(repellent);
+                    permiumsService.insert(permiums);
                     totalCount ++;
                 }
+
             } catch (Exception e) {
-                logger.error("[repellentController|importExcel]保存数据发生异常。repellent={}", JSON.toJSONString(dataItem), e);
+                logger.error("[permiumsController|importExcel]保存数据发生异常。permiums={}", JSON.toJSONString(dataItem), e);
                 ExceptionLogger exceptionLogger = new ExceptionLogger();
                 exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据异常");
-                exceptionLogger.setLoggerType("repellent");
+                exceptionLogger.setLoggerType("permiums");
                 exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                 exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                 exceptionLoggerService.save(exceptionLogger);
             }
-
         }
         resultVo.setRtnData(totalCount);
         return resultVo;
     }
 
 
-    private List<RepellentVo> transformBean2VoList(List<Repellent> repellentList){
+    private List<PermiumsVo> transformBean2VoList(List<Permiums> permiumsList){
         Merchant merchant;
-        RepellentVo repellentVo;
-        List<RepellentVo> repellentVoList = new ArrayList<>();
-        for(Repellent repellent : repellentList){
-            repellentVo = new RepellentVo();
-            BeanUtils.copyProperties(repellent, repellentVo);
-
-            merchant = merchantService.findById(repellent.getMerchantId());
-            repellentVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            repellentVo.setStatus(InsuranceStatusEnum.getTextByValue(repellent.getStatus()));
-            repellentVo.setChildStatus(InsuranceChildStatusEnum.getTextByValue(repellent.getChildStatus()));
-            repellentVo.setPayTypeName(InsurancePayTypeEnum.getTextByValue(repellent.getPayType()));
-            repellentVo.setCreateTime(DateUtils.formatDate(repellent.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            repellentVo.setUpdateTime(DateUtils.formatDate(repellent.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
-            repellentVoList.add(repellentVo);
+        PermiumsVo permiumsVo;
+        List<PermiumsVo> permiumsVoList = new ArrayList<>();
+        for(Permiums permiums : permiumsList){
+            permiumsVo = new PermiumsVo();
+            merchant = merchantService.findById(permiums.getMerchantId());
+            BeanUtils.copyProperties(permiums, permiumsVo);
+            permiumsVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            permiumsVo.setCreateTime(DateUtils.formatDate(permiums.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            permiumsVo.setUpdateTime(DateUtils.formatDate(permiums.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            permiumsVoList.add(permiumsVo);
         }
-        return repellentVoList;
+        return permiumsVoList;
     }
 }

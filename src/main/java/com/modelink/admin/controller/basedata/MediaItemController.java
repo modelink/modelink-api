@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;

@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
@@ -11,10 +11,14 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.reservation.bean.Abnormal;
-import com.modelink.reservation.service.AbnormalService;
-import com.modelink.reservation.vo.AbnormalParamPagerVo;
-import com.modelink.reservation.vo.AbnormalVo;
+import com.modelink.reservation.bean.Flow;
+import com.modelink.reservation.service.FlowService;
+import com.modelink.reservation.vo.FlowParamPagerVo;
+import com.modelink.reservation.vo.FlowVo;
+import com.modelink.usercenter.bean.Area;
+import com.modelink.usercenter.bean.Merchant;
+import com.modelink.usercenter.service.AreaService;
+import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -30,16 +34,21 @@ import javax.annotation.Resource;
 import java.util.*;
 
 /**
- * 异常数据Controller
+ * 承保效果数据Controller
  */
 @Controller
-@RequestMapping("/admin/abnormal")
-public class AbnormalController {
+@RequestMapping("/admin/flow")
+public class FlowController {
 
-    public static Logger logger = LoggerFactory.getLogger(AbnormalController.class);
+    public static Logger logger = LoggerFactory.getLogger(FlowController.class);
+    public static String yyyyMMddFormat = "yyyy-MM-dd";
 
     @Resource
-    private AbnormalService abnormalService;
+    private AreaService areaService;
+    @Resource
+    private MerchantService merchantService;
+    @Resource
+    private FlowService flowService;
     @Resource
     private ExceptionLoggerService exceptionLoggerService;
 
@@ -47,18 +56,18 @@ public class AbnormalController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/abnormal/abnormal-list");
+        modelAndView.setViewName("/admin/flow/flow-list");
         return modelAndView;
     }
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<AbnormalVo> list(AbnormalParamPagerVo paramPagerVo){
-        LayuiResultPagerVo<AbnormalVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
+    public LayuiResultPagerVo<FlowVo> list(FlowParamPagerVo paramPagerVo){
+        LayuiResultPagerVo<FlowVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
-        PageInfo<Abnormal> pageInfo = abnormalService.findPagerByParam(paramPagerVo);
-        List<Abnormal> abnormalList = pageInfo.getList();
-        List<AbnormalVo> advertiseAnalyseVoList = transformBean2VoList(abnormalList);
+        PageInfo<Flow> pageInfo = flowService.findPagerByParam(paramPagerVo);
+        List<Flow> flowList = pageInfo.getList();
+        List<FlowVo> advertiseAnalyseVoList = transformBean2VoList(flowList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -73,21 +82,21 @@ public class AbnormalController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("异常数据表")){
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("流量总表")){
                 resultVo.setRtnCode(RetStatus.Fail.getValue());
-                resultVo.setRtnMsg("您导入表格不是异常数据表");
+                resultVo.setRtnMsg("您导入表格不是流量总表");
                 return resultVo;
             }
 
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            fieldFormatMap.put(0, "M月d日");
+            fieldFormatMap.put(10, "HH:mm:ss");
 
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
-            logger.error("[abnormalController|importExcel]发生异常", e);
+            logger.error("[flowController|importExcel]发生异常", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
@@ -104,11 +113,12 @@ public class AbnormalController {
 
 
         // 校验Excel数据是否符合规定
+        boolean isExist;
         boolean isFullNull;
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 15){
+            if(dataItem.size() < 13){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -130,13 +140,14 @@ public class AbnormalController {
         }
 
         // 数据入库
-        boolean exist;
-        Abnormal abnormal;
+        Area area;
+        Flow flow;
+        Merchant merchant;
         int totalCount = 0;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
-            exist = true;
+            isExist = true;
             isFullNull = true;
             for(String dataString : dataItem){
                 if(StringUtils.hasText(dataString)){
@@ -148,78 +159,81 @@ public class AbnormalController {
             }
             try {
                 // 重复数据校验
-                abnormal = new Abnormal();
-                abnormal.setDate(dataItem.get(1));
-                abnormal.setSource(dataItem.get(4));
-                abnormal.setMobile(dataItem.get(5));
-                abnormal.setCallResult(dataItem.get(9));
-                abnormal.setLastResult(dataItem.get(10));
-                abnormal = abnormalService.findOneByParam(abnormal);
-                if(abnormal == null){
-                    exist = false;
-                    abnormal = new Abnormal();
+                flow = new Flow();
+
+                merchant = merchantService.findByName(dataItem.get(2));
+                flow.setDate(dataItem.get(1));
+                flow.setMerchantId(merchant.getId());
+                flow.setPlatformName(dataItem.get(3));
+                flow.setWebsite(dataItem.get(4));
+                flow.setSource(dataItem.get(5));
+                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                flow = flowService.findOneByParam(flow);
+                if(flow == null){
+                    isExist = false;
+                    flow = new Flow();
                 }else{
-                    logger.info("[abnormalController|importExcel]重复数据{}", JSON.toJSONString(abnormal));
+                    logger.info("[flowController|importExcel]重复数据{}", JSON.toJSONString(flow));
                     ExceptionLogger exceptionLogger = new ExceptionLogger();
                     exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
-                    exceptionLogger.setLoggerType("abnormal");
+                    exceptionLogger.setLoggerType("flow-base");
                     exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                     exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                     exceptionLoggerService.save(exceptionLogger);
                 }
 
-                // 保存数据
-                abnormal.setDate(dataItem.get(1));
-                abnormal.setOrgName(dataItem.get(2));
-                abnormal.setTsrName(dataItem.get(3));
-                abnormal.setSource(dataItem.get(4));
-                abnormal.setMobile(dataItem.get(5));
-                abnormal.setReserveDate(dataItem.get(6));
-                abnormal.setArrangeDate(dataItem.get(7));
-                abnormal.setCallDate(dataItem.get(8));
-                abnormal.setCallResult(dataItem.get(9));
-                abnormal.setLastResult(dataItem.get(10));
-                abnormal.setProblemData(dataItem.get(11));
-                if("-".trim().equals(dataItem.get(12))) {
-                    abnormal.setCallCount(1);
-                }else{
-                    abnormal.setCallCount(DataUtils.tranform2Integer(dataItem.get(12)));
-                }
-                abnormal.setSourceMedia(dataItem.get(13));
-                abnormal.setDeviceName(dataItem.get(14));
 
-                if(exist) {
-                    abnormalService.update(abnormal);
-                }else {
-                    abnormalService.insert(abnormal);
+                // 保存数据
+                flow.setDate(dataItem.get(1));
+                flow.setMerchantId(merchant == null ? 0L : merchant.getId());
+                // 渠道归属
+                flow.setPlatformName(dataItem.get(3));
+
+                flow.setWebsite(dataItem.get(4));
+                flow.setSource(dataItem.get(5));
+                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                flow.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                flow.setUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                flow.setAgainClickCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                flow.setAgainClickRate(dataItem.get(10));
+                flow.setAverageBrowsePageCount(dataItem.get(11));
+                flow.setAverageStayTime(dataItem.get(12));
+
+                if(isExist) {
+                    flowService.update(flow);
+                }else{
+                    flowService.insert(flow);
                     totalCount ++;
                 }
-
             } catch (Exception e) {
-                logger.error("[abnormalController|importExcel]保存数据发生异常。abnormal={}", JSON.toJSONString(dataItem), e);
+                logger.error("[flowController|importExcel]保存数据发生异常。flow={}", JSON.toJSONString(dataItem), e);
                 ExceptionLogger exceptionLogger = new ExceptionLogger();
                 exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据异常");
-                exceptionLogger.setLoggerType("abnormal");
+                exceptionLogger.setLoggerType("flow-base");
                 exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                 exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                 exceptionLoggerService.save(exceptionLogger);
             }
+
         }
         resultVo.setRtnData(totalCount);
         return resultVo;
     }
 
 
-    private List<AbnormalVo> transformBean2VoList(List<Abnormal> abnormalList){
-        AbnormalVo abnormalVo;
-        List<AbnormalVo> abnormalVoList = new ArrayList<>();
-        for(Abnormal abnormal : abnormalList){
-            abnormalVo = new AbnormalVo();
-            BeanUtils.copyProperties(abnormal, abnormalVo);
-            abnormalVo.setCreateTime(DateUtils.formatDate(abnormal.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            abnormalVo.setUpdateTime(DateUtils.formatDate(abnormal.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
-            abnormalVoList.add(abnormalVo);
+    private List<FlowVo> transformBean2VoList(List<Flow> flowList){
+        Merchant merchant;
+        FlowVo flowVo;
+        List<FlowVo> flowVoList = new ArrayList<>();
+        for(Flow flow : flowList){
+            merchant = merchantService.findById(flow.getMerchantId());
+            flowVo = new FlowVo();
+            BeanUtils.copyProperties(flow, flowVo);
+            flowVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            flowVo.setCreateTime(DateUtils.formatDate(flow.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            flowVo.setUpdateTime(DateUtils.formatDate(flow.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            flowVoList.add(flowVo);
         }
-        return abnormalVoList;
+        return flowVoList;
     }
 }

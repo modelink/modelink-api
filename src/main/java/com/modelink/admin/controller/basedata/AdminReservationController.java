@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.ReservationParamPagerVo;

@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONObject;
 import com.modelink.admin.vo.DashboardParamVo;

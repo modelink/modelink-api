@@ -1,9 +1,12 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.ExceptionLogger;
 import com.modelink.admin.service.ExceptionLoggerService;
+import com.modelink.common.enums.InsuranceChildStatusEnum;
+import com.modelink.common.enums.InsurancePayTypeEnum;
+import com.modelink.common.enums.InsuranceStatusEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelImportConfigation;
 import com.modelink.common.excel.ExcelImportHelper;
@@ -11,13 +14,11 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
-import com.modelink.reservation.bean.Flow;
-import com.modelink.reservation.service.FlowService;
-import com.modelink.reservation.vo.FlowParamPagerVo;
-import com.modelink.reservation.vo.FlowVo;
-import com.modelink.usercenter.bean.Area;
+import com.modelink.reservation.bean.Repellent;
+import com.modelink.reservation.service.RepellentService;
+import com.modelink.reservation.vo.RepellentParamPagerVo;
+import com.modelink.reservation.vo.RepellentVo;
 import com.modelink.usercenter.bean.Merchant;
-import com.modelink.usercenter.service.AreaService;
 import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,22 +34,18 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.Resource;
 import java.util.*;
 
-/**
- * 承保效果数据Controller
- */
+/** 退保数据Controller **/
 @Controller
-@RequestMapping("/admin/flow")
-public class FlowController {
+@RequestMapping("/admin/repellent")
+public class RepellentController {
 
-    public static Logger logger = LoggerFactory.getLogger(FlowController.class);
-    public static String yyyyMMddFormat = "yyyy-MM-dd";
 
-    @Resource
-    private AreaService areaService;
+    public static Logger logger = LoggerFactory.getLogger(RepellentController.class);
+
     @Resource
     private MerchantService merchantService;
     @Resource
-    private FlowService flowService;
+    private RepellentService repellentService;
     @Resource
     private ExceptionLoggerService exceptionLoggerService;
 
@@ -56,18 +53,18 @@ public class FlowController {
     public ModelAndView index() {
         ModelAndView modelAndView = new ModelAndView();
 
-        modelAndView.setViewName("/admin/flow/flow-list");
+        modelAndView.setViewName("/admin/repellent/repellent-list");
         return modelAndView;
     }
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<FlowVo> list(FlowParamPagerVo paramPagerVo){
-        LayuiResultPagerVo<FlowVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
+    public LayuiResultPagerVo<RepellentVo> list(RepellentParamPagerVo paramPagerVo){
+        LayuiResultPagerVo<RepellentVo> layuiResultPagerVo = new LayuiResultPagerVo<>();
 
-        PageInfo<Flow> pageInfo = flowService.findPagerByParam(paramPagerVo);
-        List<Flow> flowList = pageInfo.getList();
-        List<FlowVo> advertiseAnalyseVoList = transformBean2VoList(flowList);
+        PageInfo<Repellent> pageInfo = repellentService.findPagerByParam(paramPagerVo);
+        List<Repellent> repellentList = pageInfo.getList();
+        List<RepellentVo> advertiseAnalyseVoList = transformBean2VoList(repellentList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
@@ -82,21 +79,21 @@ public class FlowController {
         ExcelImportConfigation configation = new ExcelImportConfigation();
         try {
             String fileName = file.getOriginalFilename();
-            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("流量总表")){
+            if(StringUtils.isEmpty(fileName) || !fileName.startsWith("退保数据表")){
                 resultVo.setRtnCode(RetStatus.Fail.getValue());
-                resultVo.setRtnMsg("您导入表格不是流量总表");
+                resultVo.setRtnMsg("您导入表格不是退保数据表");
                 return resultVo;
             }
 
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            fieldFormatMap.put(10, "HH:mm:ss");
+            fieldFormatMap.put(0, "M月d日");
 
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
             dataList = ExcelImportHelper.importExcel(configation, file.getInputStream());
         } catch (Exception e) {
-            logger.error("[flowController|importExcel]发生异常", e);
+            logger.error("[repellentController|importExcel]发生异常", e);
             resultVo.setRtnCode(RetStatus.Exception.getValue());
             resultVo.setRtnMsg(e.getMessage());
             dataList = null;
@@ -118,7 +115,7 @@ public class FlowController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 13){
+            if(dataItem.size() < 26){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -140,9 +137,8 @@ public class FlowController {
         }
 
         // 数据入库
-        Area area;
-        Flow flow;
         Merchant merchant;
+        Repellent repellent;
         int totalCount = 0;
         for(List<String> dataItem : dataList){
 
@@ -159,57 +155,66 @@ public class FlowController {
             }
             try {
                 // 重复数据校验
-                flow = new Flow();
-
-                merchant = merchantService.findByName(dataItem.get(2));
-                flow.setDate(dataItem.get(1));
-                flow.setMerchantId(merchant.getId());
-                flow.setPlatformName(dataItem.get(3));
-                flow.setWebsite(dataItem.get(4));
-                flow.setSource(dataItem.get(5));
-                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
-                flow = flowService.findOneByParam(flow);
-                if(flow == null){
+                repellent = new Repellent();
+                repellent.setInsuranceNo(dataItem.get(4));
+                repellent.setStatus(InsuranceStatusEnum.getValueByText(dataItem.get(5)));
+                repellent = repellentService.findOneByParam(repellent);
+                if(repellent == null){
                     isExist = false;
-                    flow = new Flow();
+                    repellent = new Repellent();
                 }else{
-                    logger.info("[flowController|importExcel]重复数据{}", JSON.toJSONString(flow));
+                    logger.info("[repellentController|importExcel]重复数据{}", JSON.toJSONString(repellent));
                     ExceptionLogger exceptionLogger = new ExceptionLogger();
                     exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据重复");
-                    exceptionLogger.setLoggerType("flow-base");
+                    exceptionLogger.setLoggerType("repellent");
                     exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                     exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                     exceptionLoggerService.save(exceptionLogger);
                 }
 
-
+                merchant = merchantService.findByName(dataItem.get(1));
                 // 保存数据
-                flow.setDate(dataItem.get(1));
-                flow.setMerchantId(merchant == null ? 0L : merchant.getId());
-                // 渠道归属
-                flow.setPlatformName(dataItem.get(3));
+                repellent.setMerchantId(merchant == null ? 0 : merchant.getId());
+                repellent.setExportOrgName(dataItem.get(2));
+                repellent.setRepellentNo(dataItem.get(3));
+                repellent.setInsuranceNo(dataItem.get(4));
+                repellent.setStatus(InsuranceStatusEnum.getValueByText(dataItem.get(5)));
+                repellent.setChildStatus(InsuranceChildStatusEnum.getValueByText(dataItem.get(6)));
+                repellent.setInsuranceName(dataItem.get(7));
+                repellent.setProductName(dataItem.get(8));
+                repellent.setExtraInsurance(dataItem.get(9));
+                repellent.setInsuranceAmount(dataItem.get(10));
+                repellent.setYearInsuranceFee(dataItem.get(11));
+                repellent.setInsuranceFee(dataItem.get(12));
+                repellent.setTsrNumber(dataItem.get(13));
+                repellent.setTsrName(dataItem.get(14));
+                repellent.setTlNumber(dataItem.get(15));
+                repellent.setTlName(dataItem.get(16));
+                repellent.setOrgName(dataItem.get(17));
+                repellent.setDepartment(dataItem.get(18));
+                repellent.setRegionName(dataItem.get(19));
+                repellent.setGroupName(dataItem.get(20));
+                repellent.setSpecialCaseName(dataItem.get(21));
+                repellent.setInsuranceDate(dataItem.get(22));
+                repellent.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(23)));
+                repellent.setHesitateDate(dataItem.get(24));
+                if("-".equals(dataItem.get(25)) || "".equals(dataItem.get(25))){
+                    repellent.setPayInterval(0);
+                }else {
+                    repellent.setPayInterval(DataUtils.tranform2Integer(dataItem.get(25)));
+                }
 
-                flow.setWebsite(dataItem.get(4));
-                flow.setSource(dataItem.get(5));
-                flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
-                flow.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
-                flow.setUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
-                flow.setAgainClickCount(DataUtils.tranform2Integer(dataItem.get(9)));
-                flow.setAgainClickRate(dataItem.get(10));
-                flow.setAverageStayTime(dataItem.get(11));
-                flow.setAverageBrowsePageCount(dataItem.get(12));
-
-                if(isExist) {
-                    flowService.update(flow);
-                }else{
-                    flowService.insert(flow);
+                if(isExist){
+                    repellentService.update(repellent);
+                }else {
+                    repellentService.insert(repellent);
                     totalCount ++;
                 }
             } catch (Exception e) {
-                logger.error("[flowController|importExcel]保存数据发生异常。flow={}", JSON.toJSONString(dataItem), e);
+                logger.error("[repellentController|importExcel]保存数据发生异常。repellent={}", JSON.toJSONString(dataItem), e);
                 ExceptionLogger exceptionLogger = new ExceptionLogger();
                 exceptionLogger.setLoggerKey(dataItem.get(0) + "行数据异常");
-                exceptionLogger.setLoggerType("flow-base");
+                exceptionLogger.setLoggerType("repellent");
                 exceptionLogger.setLoggerDesc(JSON.toJSONString(dataItem));
                 exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                 exceptionLoggerService.save(exceptionLogger);
@@ -221,19 +226,23 @@ public class FlowController {
     }
 
 
-    private List<FlowVo> transformBean2VoList(List<Flow> flowList){
+    private List<RepellentVo> transformBean2VoList(List<Repellent> repellentList){
         Merchant merchant;
-        FlowVo flowVo;
-        List<FlowVo> flowVoList = new ArrayList<>();
-        for(Flow flow : flowList){
-            merchant = merchantService.findById(flow.getMerchantId());
-            flowVo = new FlowVo();
-            BeanUtils.copyProperties(flow, flowVo);
-            flowVo.setMerchantName(merchant == null ? "" : merchant.getName());
-            flowVo.setCreateTime(DateUtils.formatDate(flow.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
-            flowVo.setUpdateTime(DateUtils.formatDate(flow.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
-            flowVoList.add(flowVo);
+        RepellentVo repellentVo;
+        List<RepellentVo> repellentVoList = new ArrayList<>();
+        for(Repellent repellent : repellentList){
+            repellentVo = new RepellentVo();
+            BeanUtils.copyProperties(repellent, repellentVo);
+
+            merchant = merchantService.findById(repellent.getMerchantId());
+            repellentVo.setMerchantName(merchant == null ? "" : merchant.getName());
+            repellentVo.setStatus(InsuranceStatusEnum.getTextByValue(repellent.getStatus()));
+            repellentVo.setChildStatus(InsuranceChildStatusEnum.getTextByValue(repellent.getChildStatus()));
+            repellentVo.setPayTypeName(InsurancePayTypeEnum.getTextByValue(repellent.getPayType()));
+            repellentVo.setCreateTime(DateUtils.formatDate(repellent.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
+            repellentVo.setUpdateTime(DateUtils.formatDate(repellent.getUpdateTime(), "yyyy-MM-dd HH:mm:ss"));
+            repellentVoList.add(repellentVo);
         }
-        return flowVoList;
+        return repellentVoList;
     }
 }

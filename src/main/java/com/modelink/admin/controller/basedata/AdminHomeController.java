@@ -1,4 +1,4 @@
-package com.modelink.admin.controller;
+package com.modelink.admin.controller.basedata;
 
 import com.modelink.admin.bean.Admin;
 import com.modelink.admin.bean.Permission;
