@@ -143,15 +143,17 @@
             <div class="layui-card">
                 <div class="layui-card-header">
                     <div style="float:left;">外部来源</div>
-                    <div style="float:right;" class="layui-form layui-form-pane">
-                        <div class="layui-form-item">
-                            <label class="layui-form-label">来源类型</label>
-                            <div class="layui-input-block">
-                                <input type="radio" name="source" value="0" title="全部" checked>
-                                <input type="radio" name="source" value="1" title="推介网站">
-                                <input type="radio" name="source" value="2" title="搜索引擎">
+                    <div style="float:right;">
+                        <form class="layui-form layui-form-pane">
+                            <div class="layui-form-item">
+                                <label class="layui-form-label">来源类型</label>
+                                <div class="layui-input-block">
+                                    <input type="radio" lay-filter="source" name="source" value="" title="全部" checked>
+                                    <input type="radio" lay-filter="source" name="source" value="推介网站" title="推介网站">
+                                    <input type="radio" lay-filter="source" name="source" value="搜索引擎" title="搜索引擎">
+                                </div>
                             </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
                 <div class="layui-card-body">

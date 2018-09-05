@@ -1,5 +1,6 @@
 layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'layer'], function (exports) {
     var $ = layui.jquery;
+    var form = layui.form;
     var layer = layui.layer;
     var table = layui.table;
     var laydate = layui.laydate;
@@ -8,6 +9,10 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'layer'], functio
     laydate.render({
         range: true,
         elem: '#chooseDate'
+    });
+
+    form.on('radio(source)', function(data){
+        insuranceEcharts.getDataJson2DrawFlowSource($, table, "flow-source", "/admin/dashboard/flow/getFlowSource", data.value);
     });
 
     insuranceEcharts.echartsMap["flow-summary-echart"] = echarts.init($("#flow-summary-echart")[0]);
@@ -60,7 +65,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'layer'], functio
     $("#search-btn").on("click", function () {
         insuranceEcharts.getDataJson2DrawFlowSummary($, "flow-summary", "/admin/dashboard/flow/getFlowSummary");
         insuranceEcharts.getDataJson2DrawFlowUser($, table, "flow-user", "/admin/dashboard/flow/getFlowUser");
-        insuranceEcharts.getDataJson2DrawFlowSource($, table, "flow-source", "/admin/dashboard/flow/getFlowSource");
+        insuranceEcharts.getDataJson2DrawFlowSource($, table, "flow-source", "/admin/dashboard/flow/getFlowSource", "");
         insuranceEcharts.getDataJson2DrawInflowSource($, table, "inflow-source", "/admin/dashboard/flow/getInflowSource");
     });
     $("#search-btn").trigger("click");
@@ -138,11 +143,11 @@ var insuranceEcharts = {
             }
         });
     },
-    getDataJson2DrawFlowSource: function ($, table, selectedPrefix, dataUrl) {
+    getDataJson2DrawFlowSource: function ($, table, selectedPrefix, dataUrl, source) {
         $.ajax({
             url: dataUrl,
             data: {
-                source: $("#source").val(),
+                source: source,
                 merchantId: $("#merchant").val(),
                 chooseDate: $("#chooseDate").val(),
                 platformName: $("#platformName").val()

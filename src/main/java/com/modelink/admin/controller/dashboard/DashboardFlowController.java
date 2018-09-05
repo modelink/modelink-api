@@ -256,6 +256,7 @@ public class DashboardFlowController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setColumnFieldIds("id,website,inflowCount,againClickRate,averageStayTime");
+        paramPagerVo.setSource(paramVo.getSource());
         paramPagerVo.setDateField("date");
         List<Flow> flowList = flowService.findListByParam(paramPagerVo);
 
