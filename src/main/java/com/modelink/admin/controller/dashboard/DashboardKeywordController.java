@@ -119,24 +119,25 @@ public class DashboardKeywordController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,searchWord");
+        paramPagerVo.setColumnFieldIds("id,date,advertiseDesc");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         int searchCount;
         Map<String, Integer> searchWordMap = new HashMap<>();
         for (FlowReserve flowReserve : flowReserveList) {
-            if ("-".equals(flowReserve.getSearchWord()) || "".equals(flowReserve.getSearchWord())) {
+            if ("-".equals(flowReserve.getAdvertiseDesc()) || "".equals(flowReserve.getAdvertiseDesc())) {
                 continue;
             }
-            if (searchWordMap.get(flowReserve.getSearchWord()) == null) {
+            if (searchWordMap.get(flowReserve.getAdvertiseDesc()) == null) {
                 searchCount = 0;
             } else {
-                searchCount = searchWordMap.get(flowReserve.getSearchWord());
+                searchCount = searchWordMap.get(flowReserve.getAdvertiseDesc());
             }
 
             searchCount++;
-            searchWordMap.put(flowReserve.getSearchWord(), searchCount);
+            searchWordMap.put(flowReserve.getAdvertiseDesc(), searchCount);
         }
 
         List<Map.Entry<String, Integer>> list = new ArrayList<>(searchWordMap.entrySet());
@@ -178,7 +179,8 @@ public class DashboardKeywordController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,reserveMobile,searchWord");
+        paramPagerVo.setColumnFieldIds("date,reserveMobile");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -456,6 +458,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,reserveMobile,advertiseDesc");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -559,6 +562,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,advertiseDesc");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -819,6 +823,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,advertiseDesc");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 

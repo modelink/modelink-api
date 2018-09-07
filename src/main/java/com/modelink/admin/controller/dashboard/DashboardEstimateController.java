@@ -351,7 +351,7 @@ public class DashboardEstimateController {
             flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
             flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
             flowReserveParamPagerVo.setColumnFieldIds("id,advertiseDesc");
-            flowReserveParamPagerVo.setFeeType("测保");
+            flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_ESTIMATE);
             flowReserveParamPagerVo.setDateField("date");
             List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -442,7 +442,7 @@ public class DashboardEstimateController {
             flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
             flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
             flowReserveParamPagerVo.setColumnFieldIds("id,provinceId,cityId");
-            flowReserveParamPagerVo.setFeeType("测保");
+            flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_ESTIMATE);
             flowReserveParamPagerVo.setDateField("date");
             if(StringUtils.hasText(paramVo.getProvinceName())) {
                 flowReserveParamPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
@@ -516,7 +516,7 @@ public class DashboardEstimateController {
         flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
         flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowReserveParamPagerVo.setColumnFieldIds("id,browser,os,resolutionRatio");
-        flowReserveParamPagerVo.setFeeType("测保");
+        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_ESTIMATE);
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
         if("os".equals(paramVo.getSource())) {

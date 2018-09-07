@@ -9,6 +9,11 @@ import java.util.Date;
  */
 public class FlowReserve implements Serializable {
 
+    /** 预约类型 **/
+    public static final String FEE_TYPE_RESERVE = "预约";
+    /** 测保类型 **/
+    public static final String FEE_TYPE_ESTIMATE = "测保";
+
     @Id
     private Long id;
     /** 合作商户 **/

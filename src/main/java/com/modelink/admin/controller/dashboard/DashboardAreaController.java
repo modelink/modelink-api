@@ -71,6 +71,7 @@ public class DashboardAreaController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,provinceId");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -715,6 +716,7 @@ public class DashboardAreaController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,provinceId,cityId");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 

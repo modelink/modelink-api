@@ -102,6 +102,7 @@ public class DashboardSummaryController {
         flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
         flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
+        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -480,7 +481,8 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,searchWord");
+        paramPagerVo.setColumnFieldIds("id,date");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
