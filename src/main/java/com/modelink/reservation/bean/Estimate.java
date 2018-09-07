@@ -18,27 +18,28 @@ public class Estimate implements Serializable {
     /** 广告活动 **/
     private String advertiseActive;
     /** 测保转化数 **/
-    private int transformCount;
+    private Integer transformCount;
     /** 浏览量（网站） **/
-    private int webBrowseCount;
+    private Integer webBrowseCount;
     /** 点击量（网站） **/
-    private int webClickCount;
+    private Integer webClickCount;
     /** 到达量 **/
-    private int arriveCount;
+    private Integer arriveCount;
     /** 到达用户 **/
-    private int arriveUserCount;
+    private Integer arriveUserCount;
     /** 到达率 **/
     private String arriveRate;
     /** 二跳量 **/
-    private int againCount;
+    private Integer againCount;
     /** 二跳率 **/
     private String againRate;
     /** 平均停留时间 **/
     private String averageStayTime;
     /** 展示数（媒体） **/
-    private int mediaShowCount;
+    private Integer mediaShowCount;
     /** 点击数（媒体） **/
-    private int mediaClickCount;
+    private Integer mediaClickCount;
+    /** 点击率（媒体） **/
     private String mediaClickRate;
     private String cpc;
     private String cpm;
@@ -84,43 +85,43 @@ public class Estimate implements Serializable {
         this.advertiseActive = advertiseActive;
     }
 
-    public int getTransformCount() {
+    public Integer getTransformCount() {
         return transformCount;
     }
 
-    public void setTransformCount(int transformCount) {
+    public void setTransformCount(Integer transformCount) {
         this.transformCount = transformCount;
     }
 
-    public int getWebBrowseCount() {
+    public Integer getWebBrowseCount() {
         return webBrowseCount;
     }
 
-    public void setWebBrowseCount(int webBrowseCount) {
+    public void setWebBrowseCount(Integer webBrowseCount) {
         this.webBrowseCount = webBrowseCount;
     }
 
-    public int getWebClickCount() {
+    public Integer getWebClickCount() {
         return webClickCount;
     }
 
-    public void setWebClickCount(int webClickCount) {
+    public void setWebClickCount(Integer webClickCount) {
         this.webClickCount = webClickCount;
     }
 
-    public int getArriveCount() {
+    public Integer getArriveCount() {
         return arriveCount;
     }
 
-    public void setArriveCount(int arriveCount) {
+    public void setArriveCount(Integer arriveCount) {
         this.arriveCount = arriveCount;
     }
 
-    public int getArriveUserCount() {
+    public Integer getArriveUserCount() {
         return arriveUserCount;
     }
 
-    public void setArriveUserCount(int arriveUserCount) {
+    public void setArriveUserCount(Integer arriveUserCount) {
         this.arriveUserCount = arriveUserCount;
     }
 
@@ -132,11 +133,11 @@ public class Estimate implements Serializable {
         this.arriveRate = arriveRate;
     }
 
-    public int getAgainCount() {
+    public Integer getAgainCount() {
         return againCount;
     }
 
-    public void setAgainCount(int againCount) {
+    public void setAgainCount(Integer againCount) {
         this.againCount = againCount;
     }
 
@@ -156,19 +157,19 @@ public class Estimate implements Serializable {
         this.averageStayTime = averageStayTime;
     }
 
-    public int getMediaShowCount() {
+    public Integer getMediaShowCount() {
         return mediaShowCount;
     }
 
-    public void setMediaShowCount(int mediaShowCount) {
+    public void setMediaShowCount(Integer mediaShowCount) {
         this.mediaShowCount = mediaShowCount;
     }
 
-    public int getMediaClickCount() {
+    public Integer getMediaClickCount() {
         return mediaClickCount;
     }
 
-    public void setMediaClickCount(int mediaClickCount) {
+    public void setMediaClickCount(Integer mediaClickCount) {
         this.mediaClickCount = mediaClickCount;
     }
 

@@ -14,6 +14,8 @@ public class UnderwriteParamPagerVo extends PagerVo {
     private String columnFieldIds;
     private String platformName;
     private String advertiseActive;
+    private Integer provinceId;
+    private String source;
 
     public String getChooseDate() {
         return chooseDate;
@@ -77,5 +79,21 @@ public class UnderwriteParamPagerVo extends PagerVo {
 
     public void setMobiles(Set<String> mobiles) {
         this.mobiles = mobiles;
+    }
+
+    public Integer getProvinceId() {
+        return provinceId;
+    }
+
+    public void setProvinceId(Integer provinceId) {
+        this.provinceId = provinceId;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
     }
 }

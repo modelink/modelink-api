@@ -99,6 +99,9 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
         }
+        if(paramPagerVo.getProvinceId() != null){
+            criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
+        }
         criteria.andEqualTo("isMakeUp", 0);
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;

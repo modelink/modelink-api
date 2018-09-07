@@ -4,6 +4,9 @@ import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
+/**
+ * 退保数据
+ */
 public class Repellent implements Serializable {
 
     @Id

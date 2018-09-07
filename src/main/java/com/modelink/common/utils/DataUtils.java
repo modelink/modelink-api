@@ -1,5 +1,6 @@
 package com.modelink.common.utils;
 
+import com.modelink.common.enums.AgePartEnum;
 import com.modelink.common.enums.DateTypeEnum;
 import org.springframework.util.StringUtils;
 
@@ -139,5 +140,19 @@ public class DataUtils {
             resultDate = "";
         }
         return resultDate;
+    }
+
+    public static Map<Integer, Double> initAgeMap(){
+        Map<Integer, Double> ageMap = new HashMap<>(9);
+        ageMap.put(AgePartEnum.from_0_5.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_5_18.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_18_25.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_25_30.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_30_35.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_35_40.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_40_50.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_50_55.getValue(), 0.00);
+        ageMap.put(AgePartEnum.from_55_100.getValue(), 0.00);
+        return ageMap;
     }
 }

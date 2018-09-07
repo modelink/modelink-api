@@ -105,6 +105,12 @@ public class UnderwriteServiceImpl implements UnderwriteService {
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
         }
+        if(paramPagerVo.getProvinceId() != null){
+            criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
+        }
+        if(StringUtils.hasText(paramPagerVo.getSource())){
+            criteria.andEqualTo("source", paramPagerVo.getSource());
+        }
         List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
         return underwriteList;
     }
