@@ -76,7 +76,7 @@ public class ExcelImportHelper {
                     cell.setCellType(CellType.STRING);
                     cellContent = cell.getStringCellValue();
                 }
-                rowData.add(cellContent);
+                rowData.add(cellContent.trim());
             }
             // 判断改行是否为空
             sb = new StringBuilder();
