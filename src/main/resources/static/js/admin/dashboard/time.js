@@ -29,7 +29,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         if(insuranceEcharts.dateType == "6"){
             insuranceEcharts.getDataJson2DrawHour($, table, "reserve-count", "/admin/dashboard/time/getReserveCountByHour");
         }else{
-            insuranceEcharts.getDataJson2DrawDate($, table, "reserve-count", "/admin/dashboard/time/getUnderwriteSummaryByDate");
+            insuranceEcharts.getDataJson($, table, "reserve-count", "/admin/dashboard/time/getUnderwriteSummaryByDate");
         }
 
     });
@@ -79,8 +79,8 @@ var insuranceEcharts = {
                 if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
                     return;
                 }
-                insuranceEcharts.drawDateTable($, table, selectedPrefix, response.rtnData.tableItemList);
-                insuranceEcharts.drawDateEchart(selectedPrefix + "-echart", response.rtnData.titleList,
+                insuranceEcharts.drawTable($, table, selectedPrefix, response.rtnData.tableItemList);
+                insuranceEcharts.drawEchart(selectedPrefix + "-echart", response.rtnData.titleList,
                     response.rtnData.reserveCountList, response.rtnData.underwriteCountList);
             }
         });
