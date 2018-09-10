@@ -1,0 +1,545 @@
+{
+	"msg_code": 200,
+	"scene":{
+		"1": {"start":"0","end":"0"},
+		"2": {"start":"1","end":"5"},
+		"3": {"start":"6","end":"11"},
+		"4": {"start":"12","end":"17"},
+		"5": {"start":"18","end":"24"},
+		"6": {"start":"25","end":"32"},
+		"7": {"start":"33","end":"39"},
+		"8": {"start":"40","end":"44"},
+		"9": {"start":"45","end":"52"}
+	},
+	"data": {
+		"1": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.2rem 0rem",
+			"text": "小半年儿没见了吧？气色不错啊",
+			"speed":"2000"
+		},
+		"2": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.5rem 0rem",
+			"text": "跟我比差远了",
+			"speed":"2000"
+		},
+		"3": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.2rem 0rem",
+			"text": "最近在干嘛？",
+			"speed":"2000"
+		},		
+		"4": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.1rem 0rem",
+			"text": "不错什么呀~前两天刚升职，要带团队开拓业务，事情多，常加班，累得很~近期有了成果，辛苦也开心",
+		    "speed":"6000"
+		},		
+		"5": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.31rem 0rem",
+			"text": "这种开心跟你说你也不明白",
+			"speed":"2000"
+			
+		},		
+		"6": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.1rem 0rem",
+			"text": "哎呀，女强人这种心理我不懂~我老公心疼我，让我和孩子只管花钱和开心，钱他负责赚。",
+			"speed":"2000"	
+		},		
+		"7": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.31rem 0rem",
+			"text": ".....瞧那惹人厌的嘴脸。",
+			"speed":"3000"
+			
+		},		
+		"8": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.4rem 0rem",
+			"text": "啊哈，堵得她说不出话了",
+			"speed":"2000"
+		},		
+		"9": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.2rem 0rem",
+			"text": "你这个包不错，新买的？",
+			"speed":"2000"
+			
+		},		
+		"10": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.1rem 0rem",
+			"text": "对啊，好朋友给代购的经典款。最近奥莱折扣，入手超便宜。现在火得快断货了，你要吗？我让好友给你留一个。",
+			"speed":"6000"
+			
+		},		
+		"11": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.5rem 0rem",
+			"text": "想要就求我啊",
+			"speed":"2000"
+			
+		},		
+		"12": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.1rem 0rem",
+			"text": "哎呦，不麻烦了。月底我跟老公去美国，去拿下刚出的新款包，不打折也买，谁让我喜欢呢~",
+			"speed":"2000"
+		},		
+		"13": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.5rem 0rem",
+			"text": "喜欢就买，等啥打折",
+			"speed":"6000"			
+		},		
+		"14": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.25rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "...最近她是开挂了?她夫妻俩一个月就那点工资？还在这嘚瑟什么？也不怕玩着这次， 没下次。",
+			"speed":"4000"
+			
+		},		
+		"15": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.25rem 0rem",
+			"text": "你这是又怀孕了？",
+			"speed":"1500"
+		},		
+		"16": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.25rem 0rem",
+			"text": "对呀，我喜欢小孩子？趁着年轻赶紧生。",
+			"speed":"4000"
+		},		
+		"17": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.35rem 0rem",
+			"text": "哎呦，说不过就转移话题",
+			"speed":"2000"
+		},		
+		"18": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "二胎政策放开后，你这也彻底放弃自己了？养个孩子多贵啊？",
+			"speed":"2000"
+		},		
+		"19": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.15rem 0rem",
+			"text": "要我说，生了之后她那LV都得换成奶 粉钱。",
+			"speed":"5000"
+		},		
+		"20": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.5rem 0rem",
+			"text": "对你来说贵吧",
+			"speed":"2000"		
+		},		
+		"21": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.2rem 0rem",
+			"text": "哪有那么夸张，两个孩子而已，我们家hold住。",
+			"speed":"2000"
+		},		
+		"22": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.35rem 0rem",
+			"text": "hold住？我看是兜不住吧",
+			"speed":"2000"
+		},		
+		"23": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.28rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.2rem 0rem",
+			"text": "我是不会再生了。要把好的全给我家小Leo，他特别争气，年年拿第一，想学什么我就给他报班学。大学还要出国，教育这块我可一点都不马虎，绝不浪费他的优良基因~",
+			"speed":"7000"
+		},		
+		"24": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.1rem 0rem",
+			"text": "这你可说的太对了，这点我俩认识一致。来为了这个干一杯。",
+			"speed":"3000"
+		},		
+		"25": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.28rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.1rem 0rem",
+			"text": "你就会辛苦了吧，俩孩子的教育花销可不是闹着玩的。你和你老公可得省着点了，要降低了两个孩子的优质教育，这就不好啊，穷啥也不能穷教育不是~",
+			"speed":"2000"
+		},
+		"26": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.28rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.1rem 0rem",
+			"text": "你就会辛苦了吧，俩孩子的教育花销可不是闹着玩的。你和你老公可得省着点了，要降低了两个孩子的优质教育，这就不好啊，穷啥也不能穷教育不是~",
+			"speed":"4000"
+		},		
+		"27": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.35rem 0rem",
+			"text": "谁说必须要省钱，今儿就让你开眼",
+			"speed":"2000"
+			
+		},		
+		"28": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.28rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.2rem 0rem",
+			"text": "这就别操心了~老大幼儿园的时候，我就准备少儿年金险。他18就能用保险的“教育深造金”，大学、研究生和出国都能用。老二出生后，我也给她备一份，这样俩孩子以后的教育就不用愁了。",
+			"speed":"8000"
+		},		
+		"29": {
+			"bearing": "r",
+			"type": "nx",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.12rem 0rem 0rem 0.1rem",
+			"text": "额...有点处于劣势啊，但离认输还远呢！",
+			"speed":"2000"
+		},		
+		"30": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.1rem 0rem",
+			"text": "我跟你讲，一有权威线下讲解课程我就去听，为孩子我可是下了超大的功夫！",
+			"speed":"4000"
+		},		
+		"31": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.15rem 0rem",
+			"text": "线下？现在是网络时代，哪还用东奔西跑...",
+			"speed":"4000"
+		},		
+		"32": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.1rem 0rem",
+			"text": "我就很省事，在线预约管家，他们为我的孩子免费定制专属高品质保障方案。",
+			"speed":"5000"
+		},		
+		"33": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.5rem 0rem",
+			"text": ".......了不起哦",
+			"speed":"2000"
+		},		
+		"34": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.2rem 0rem",
+			"text": "听起来很厉害的样子，具体有什么厉害之处吗？",
+			"speed":"4000"
+		},		
+		"35": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.28rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.3rem 0rem",
+			"text": "厉害的可多了，那教育金是华夏珍爱宝贝少儿年金保险，适用于13岁以下的孩子，18岁就能领教育金，连续可领7年。孩子30的时候，领满期金，金额是保费的120%，这笔钱想用作礼金、养老就随你们了。",
+			"speed":"9000"
+		},		
+		"36": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.25rem 0rem",
+			"text": "那我能测测我家孩子到时候能领多少钱吗？",
+			"speed":"4000"
+			
+		},		
+		"37": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.25rem 0rem",
+			"text": "当然可以，我把链接发你，你自己算一下。",
+			"speed":"4000"
+		},		
+		"38": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.25rem 0rem",
+			"text": "嗯嗯。嗯？这个收益并没有多少啊？",
+			"speed":"2000"
+		},		
+		"39": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.45rem 0rem",
+			"text": "想忽悠我，没门！",
+			"speed":"2000"
+		},		
+		"40": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.35rem 0rem",
+			"text": "我不是说了这是保险吗？",
+			"speed":"2000"
+		},		
+		"41": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "这是保险啊亲，理财只是其中的一个属性，真正的价值在于保险功能，会帮你降低未来可能发生的不幸的破坏力。",
+			"speed":"7000"
+		},		
+		"42": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.15rem 0rem",
+			"text": "未来能有什么风险？我银行里的钱会跑了？",
+			"speed":"4000"		
+		},		
+		"43": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"0.35rem 0rem",
+			"text": "看你还有啥说的",
+			"speed":"2000"
+		},		
+		"44": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "跑不跑我不知道，但我知道它会在投保人因事故而没有缴保能力时，不用再缴费，保险合同却依旧有效，孩子应得的钱到期也会领到。",
+		    "speed":"7000"
+		},		
+		"45": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "就是我在给孩子交了几年钱后，要是因为点啥...不太好的事，不能继续交钱，我家孩子也能领钱？",
+			"speed":"2000"	
+		},	
+		"46": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "就是我在给孩子交了几年钱后，要是因为点啥...不太好的事，不能继续交钱，我家孩子也能领钱？",
+			"speed":"4000"	
+		},		
+		"47": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.35em 0rem",
+			"text": "对！",
+			"speed":"3000"
+		},		
+		"48": {
+			"bearing": "l",
+			"type": "nx",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0.35rem 0rem",
+			"text": "没听懂吗？干嘛换个表述重复我的话",
+			"speed":"2000"		
+		},		
+		"49": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"-0.15rem 0rem",
+			"text": "你家可以不用像我一样交这么多，你可以选价格低的，减轻下压力。",
+			"speed":"3000"
+			
+		},		
+		"50": {
+			"bearing": "r",
+			"type": "nx",
+			"fontsize": "0.28rem",
+			"lineheight": "0.35rem",
+			"textalign":"left",
+			"margin":"0rem",
+			"text": "瞧不起谁呢，我现在就预约保险专家，Leo13了，再不买就来不及了。",
+			"speed":"3000"	
+		},
+		"51": {
+			"bearing": "r",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.3rem 0rem",
+			"text": "这每个月算下来也没交多少钱，我交的起！",
+			"speed":"2000"
+		}
+		,
+		"52": {
+			"bearing": "l",
+			"type": "dh",
+			"fontsize": "0.3rem",
+			"lineheight": "0.35rem",
+			"textalign":"center",
+			"margin":"-0.3rem 0rem",
+			"text": "哦，是吗，链接已经发你了，你自己预约吧~",
+			"speed":"2000"		
+		}																	
+	}
+}

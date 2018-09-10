@@ -3,6 +3,8 @@ package com.modelink.admin.service;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.Sms;
 import com.modelink.admin.vo.SmsParamPagerVo;
+import com.modelink.common.vo.ResultVo;
+import com.modelink.thirdparty.bean.SmsParamVo;
 
 import java.util.List;
 
@@ -42,4 +44,32 @@ public interface SmsService {
      * @return
      */
     public PageInfo<Sms> findPagerByParam(SmsParamPagerVo paramPagerVo);
+
+    /**
+     * 发送验证码
+     * @param mobile
+     * @return
+     */
+    public ResultVo sendCaptcha(String mobile);
+
+    /**
+     * 校验验证码
+     * @param mobile
+     * @param captcha
+     * @return
+     */
+    public ResultVo validateCaptcha(String mobile, String captcha);
+
+    /**
+     * 清除验证码
+     * @param mobile
+     */
+    public void clearCaptcha(String mobile);
+
+    /**
+     * 发送短信
+     * @param smsParamVo
+     * @return
+     */
+    public ResultVo sendSms(SmsParamVo smsParamVo);
 }

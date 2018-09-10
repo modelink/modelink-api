@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.modelink.admin.bean.Sms;
 import com.modelink.admin.service.SmsService;
 import com.modelink.common.enums.RetStatus;
+import com.modelink.common.utils.ValidateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.thirdparty.bean.SmsParamVo;
 import com.modelink.thirdparty.constants.SmsContant;
@@ -19,18 +20,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import javax.annotation.Resource;
 import java.text.DecimalFormat;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 @Controller
 @RequestMapping("/sms")
 public class SmsController {
 
-    private static final String Prefix = "sms_";
+
     @Resource
     private SmsService smsService;
-    @Resource
-    private RedisService redisService;
-    @Resource
-    private AliyunSmsService aliyunSmsService;
 
     /**
      * 发送短信验证码
@@ -40,17 +38,7 @@ public class SmsController {
     @ResponseBody
     @RequestMapping("/sendCaptcha")
     public ResultVo sendCaptcha(String mobile){
-        String smsCaptcha = formSmsCaptcha();
-        /** 设置验证码5分钟有效 **/
-        redisService.setString(Prefix + mobile, smsCaptcha, 300000);
-        JSONObject templateValue = new JSONObject();
-        templateValue.put("code", smsCaptcha);
-        SmsParamVo smsParamVo = new SmsParamVo();
-        smsParamVo.setPhoneNumbers(mobile);
-        smsParamVo.setTemplateCode(SmsContant.ALIYUN_TEMPLATE_CAPTCHA);
-        smsParamVo.setTemplateParam(JSON.toJSONString(templateValue));
-        smsParamVo.setSignName(SmsContant.ALIYUN_SIGNNAME);
-        return sendSms(smsParamVo);
+        return smsService.sendCaptcha(mobile);
     }
 
     /**
@@ -62,25 +50,7 @@ public class SmsController {
     @ResponseBody
     @RequestMapping("/validateCaptcha")
     public ResultVo validateCaptcha(String mobile, String captcha){
-        ResultVo resultVo = new ResultVo();
-        if(StringUtils.isEmpty(mobile)){
-            resultVo.setRtnCode(RetStatus.Fail.getValue());
-            resultVo.setRtnMsg("手机号码不能为空");
-            return resultVo;
-        }
-        if(StringUtils.isEmpty(captcha)){
-            resultVo.setRtnCode(RetStatus.Fail.getValue());
-            resultVo.setRtnMsg("手机验证码不能为空");
-            return resultVo;
-        }
-        String redisCaptcha = redisService.getString(Prefix + mobile);
-        if(!captcha.equals(redisCaptcha)){
-            resultVo.setRtnCode(RetStatus.Fail.getValue());
-            resultVo.setRtnMsg("手机验证码不正确");
-            return resultVo;
-        }
-        resultVo.setRtnCode(RetStatus.Ok.getValue());
-        return resultVo;
+        return smsService.validateCaptcha(mobile, captcha);
     }
 
     /**
@@ -91,16 +61,7 @@ public class SmsController {
     @ResponseBody
     @RequestMapping("/sendSms")
     public ResultVo sendSms(SmsParamVo smsParamVo){
-        Sms sms = new Sms();
-        BeanUtils.copyProperties(smsParamVo, sms);
-        sms.setStatus(Sms.STATUS_INIT);
-        smsService.save(sms);
-
-        ResultVo resultVo = aliyunSmsService.sendSms(smsParamVo);
-        sms.setStatus(resultVo.getRtnCode());
-        sms.setResult(resultVo.getRtnMsg());
-        smsService.update(sms);
-        return resultVo;
+        return smsService.sendSms(smsParamVo);
     }
 
     private String formSmsCaptcha(){

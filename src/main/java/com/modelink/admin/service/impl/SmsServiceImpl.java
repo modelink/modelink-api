@@ -1,23 +1,42 @@
 package com.modelink.admin.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.Sms;
 import com.modelink.admin.mapper.SmsMapper;
 import com.modelink.admin.service.SmsService;
 import com.modelink.admin.vo.SmsParamPagerVo;
+import com.modelink.common.enums.RetStatus;
+import com.modelink.common.utils.ValidateUtils;
+import com.modelink.common.vo.ResultVo;
+import com.modelink.thirdparty.bean.SmsParamVo;
+import com.modelink.thirdparty.constants.SmsContant;
+import com.modelink.thirdparty.controller.SmsController;
+import com.modelink.thirdparty.service.AliyunSmsService;
+import com.modelink.thirdparty.service.RedisService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Random;
 
 @Service
 public class SmsServiceImpl implements SmsService {
 
+    public static final String Prefix = "sms_";
+
     @Resource
     private SmsMapper smsMapper;
+    @Resource
+    private RedisService redisService;
+    @Resource
+    private AliyunSmsService aliyunSmsService;
     /**
      * 插入信息
      *
@@ -97,4 +116,99 @@ public class SmsServiceImpl implements SmsService {
         PageInfo<Sms> pageInfo = new PageInfo<>(abnormalList);
         return pageInfo;
     }
+
+    /**
+     * 发送验证码
+     *
+     * @param mobile
+     * @return
+     */
+    @Override
+    public ResultVo sendCaptcha(String mobile) {
+        ResultVo resultVo = new ResultVo<>();
+        String validResult = ValidateUtils.isValidPhone(mobile);
+        if (StringUtils.hasText(validResult)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg(validResult);
+            return resultVo;
+        }
+
+        String smsCaptcha = formSmsCaptcha();
+        /** 设置验证码5分钟有效 **/
+        redisService.setString(Prefix + mobile, smsCaptcha, 300000);
+        JSONObject templateValue = new JSONObject();
+        templateValue.put("code", smsCaptcha);
+        SmsParamVo smsParamVo = new SmsParamVo();
+        smsParamVo.setPhoneNumbers(mobile);
+        smsParamVo.setTemplateCode(SmsContant.ALIYUN_TEMPLATE_CAPTCHA);
+        smsParamVo.setTemplateParam(JSON.toJSONString(templateValue));
+        smsParamVo.setSignName(SmsContant.ALIYUN_SIGNNAME);
+        resultVo = sendSms(smsParamVo);
+        return resultVo;
+    }
+
+    /**
+     * 校验验证码
+     *
+     * @param mobile
+     * @param captcha
+     * @return
+     */
+    @Override
+    public ResultVo validateCaptcha(String mobile, String captcha) {
+        ResultVo resultVo = new ResultVo();
+        if(StringUtils.isEmpty(mobile)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg("手机号码不能为空");
+            return resultVo;
+        }
+        if(StringUtils.isEmpty(captcha)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg("手机验证码不能为空");
+            return resultVo;
+        }
+        String redisCaptcha = redisService.getString(Prefix + mobile);
+        if(!captcha.equals(redisCaptcha)){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg("手机验证码不正确");
+            return resultVo;
+        }
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        return resultVo;
+    }
+
+    /**
+     * 清除验证码
+     *
+     * @param mobile
+     */
+    @Override
+    public void clearCaptcha(String mobile) {
+        redisService.delString(Prefix + mobile);
+    }
+
+    /**
+     * 发送短信
+     * @param smsParamVo
+     * @return
+     */
+    @Override
+    public ResultVo sendSms(SmsParamVo smsParamVo){
+        Sms sms = new Sms();
+        BeanUtils.copyProperties(smsParamVo, sms);
+        sms.setStatus(Sms.STATUS_INIT);
+        this.save(sms);
+
+        ResultVo resultVo = aliyunSmsService.sendSms(smsParamVo);
+        sms.setStatus(resultVo.getRtnCode());
+        sms.setResult(resultVo.getRtnMsg());
+        this.update(sms);
+        return resultVo;
+    }
+
+    private String formSmsCaptcha(){
+        int smsCaptcha = new Random().nextInt(999999);
+        return new DecimalFormat("000000").format(smsCaptcha);
+    }
+
 }

@@ -33,5 +33,9 @@ public class RedisService {
         return stringRedisTemplate.opsForValue().get(key);
     }
 
+    public boolean delString(String key) {
+        return stringRedisTemplate.delete(key);
+    }
+
 
 }

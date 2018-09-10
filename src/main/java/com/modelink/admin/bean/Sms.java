@@ -1,5 +1,6 @@
 package com.modelink.admin.bean;
 
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
@@ -9,6 +10,7 @@ public class Sms implements Serializable {
     public static final int STATUS_INIT = 0;
 
     @Id
+    @GeneratedValue(generator = "JDBC")
     private Long id;
     private String phoneNumbers;
     private String templateCode;

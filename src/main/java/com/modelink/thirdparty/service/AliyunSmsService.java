@@ -1,6 +1,7 @@
 package com.modelink.thirdparty.service;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.IAcsClient;
 import com.aliyuncs.dysmsapi.model.v20170525.SendSmsRequest;
@@ -30,6 +31,7 @@ public class AliyunSmsService {
     private boolean debug;
 
     public ResultVo sendSms(SmsParamVo smsParamVo) {
+        JSONObject resultJson = new JSONObject();
         ResultVo resultVo = new ResultVo();
         if(debug){
             resultVo.setRtnCode(RetStatus.Ok.getValue());
@@ -49,8 +51,10 @@ public class AliyunSmsService {
         try {
             DefaultProfile.addEndpoint("cn-hangzhou", "cn-hangzhou", product, domain);
         } catch (Exception e) {
+            resultJson.put("code", "modelink.exception");
+            resultJson.put("message", "短信发送异常");
             resultVo.setRtnCode(RetStatus.Exception.getValue());
-            resultVo.setRtnMsg("aliyun addEndpoint exception ! " + e.getMessage());
+            resultVo.setRtnMsg(resultJson.toJSONString());
             logger.error("[aliyunSmsService|sendSms]发生异常", e);
             return resultVo;
         }
@@ -85,8 +89,10 @@ public class AliyunSmsService {
             sendSmsResponse = null;
         }
         if(sendSmsResponse == null || sendSmsResponse.getCode() == null){
+            resultJson.put("code", "modelink.exception");
+            resultJson.put("message", "短信发送异常");
             resultVo.setRtnCode(RetStatus.Fail.getValue());
-            resultVo.setRtnMsg(RetStatus.Fail.getText());
+            resultVo.setRtnMsg(resultJson.toJSONString());
             return resultVo;
         }
         if(!sendSmsResponse.getCode().equals("OK")){

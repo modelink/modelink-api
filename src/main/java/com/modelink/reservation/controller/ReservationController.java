@@ -49,6 +49,8 @@ public class ReservationController {
             BeanUtils.copyProperties(reserveParamVo, reservation);
             reservation.setStatus(ReservationStatusEnum.CREATED.getValue());
             reservation.setChannel((Long)request.getAttribute("merchant"));
+            reservation.setCreateTime(new Date());
+            reservation.setUpdateTime(new Date());
             int num = reservationService.insert(reservation);
             if(num > 0){
                 resultVo.setRtnCode(RetStatus.Ok.getValue());
