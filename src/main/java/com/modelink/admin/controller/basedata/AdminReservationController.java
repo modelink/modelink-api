@@ -2,6 +2,8 @@ package com.modelink.admin.controller.basedata;
 
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.ReservationParamPagerVo;
+import com.modelink.admin.vo.ReservationVo;
+import com.modelink.common.enums.HXSourceTypeEnum;
 import com.modelink.common.excel.ExcelExportConfigation;
 import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.utils.DateUtils;
@@ -9,6 +11,9 @@ import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.enums.ResourceTypeEnum;
 import com.modelink.reservation.service.ReservationService;
+import com.modelink.usercenter.bean.Merchant;
+import com.modelink.usercenter.service.MerchantService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -24,6 +29,8 @@ import java.util.List;
 public class AdminReservationController {
 
     @Resource
+    private MerchantService merchantService;
+    @Resource
     private ReservationService reservationService;
 
     @RequestMapping
@@ -33,11 +40,28 @@ public class AdminReservationController {
 
     @ResponseBody
     @RequestMapping("/list")
-    public LayuiResultPagerVo<Reservation> list(ReservationParamPagerVo paramPagerVo) {
+    public LayuiResultPagerVo<ReservationVo> list(ReservationParamPagerVo paramPagerVo) {
         PageInfo<Reservation> pageInfo = reservationService.findPagerByParam(paramPagerVo);
-        LayuiResultPagerVo<Reservation> layuiResultPagerVo = new LayuiResultPagerVo();
+        LayuiResultPagerVo<ReservationVo> layuiResultPagerVo = new LayuiResultPagerVo();
+
+        Merchant merchant;
+        ReservationVo reservationVo;
+        List<ReservationVo> reservationVoList = new ArrayList<>();
+        for (Reservation reservation : pageInfo.getList()) {
+            reservationVo = new ReservationVo();
+            BeanUtils.copyProperties(reservation, reservationVo);
+
+            merchant = merchantService.findById(reservation.getChannel());
+            reservationVo.setChannel(merchant == null ? "" : merchant.getName());
+            if(merchant.getAppKey() == 10000L){
+                reservationVo.setSourceType("H5:塑料姐妹情");
+            }else if(merchant.getAppKey() == 10001L){
+                reservationVo.setSourceType(HXSourceTypeEnum.getTextByValue(reservation.getSourceType()));
+            }
+            reservationVoList.add(reservationVo);
+        }
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
-        layuiResultPagerVo.setRtnList(pageInfo.getList());
+        layuiResultPagerVo.setRtnList(reservationVoList);
         return layuiResultPagerVo;
     }
 

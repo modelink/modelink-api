@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.annotation.Resource;
+import java.util.HashMap;
 import java.util.Map;
 
 @Controller
@@ -23,6 +24,8 @@ public class WeixinController {
     private String appId;
     @Value("${weixin.pn.appSecret}")
     private String appSecret;
+    @Value("${environment.debug}")
+    private boolean debug;
 
     @Resource
     private RedisService redisService;
@@ -32,7 +35,11 @@ public class WeixinController {
     public Map<String, String> getSignature(@RequestParam(value = "url", required = true) String url) {
         Map<String, String> rtnMap = null;
         try {
-            rtnMap = PastUtil.getParam(redisService, appId, appSecret, url);
+            if (debug) {
+                rtnMap = new HashMap<>();
+            } else {
+                rtnMap = PastUtil.getParam(redisService, appId, appSecret, url);
+            }
             logger.info("[weixinController|getSignature]返回结果。rtnMap={}", rtnMap);
         } catch (Exception e) {
             logger.error("[weixinController|getSignature]发生异常", e);

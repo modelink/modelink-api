@@ -40,17 +40,11 @@ layui.define(['form', 'table', 'laydate', 'jquery'], function (exports) {
             [
                 {checkbox: true, fixed: true},
                 {field: 'id', title: 'ID', width: 80, sort: false, align: 'center', fixed: true},
+                {field: 'channel', title: '合作商户', width: 120, sort: false, align: 'center', fixed: true},
                 {field: 'contactName', title: '预约姓名', align: 'center'},
                 {field: 'contactTime', title: '预约时间', align: 'center'},
                 {field: 'contactMobile', title: '预约电话', align: 'center'},
-                {field: 'sourceType', title: '预约入口', align: 'center', templet: function(value){
-                    if(value.sourceType == 0){ return "其他产品" }
-                    else if(value.sourceType == 1){ return "专题首页" }
-                    else if(value.sourceType == 2){ return "常青树" }
-                    else if(value.sourceType == 3){ return "华夏福" }
-                    else if(value.sourceType == 4){ return "常青藤" }
-                    else if(value.sourceType == 5){ return "福临门" }
-                }},
+                {field: 'sourceType', title: '预约入口', align: 'center'},
                 {field: 'status', title: '数据状态', align: 'center', templet: function(value){
                     if(value.status == 0){ return "已预约" }
                     else if(value.status == 1){ return "沟通中" }

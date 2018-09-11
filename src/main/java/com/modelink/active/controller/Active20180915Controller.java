@@ -10,6 +10,7 @@ import com.modelink.reservation.service.ReservationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,7 +40,12 @@ public class Active20180915Controller {
     @ResponseBody
     @RequestMapping("/doReserve")
     public ResultVo doReserve(String name, String mobile, String captcha) {
-        ResultVo resultVo;
+        ResultVo resultVo = new ResultVo();
+        if(StringUtils.isEmpty(name) || name.length() > 10){
+            resultVo.setRtnCode(RetStatus.Fail.getValue());
+            resultVo.setRtnMsg("请输入您的姓名（不超过10个字符）");
+            return resultVo;
+        }
 
         // 校验验证码是否正确
         resultVo = smsService.validateCaptcha(mobile, captcha);
@@ -53,7 +59,7 @@ public class Active20180915Controller {
             reservation.setContactMobile(mobile);
             reservation.setContactTime(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
             reservation.setStatus(ReservationStatusEnum.CREATED.getValue());
-            reservation.setChannel(10000L);
+            reservation.setChannel(5L);
             reservation.setSourceType(1);//塑料姐妹不可怕，谁穷谁尴尬
             reservation.setCreateTime(new Date());
             reservation.setUpdateTime(new Date());
