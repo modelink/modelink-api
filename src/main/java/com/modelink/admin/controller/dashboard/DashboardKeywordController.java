@@ -200,7 +200,9 @@ public class DashboardKeywordController {
             }else{
                 insuranceFee = insuranceFeeMap.get(underwrite.getReserveMobile());
             }
-            insuranceFee += Double.parseDouble(underwrite.getInsuranceFee());
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                insuranceFee += Double.parseDouble(underwrite.getInsuranceFee());
+            }
             insuranceFeeMap.put(underwrite.getReserveMobile(), insuranceFee);
         }
 

@@ -144,7 +144,9 @@ public class DashboardController {
             if(totalAmountMap.get(dateKey) != null){
                 insuranceTotalAmount = (double)totalAmountMap.get(dateKey);
             }
-            insuranceTotalAmount += Double.valueOf(underwrite.getInsuranceFee());
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                insuranceTotalAmount += Double.valueOf(underwrite.getInsuranceFee());
+            }
             totalAmountMap.put(dateKey, insuranceTotalAmount);
         }
 
@@ -164,7 +166,9 @@ public class DashboardController {
             if(refundAmountMap.get(dateKey) != null){
                 refundTotalAmount = (double)refundAmountMap.get(dateKey);
             }
-            refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
+            if(StringUtils.hasText(repellent.getInsuranceFee()) && !"-".equals(repellent.getInsuranceFee())) {
+                refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
+            }
             refundAmountMap.put(dateKey, refundTotalAmount);
         }
 
@@ -215,7 +219,9 @@ public class DashboardController {
             if(refundAmountMap.get(dateKey) != null){
                 refundTotalAmount = (double)refundAmountMap.get(dateKey);
             }
-            refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
+            if(StringUtils.hasText(repellent.getInsuranceFee()) && !"-".equals(repellent.getInsuranceFee())) {
+                refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
+            }
             refundAmountMap.put(dateKey, refundTotalAmount);
         }
 
@@ -591,7 +597,10 @@ public class DashboardController {
         for (Underwrite underwrite : underwriteList) {
             age = underwrite.getAge();
             gender = underwrite.getGender();
-            amount = Double.parseDouble(underwrite.getInsuranceFee());
+            amount = 0.0d;
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                amount = Double.parseDouble(underwrite.getInsuranceFee());
+            }
             if(0 < age && age <= 5) {
                 mapKey = AgePartEnum.from_0_5.getValue();
                 if("男".equals(gender)) {
