@@ -934,8 +934,8 @@ public class DashboardController {
             paramVo = new DashboardParamVo();
         }
         if(StringUtils.isEmpty(paramVo.getChooseDate())){
-            String endDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -1, "yyyy-MM-dd");
-            String startDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -6, "yyyy-MM-dd");
+            String endDate = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+            String startDate = DateUtils.formatDate(new Date(), "yyyy-MM") + "-01";
             paramVo.setChooseDate(startDate + " - " + endDate);
         }
         if(StringUtils.isEmpty(paramVo.getDateType())){

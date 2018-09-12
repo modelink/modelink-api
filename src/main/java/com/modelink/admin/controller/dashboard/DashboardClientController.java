@@ -253,8 +253,8 @@ public class DashboardClientController {
             dashboardParamVo = new DashboardClientParamVo();
         }
         if(StringUtils.isEmpty(dashboardParamVo.getChooseDate())){
-            String endDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -1, "yyyy-MM-dd");
-            String startDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -8, "yyyy-MM-dd");
+            String endDate = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+            String startDate = DateUtils.formatDate(new Date(), "yyyy-MM") + "-01";
             dashboardParamVo.setChooseDate(startDate + " - " + endDate);
         }
         if(StringUtils.hasText(dashboardParamVo.getPlatformName())){

@@ -576,8 +576,8 @@ public class DashboardMediaController {
             dashboardParamVo = new DashboardParamVo();
         }
         if(StringUtils.isEmpty(dashboardParamVo.getChooseDate())){
-            String endDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -1, "yyyy") + "-12-31";
-            String startDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -8, "yyyy") + "-01-01";
+            String endDate = DateUtils.formatDate(new Date(), "yyyy") + "-12-31";
+            String startDate = DateUtils.formatDate(new Date(), "yyyy") + "-01-01";
             dashboardParamVo.setChooseDate(startDate + " - " + endDate);
         }else{
             String[] dateArray = dashboardParamVo.getChooseDate().split(" - ");

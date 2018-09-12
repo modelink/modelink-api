@@ -748,8 +748,8 @@ public class DashboardSummaryController {
             paramVo = new DashboardSummaryParamVo();
         }
         if(StringUtils.isEmpty(paramVo.getChooseDate())){
-            String endDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -1, "yyyy-MM-dd");
-            String startDate = DateUtils.calculateDate(new Date(), Calendar.DAY_OF_YEAR, -8, "yyyy-MM-dd");
+            String endDate = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+            String startDate = DateUtils.formatDate(new Date(), "yyyy-MM") + "-01";
             paramVo.setChooseDate(startDate + " - " + endDate);
         }
         if(StringUtils.hasText(paramVo.getPlatformName())){
