@@ -248,7 +248,7 @@ h1 {
 	display: block;
 	height: 80px;
 	width: 328px;
-	background: url(/static/image/portal/index/logo.png) no-repeat left center;
+	background: url('http://image.modelink.cn/common/logo.jpg?x-oss-process=image/resize,h_80') no-repeat left center;
 }
 
 .h_nav li {
