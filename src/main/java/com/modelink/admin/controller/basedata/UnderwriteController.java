@@ -13,6 +13,7 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.common.vo.ResultVo;
+import com.modelink.reservation.bean.Flow;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.bean.Underwrite;
 import com.modelink.reservation.service.FlowReserveService;
@@ -79,11 +80,9 @@ public class UnderwriteController {
         for(Underwrite underwrite : underwriteList){
             flowReserveParamPagerVo = new FlowReserveParamPagerVo();
             flowReserveParamPagerVo.setMobile(underwrite.getReserveMobile());
-            flowReserveParamPagerVo.setDateField("date");
+            flowReserveParamPagerVo.setSortField("date desc");
             flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
-
-            underwrite.setSourceDate(underwrite.getReserveDate());
             underwrite.setReserveDate("");
             underwrite.setKeyword("");
             if(flowReserveList.size() > 0) {
@@ -194,7 +193,6 @@ public class UnderwriteController {
         Area area;
         boolean exist;
         Underwrite underwrite;
-        FlowReserve flowReserve;
         Set<String> mobileSet;
         List<FlowReserve> flowReserveList;
         Merchant merchant;
@@ -202,6 +200,9 @@ public class UnderwriteController {
         int index;
         int totalCount = 0;
         int provinceId, cityId;
+        int difference;
+        String reserveDate, finishDate;
+        FlowReserveParamPagerVo flowReserveParamPagerVo;
         for(List<String> dataItem : dataList){
 
             // 跳过空行
@@ -294,12 +295,31 @@ public class UnderwriteController {
                 underwrite.setCityId(cityId);
 
                 // 插入预约日期
-                mobileSet = new HashSet<>();
-                mobileSet.add(underwrite.getReserveMobile());
-                flowReserveList = flowReserveService.findListByMobiles(mobileSet, "date");
-                if(flowReserveList != null && flowReserveList.size() > 0) {
-                    underwrite.setReserveDate(flowReserveList.get(0).getDate());
-                    underwrite.setKeyword(flowReserveList.get(0).getAdvertiseDesc());
+                flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+                flowReserveParamPagerVo.setMobile(underwrite.getReserveMobile());
+                flowReserveParamPagerVo.setSortField("date desc");
+                flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+
+                underwrite.setReserveDate("");
+                underwrite.setKeyword("");
+                if(flowReserveList.size() > 0) {
+                    for(FlowReserve flowReserve : flowReserveList){
+                        reserveDate = flowReserve.getDate();
+                        if(reserveDate.contains("/")){
+                            reserveDate = DateUtils.dateFormatTransform(reserveDate, "yyyy/M/d", "yyyy-MM-dd");
+                        }
+                        finishDate = underwrite.getFinishDate();
+                        if(finishDate.contains("/")){
+                            finishDate = DateUtils.dateFormatTransform(finishDate, "yyyy/M/d", "yyyy-MM-dd");
+                            underwrite.setFinishDate(finishDate);
+                        }
+                        difference = DateUtils.getDateDifference(reserveDate, finishDate);
+                        if(difference > 0){
+                            underwrite.setReserveDate(reserveDate);
+                            underwrite.setKeyword(flowReserve.getAdvertiseDesc());
+                            break;
+                        }
+                    }
                 }
 
                 if(exist) {

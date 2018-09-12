@@ -4,6 +4,7 @@ import com.modelink.common.vo.PagerVo;
 
 public class FlowReserveParamPagerVo extends PagerVo {
 
+    private String sortField;
     private String dateField;
     private String chooseDate;
     private String mobile;
@@ -84,5 +85,13 @@ public class FlowReserveParamPagerVo extends PagerVo {
 
     public void setFeeType(String feeType) {
         this.feeType = feeType;
+    }
+
+    public String getSortField() {
+        return sortField;
+    }
+
+    public void setSortField(String sortField) {
+        this.sortField = sortField;
     }
 }

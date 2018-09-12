@@ -103,6 +103,9 @@ public class FlowReserveServiceImpl implements FlowReserveService {
             criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
         }
         criteria.andEqualTo("isMakeUp", 0);
+        if(StringUtils.hasText(paramPagerVo.getSortField())) {
+            example.setOrderByClause(paramPagerVo.getSortField());
+        }
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         return flowReserveList;
     }

@@ -41,7 +41,7 @@ public class UnderwriteServiceImpl implements UnderwriteService {
      */
     @Override
     public int update(Underwrite underwrite) {
-        return underwriteMapper.updateByPrimaryKeySelective(underwrite);
+        return underwriteMapper.updateByPrimaryKey(underwrite);
     }
 
     /**
