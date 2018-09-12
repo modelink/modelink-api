@@ -86,8 +86,6 @@ public class RepellentController {
             }
 
             Map<Integer, String> fieldFormatMap = new HashMap<>();
-            fieldFormatMap.put(0, "M月d日");
-
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
@@ -195,9 +193,17 @@ public class RepellentController {
                 repellent.setRegionName(dataItem.get(19));
                 repellent.setGroupName(dataItem.get(20));
                 repellent.setSpecialCaseName(dataItem.get(21));
-                repellent.setInsuranceDate(dataItem.get(22));
+                if (dataItem.get(22).contains("/")) {
+                    repellent.setInsuranceDate(DateUtils.dateFormatTransform(dataItem.get(22), "yyyy/M/d", "yyyy-MM-dd"));
+                } else {
+                    repellent.setInsuranceDate(dataItem.get(22));
+                }
                 repellent.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(23)));
-                repellent.setHesitateDate(dataItem.get(24));
+                if (dataItem.get(24).contains("/")) {
+                    repellent.setHesitateDate(DateUtils.dateFormatTransform(dataItem.get(24), "yyyy/M/d", "yyyy-MM-dd"));
+                } else {
+                    repellent.setHesitateDate(dataItem.get(24));
+                }
                 if("-".equals(dataItem.get(25)) || "".equals(dataItem.get(25))){
                     repellent.setPayInterval(0);
                 }else {

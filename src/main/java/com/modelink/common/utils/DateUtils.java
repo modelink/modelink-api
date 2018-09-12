@@ -100,8 +100,9 @@ public class DateUtils {
             date = dateFormat.parse(dateString);
             resultDate = formatDate(date, distPattern);
         } catch (Exception e) {
-            logger.error("[dateUtils|formatDate]日期转换失败。dateString={}", dateString, e);
-            resultDate = "";
+            logger.error("[dateUtils|formatDate]日期转换失败。dateString={}, pattern={}, distPattern={}",
+                    dateString, pattern, distPattern, e);
+            resultDate = dateString;
         }
         return resultDate;
     }

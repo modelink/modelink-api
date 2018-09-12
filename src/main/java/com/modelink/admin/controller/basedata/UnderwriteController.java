@@ -266,8 +266,16 @@ public class UnderwriteController {
                 underwrite.setInsuranceNo(dataItem.get(6));
                 underwrite.setReserveMobile(dataItem.get(7));
                 underwrite.setSource(dataItem.get(8));
-                underwrite.setSourceDate(dataItem.get(9));
-                underwrite.setFinishDate(dataItem.get(10));
+                if (dataItem.get(9).contains("/")) {
+                    underwrite.setSourceDate(DateUtils.dateFormatTransform(dataItem.get(9), "yyyy/M/d", "yyyy-MM-dd"));
+                } else {
+                    underwrite.setSourceDate(dataItem.get(9));
+                }
+                if (dataItem.get(10).contains("/")) {
+                    underwrite.setFinishDate(DateUtils.dateFormatTransform(dataItem.get(10), "yyyy/M/d", "yyyy-MM-dd"));
+                } else {
+                    underwrite.setFinishDate(dataItem.get(10));
+                }
                 underwrite.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(11)));
                 underwrite.setInsuranceAmount(dataItem.get(12));
                 underwrite.setInsuranceFee(dataItem.get(13));
@@ -309,7 +317,6 @@ public class UnderwriteController {
                 exceptionLogger.setLoggerDate(DateUtils.formatDate(new Date(), "yyyy-MM-dd"));
                 exceptionLoggerService.save(exceptionLogger);
             }
-
         }
         resultVo.setRtnData(totalCount);
         return resultVo;
