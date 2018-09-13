@@ -108,10 +108,11 @@ var insuranceEcharts = {
             },
             yAxis: [
                 {
+                    name: '承保数（件）',
                     type: 'value',
                     position: 'left',
                     axisLabel: {
-                        formatter: '{value}'
+                        formatter: '{value}件'
                     }
                 }
             ],
@@ -131,8 +132,8 @@ var insuranceEcharts = {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'provinceName'}\">地域</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount'}\">承保数</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">占比</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount'}\">承保数（件）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">占比（%）</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
 
@@ -171,6 +172,12 @@ var insuranceEcharts = {
                 borderColor: "#c45455",//网格的边框颜色
                 bottom: "20%" //
             },
+            tooltip: {
+
+            },
+            legend: {
+                data:['预约个数', '承保件数']
+            },
             xAxis: {
                 type: 'category',
                 axisLabel: {
@@ -182,15 +189,17 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
+                    name: '预约个数',
                     position: 'left',
                     axisLabel: {
-                        formatter: '{value}'
+                        formatter: '{value}个'
                     }
                 },{
                     type: 'value',
+                    name: '承保件数',
                     position: 'right',
                     axisLabel: {
-                        formatter: '{value}'
+                        formatter: '{value}件'
                     }
                 }
             ],

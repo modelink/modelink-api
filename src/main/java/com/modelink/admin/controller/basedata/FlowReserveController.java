@@ -160,14 +160,16 @@ public class FlowReserveController {
             try {
                 area = areaService.findByNameAndType(dataItem.get(23), AreaTypeEnum.省.getValue());
                 if(area == null){
-                    continue;
+                    provinceId = 0;
+                }else {
+                    provinceId = area.getAreaId();
                 }
-                provinceId = area.getAreaId();
                 area = areaService.findByNameAndType(dataItem.get(24), AreaTypeEnum.市.getValue());
                 if(area == null){
                     area = areaService.findByNameAndType(dataItem.get(24), AreaTypeEnum.区.getValue());
                     if(area == null){
-                        continue;
+                        area = new Area();
+                        area.setAreaId(0);
                     }
                 }
                 cityId = area.getAreaId();
@@ -200,8 +202,8 @@ public class FlowReserveController {
                 // 渠道归属
                 flowReserve.setPlatformName(dataItem.get(6));
 
-                flowReserve.setProvinceId(area == null ? 0 : area.getAreaId());
-                flowReserve.setCityId(area == null ? 0 : area.getAreaId());
+                flowReserve.setProvinceId(provinceId);
+                flowReserve.setCityId(cityId);
 
                 flowReserve.setReserveNo(dataItem.get(4));
                 flowReserve.setReserveMobile(dataItem.get(5));
