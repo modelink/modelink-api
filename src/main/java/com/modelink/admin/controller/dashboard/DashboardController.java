@@ -182,7 +182,6 @@ public class DashboardController {
         List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
 
         double refundTotalAmount;
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Map<String, Object> refundAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         for (Repellent repellent : repellentList) {
             dateKey = DataUtils.getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
@@ -193,7 +192,7 @@ public class DashboardController {
             if(StringUtils.hasText(repellent.getInsuranceFee()) && !"-".equals(repellent.getInsuranceFee())) {
                 refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
             }
-            refundAmountMap.put(dateKey, decimalFormat.format(refundTotalAmount));
+            refundAmountMap.put(dateKey, refundTotalAmount);
         }
 
         JSONObject resultJson = formLineEchartResultJson(refundAmountMap);
@@ -812,22 +811,22 @@ public class DashboardController {
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         int searchCount;
-        Map<String, Integer> searchWordMap = new HashMap<>();
+        Map<String, Integer> keywordMap = new HashMap<>();
         for (FlowReserve flowReserve : flowReserveList) {
-            if ("-".equals(flowReserve.getAdvertiseDesc()) || "".equals(flowReserve.getAdvertiseDesc())) {
+            if (StringUtils.isEmpty(flowReserve.getAdvertiseDesc()) || "-".equals(flowReserve.getAdvertiseDesc())) {
                 continue;
             }
-            if (searchWordMap.get(flowReserve.getAdvertiseDesc()) == null) {
+            if (keywordMap.get(flowReserve.getAdvertiseDesc()) == null) {
                 searchCount = 0;
             } else {
-                searchCount = searchWordMap.get(flowReserve.getAdvertiseDesc());
+                searchCount = keywordMap.get(flowReserve.getAdvertiseDesc());
             }
 
             searchCount++;
-            searchWordMap.put(flowReserve.getAdvertiseDesc(), searchCount);
+            keywordMap.put(flowReserve.getAdvertiseDesc(), searchCount);
         }
 
-        List<Map.Entry<String, Integer>> list = new ArrayList<>(searchWordMap.entrySet());
+        List<Map.Entry<String, Integer>> list = new ArrayList<>(keywordMap.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
                 return o2.getValue().compareTo(o1.getValue());
@@ -906,16 +905,16 @@ public class DashboardController {
         resultJson.put("contentList", contentArray);
 
         int size = contentArray.size();
-        int lastValue = 0;
-        int penultValue = 0;
-        int trendRate = 0;
+        double lastValue = 0;
+        double penultValue = 0;
+        double trendRate = 0;
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         if(size > 0){
-            lastValue = contentArray.getIntValue(size - 1);
+            lastValue = contentArray.getDoubleValue(size - 1);
         }
         resultJson.put("lastValue", lastValue);
         if(size > 1){
-            penultValue = contentArray.getIntValue(size - 2);
+            penultValue = contentArray.getDoubleValue(size - 2);
         }
         resultJson.put("penultValue", penultValue);
         if(penultValue != 0 && penultValue != 0){
