@@ -79,6 +79,19 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
+                <div class="layui-card-header">总保费：单位（元）</div>
+                <div class="layui-card-body">
+                    <div id="underwrite-amount" class="echart-header">
+                        <label></label>
+                        <i class="iconfont icon-arrow-equal"></i>
+                        <em></em>
+                    </div>
+                    <div id="underwrite-amount-echart" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-card">
                 <div class="layui-card-header">预约数量：单位（个）</div>
                 <div class="layui-card-body">
                     <div id="reserve-count" class="echart-header">
@@ -100,19 +113,6 @@
                         <em></em>
                     </div>
                     <div id="underwrite-count-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">总保费：单位（元）</div>
-                <div class="layui-card-body">
-                    <div id="underwrite-amount" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="underwrite-amount-echart" style="height: 200px;"></div>
                 </div>
             </div>
         </div>
@@ -147,19 +147,6 @@
         </div>
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
-                <div class="layui-card-header">异常数量：单位（个）</div>
-                <div class="layui-card-body">
-                    <div id="abnormal-count" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="abnormal-count-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
                 <div class="layui-card-header">转化周期：单位（天/个）</div>
                 <div class="layui-card-body">
                     <div id="transform-cycle" class="echart-header">
@@ -184,11 +171,9 @@
                 </div>
             </div>
         </div>
-    </div>
-    <div class="layui-row layui-col-space15">
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
-                <div class="layui-card-header">预约总量-点击量</div>
+                <div class="layui-card-header">产能：单位（元）</div>
                 <div class="layui-card-body">
                     <div id="reserve-click" class="echart-header">
                         <label></label>
@@ -196,6 +181,16 @@
                         <em></em>
                     </div>
                     <div id="reserve-click-echart" style="height: 200px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="layui-row layui-col-space15">
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-card">
+                <div class="layui-card-header">全国保费分布图：单位（%）</div>
+                <div class="layui-card-body">
+                    <div id="insurance-map-echart" style="height: 249px;"></div>
                 </div>
             </div>
         </div>
@@ -210,21 +205,24 @@
                 </div>
             </div>
         </div>
-
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
-                <div class="layui-card-header">词云分析：单位（预约个数）</div>
+                <div class="layui-card-header">有效搜索词：单位（预约个数）</div>
                 <div class="layui-card-body">
                     <div id="word-clouds-echart" style="height: 249px;"></div>
                 </div>
             </div>
         </div>
-
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
-                <div class="layui-card-header">全国保费分布图：单位（%）</div>
+                <div class="layui-card-header">异常数量：单位（个）</div>
                 <div class="layui-card-body">
-                    <div id="insurance-map-echart" style="height: 249px;"></div>
+                    <div id="abnormal-count" class="echart-header">
+                        <label></label>
+                        <i class="iconfont icon-arrow-equal"></i>
+                        <em></em>
+                    </div>
+                    <div id="abnormal-count-echart" style="height: 200px;"></div>
                 </div>
             </div>
         </div>

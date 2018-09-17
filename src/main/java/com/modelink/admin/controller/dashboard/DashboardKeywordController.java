@@ -237,13 +237,14 @@ public class DashboardKeywordController {
         int count = 1;
         JSONObject wordCloud;
         JSONArray wordCloudArray = new JSONArray();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         for (Map.Entry<String, Double> mapping : list) {
             if(count > 30){
                 break;
             }
             wordCloud = new JSONObject();
             wordCloud.put("name", mapping.getKey());
-            wordCloud.put("value", mapping.getValue());
+            wordCloud.put("value", decimalFormat.format(mapping.getValue()));
             wordCloudArray.add(wordCloud);
             count ++;
         }
@@ -534,11 +535,12 @@ public class DashboardKeywordController {
 
         List<Integer> reserveCountList = new ArrayList<>();
         List<Integer> underwriteCountList = new ArrayList<>();
-        List<Double> underwriteAmountList = new ArrayList<>();
+        List<String> underwriteAmountList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         for(String keywordStr : keywordList){
             reserveCountList.add(reserveCountMap.get(keywordStr));
             underwriteCountList.add(underwriteCountMap.get(keywordStr));
-            underwriteAmountList.add(underwriteAmountMap.get(keywordStr));
+            underwriteAmountList.add(decimalFormat.format(underwriteAmountMap.get(keywordStr)));
         }
 
         JSONObject resultJson = new JSONObject();
@@ -660,13 +662,14 @@ public class DashboardKeywordController {
         });
         int idx = 1;
         List<String> titleList = new ArrayList<>();
-        List<Double> transformCostList = new ArrayList<>();
-        List<Double> clickCostList = new ArrayList<>();
+        List<String> transformCostList = new ArrayList<>();
+        List<String> clickCostList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         for (Map.Entry<String, Double> entry : entryList) {
             if(idx > 30) break;
             titleList.add(entry.getKey());
-            transformCostList.add(entry.getValue());
-            clickCostList.add(clickCostResultMap.get(entry.getKey()));
+            transformCostList.add(decimalFormat.format(entry.getValue()));
+            clickCostList.add(decimalFormat.format(clickCostResultMap.get(entry.getKey())));
             idx ++;
         }
 

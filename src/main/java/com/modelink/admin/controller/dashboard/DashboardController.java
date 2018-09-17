@@ -39,6 +39,8 @@ public class DashboardController {
     private AbnormalService abnormalService;
     @Resource
     private RepellentService repellentService;
+    @Resource
+    private PermiumsService permiumsService;
 
     @ResponseBody
     @RequestMapping("/getReserveCount")
@@ -128,62 +130,30 @@ public class DashboardController {
         }
 
         String dateKey;
-
         // 保费汇总
-        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+        PermiumsParamPagerVo paramPagerVo = new PermiumsParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("finishDate,insuranceFee");
-        paramPagerVo.setDateField("finishDate");
-        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
-        double insuranceTotalAmount;
-        Map<String, Object> totalAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
-        for (Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
-            insuranceTotalAmount = 0.00;
-            if(totalAmountMap.get(dateKey) != null){
-                insuranceTotalAmount = (double)totalAmountMap.get(dateKey);
+        paramPagerVo.setColumnFieldIds("date,insuranceFee");
+        paramPagerVo.setDateField("date");
+        List<Permiums> permiumsList = permiumsService.findListByParam(paramPagerVo);
+
+        double underwriteAmount;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        Map<String, Object> underwriteAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        for (Permiums permiums : permiumsList) {
+            dateKey = DataUtils.getDateKeyByDateType(permiums.getDate(), paramVo.getDateType());
+            underwriteAmount = 0.00;
+            if(underwriteAmountMap.get(dateKey) != null){
+                underwriteAmount = (double)underwriteAmountMap.get(dateKey);
             }
-            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
-                insuranceTotalAmount += Double.valueOf(underwrite.getInsuranceFee());
+            if(StringUtils.hasText(permiums.getInsuranceFee()) && !"-".equals(permiums.getInsuranceFee())) {
+                underwriteAmount += Double.valueOf(permiums.getInsuranceFee());
             }
-            totalAmountMap.put(dateKey, insuranceTotalAmount);
+            underwriteAmountMap.put(dateKey, decimalFormat.format(underwriteAmount));
         }
 
-        // 退保保费汇总
-        RepellentParamPagerVo repellentParamPagerVo = new RepellentParamPagerVo();
-        repellentParamPagerVo.setChooseDate(paramVo.getChooseDate());
-        repellentParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        repellentParamPagerVo.setColumnFieldIds("id,hesitateDate");
-        repellentParamPagerVo.setDateField("hesitateDate");
-        List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
-
-        double refundTotalAmount;
-        Map<String, Object> refundAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
-        for (Repellent repellent : repellentList) {
-            dateKey = DataUtils.getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
-            refundTotalAmount = 0.00;
-            if(refundAmountMap.get(dateKey) != null){
-                refundTotalAmount = (double)refundAmountMap.get(dateKey);
-            }
-            if(StringUtils.hasText(repellent.getInsuranceFee()) && !"-".equals(repellent.getInsuranceFee())) {
-                refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
-            }
-            refundAmountMap.put(dateKey, refundTotalAmount);
-        }
-
-        // 结算最终结果
-        double amount, refundAmount;
-        Map<String, Object> resultStatMap = new HashMap<>();
-        Iterator<String> iterator = totalAmountMap.keySet().iterator();
-        while(iterator.hasNext()){
-            dateKey = iterator.next();
-            amount = (double)totalAmountMap.get(dateKey);
-            refundAmount = (double)refundAmountMap.get(dateKey);
-            resultStatMap.put(dateKey, amount - refundAmount);
-        }
-
-        JSONObject resultJson = formLineEchartResultJson(resultStatMap);
+        JSONObject resultJson = formLineEchartResultJson(underwriteAmountMap);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;
@@ -207,11 +177,12 @@ public class DashboardController {
         RepellentParamPagerVo repellentParamPagerVo = new RepellentParamPagerVo();
         repellentParamPagerVo.setChooseDate(paramVo.getChooseDate());
         repellentParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        repellentParamPagerVo.setColumnFieldIds("id,hesitateDate");
+        repellentParamPagerVo.setColumnFieldIds("id,hesitateDate,insuranceFee");
         repellentParamPagerVo.setDateField("hesitateDate");
         List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
 
         double refundTotalAmount;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Map<String, Object> refundAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         for (Repellent repellent : repellentList) {
             dateKey = DataUtils.getDateKeyByDateType(repellent.getHesitateDate(), paramVo.getDateType());
@@ -222,7 +193,7 @@ public class DashboardController {
             if(StringUtils.hasText(repellent.getInsuranceFee()) && !"-".equals(repellent.getInsuranceFee())) {
                 refundTotalAmount += Double.valueOf(repellent.getInsuranceFee());
             }
-            refundAmountMap.put(dateKey, refundTotalAmount);
+            refundAmountMap.put(dateKey, decimalFormat.format(refundTotalAmount));
         }
 
         JSONObject resultJson = formLineEchartResultJson(refundAmountMap);
@@ -280,6 +251,7 @@ public class DashboardController {
 
         int count = 0;
         double amount = 0.00;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Map<String, Object> statResultMap = new HashMap<>();
         Iterator<String> iterator = statAmountMap.keySet().iterator();
         while(iterator.hasNext()){
@@ -297,7 +269,7 @@ public class DashboardController {
             if(count == 0){
                 statResultMap.put(dateKey, 0);
             }else{
-                statResultMap.put(dateKey, amount / count);
+                statResultMap.put(dateKey, decimalFormat.format(amount / count));
             }
         }
 
@@ -390,6 +362,7 @@ public class DashboardController {
         Map<String, String> mobile2DateMap;
         Iterator<String> iterator = underwriteListMap.keySet().iterator();
 
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Map<String, Object> statResultMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         while (iterator.hasNext()) {
             dateKey = iterator.next();
@@ -419,7 +392,7 @@ public class DashboardController {
                 }
                 totalDifference += difference;
             }
-            statResultMap.put(dateKey, totalDifference / totalCount);
+            statResultMap.put(dateKey, decimalFormat.format(totalDifference / totalCount));
         }
 
 
@@ -479,15 +452,16 @@ public class DashboardController {
         // 结算最终结果
         int count, clickCount;
         Map<String, Object> resultStatMap = new HashMap<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Iterator<String> iterator = totalCountMap.keySet().iterator();
         while(iterator.hasNext()){
             dateKey = iterator.next();
             count = (int)totalCountMap.get(dateKey);
             clickCount = (int)clickTotalMap.get(dateKey);
             if(clickCount == 0) {
-                resultStatMap.put(dateKey, clickCount);
+                resultStatMap.put(dateKey, "0.00");
             }else{
-                resultStatMap.put(dateKey, (double)(count * 100) / clickCount);
+                resultStatMap.put(dateKey, decimalFormat.format((count * 100.0d) / clickCount));
             }
         }
 
@@ -531,35 +505,53 @@ public class DashboardController {
             statCountMap.put(dateKey, reserveCount);
         }
 
-        // 计算统计周期内点击量总数
-        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
-        mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
-        mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        mediaItemParamPagerVo.setColumnFieldIds("id,date,clickCount");
-        mediaItemParamPagerVo.setDateField("date");
-        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
+        // 计算统计周期内保单号总量
+        UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
+        underwriteParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        underwriteParamPagerVo.setColumnFieldIds("reserveDate,insuranceNo");
+        underwriteParamPagerVo.setDateField("reserveDate");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
-        int clickTotalCount;
-        Map<String, Object> clickTotalMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
-        for (MediaItem mediaItem : mediaItemList) {
-            dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), paramVo.getDateType());
-            clickTotalCount = (int)clickTotalMap.get(dateKey);
-            clickTotalCount += mediaItem.getClickCount();
-            clickTotalMap.put(dateKey, clickTotalCount);
+        Set<String> insuranceSet = new HashSet<>();
+        for (Underwrite underwrite : underwriteList) {
+            insuranceSet.add(underwrite.getInsuranceNo());
+        }
+        List<Repellent> repellentList = repellentService.findListByInsuranceNoList(insuranceSet);
+        Map<String, String> repellentAmountMap = new HashMap<>();
+        for (Repellent repellent : repellentList) {
+            repellentAmountMap.put(repellent.getInsuranceNo(), repellent.getInsuranceFee());
+        }
+
+        double underwriteAmount;
+        Map<String, Object> underwriteAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
+        for (Underwrite underwrite : underwriteList) {
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), paramVo.getDateType());
+            underwriteAmount = 0.0d;
+            if (underwriteAmountMap.get(dateKey) != null) {
+                underwriteAmount = (double)underwriteAmountMap.get(dateKey);
+            }
+            if (StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())){
+                underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+            }
+            if (repellentAmountMap.get(underwrite.getInsuranceNo()) != null) {
+                underwriteAmount -= Double.parseDouble(repellentAmountMap.get(underwrite.getInsuranceNo()));
+            }
+            underwriteAmountMap.put(dateKey, underwriteAmount);
         }
 
         // 结算最终结果
-        int count, clickCount;
         Map<String, Object> resultStatMap = new HashMap<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Iterator<String> iterator = statCountMap.keySet().iterator();
         while(iterator.hasNext()){
             dateKey = iterator.next();
-            count = (int)statCountMap.get(dateKey);
-            clickCount = (int)clickTotalMap.get(dateKey);
-            if(clickCount == 0) {
-                resultStatMap.put(dateKey, clickCount);
+            reserveCount = (int)statCountMap.get(dateKey);
+            underwriteAmount = (double) underwriteAmountMap.get(dateKey);
+            if(reserveCount == 0) {
+                resultStatMap.put(dateKey, decimalFormat.format(underwriteAmount));
             }else{
-                resultStatMap.put(dateKey, (double)(count * 100) / clickCount);
+                resultStatMap.put(dateKey, decimalFormat.format(underwriteAmount / reserveCount));
             }
         }
 
@@ -754,7 +746,7 @@ public class DashboardController {
         Integer provinceId;
         String insuranceFee;
         List<Integer> provinceIdList = new ArrayList<>();
-        double insuranceFeeAmount, insuranceTotalAmount;
+        double underwriteAmount, insuranceTotalAmount = 0.00d;
         Map<Integer, Double> mapAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
             provinceId = underwrite.getProvinceId();
@@ -763,17 +755,15 @@ public class DashboardController {
             }
             provinceIdList.add(provinceId);
 
-            insuranceFeeAmount = 0.0d;
-            insuranceFee = underwrite.getInsuranceFee();
-            if(StringUtils.hasText(insuranceFee)){
-                insuranceFeeAmount = Double.parseDouble(insuranceFee);
+            underwriteAmount = 0.0d;
+            if(mapAmountMap.get(provinceId) != null){
+                underwriteAmount = mapAmountMap.get(provinceId);
             }
-            if(mapAmountMap.get(provinceId) == null){
-                insuranceTotalAmount = insuranceFeeAmount;
-            }else{
-                insuranceTotalAmount = mapAmountMap.get(provinceId);
-                insuranceTotalAmount += insuranceFeeAmount;
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"".equals(underwrite.getInsuranceFee())){
+                underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+                insuranceTotalAmount += Double.parseDouble(underwrite.getInsuranceFee());
             }
+
             mapAmountMap.put(provinceId, insuranceTotalAmount);
         }
 
@@ -793,7 +783,7 @@ public class DashboardController {
             provinceId = iterator.next();
             provinceJson = new JSONObject();
             provinceJson.put("name", areaNameMap.get(provinceId));
-            provinceJson.put("value", decimalFormat.format(mapAmountMap.get(provinceId)));
+            provinceJson.put("value", decimalFormat.format(mapAmountMap.get(provinceId) * 100 / insuranceTotalAmount) + "%");
             provinceArray.add(provinceJson);
         }
 
@@ -880,17 +870,18 @@ public class DashboardController {
         Arrays.sort(keyArray);
 
         Integer maxKey = 0;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         double currentAmount, maxAmount = 0.00;
         for(Integer key : keyArray){
             currentAmount = paramMap.get(key);
-            contentArray.add(currentAmount);
+            contentArray.add(decimalFormat.format(currentAmount));
             if(currentAmount > maxAmount){
                 maxAmount = currentAmount;
                 maxKey = key;
             }
         }
         resultJson.put("contentList", contentArray);
-        resultJson.put("maxAmount", maxAmount);
+        resultJson.put("maxAmount", decimalFormat.format(maxAmount));
         resultJson.put("agePart", maxKey);
         return resultJson;
     }
@@ -918,6 +909,7 @@ public class DashboardController {
         int lastValue = 0;
         int penultValue = 0;
         int trendRate = 0;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         if(size > 0){
             lastValue = contentArray.getIntValue(size - 1);
         }
@@ -929,7 +921,7 @@ public class DashboardController {
         if(penultValue != 0 && penultValue != 0){
             trendRate = (lastValue - penultValue) * 100 / penultValue;
         }
-        resultJson.put("trendRate", trendRate);
+        resultJson.put("trendRate", decimalFormat.format(trendRate));
         return resultJson;
     }
 

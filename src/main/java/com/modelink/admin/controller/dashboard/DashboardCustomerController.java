@@ -395,6 +395,7 @@ public class DashboardCustomerController {
         int indexNo = 0;
         JSONObject tableItem;
         List<JSONObject> tableItemList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         for (Underwrite underwrite : underwriteList) {
             indexNo ++;
             tableItem = new JSONObject();
@@ -405,7 +406,7 @@ public class DashboardCustomerController {
             tableItem.put("advertiseActive", underwrite.getAdvertiseActive());
             tableItem.put("reserveDate", underwrite.getReserveDate());
             tableItem.put("finishDate", underwrite.getFinishDate());
-            tableItem.put("insuranceFee", underwrite.getInsuranceFee());
+            tableItem.put("insuranceFee", decimalFormat.format(underwrite.getInsuranceFee()));
             if(repellentMap.get(underwrite.getInsuranceNo()) == null){
                 tableItem.put("isRepellent", "否");
             } else {

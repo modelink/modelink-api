@@ -54,7 +54,9 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 
     });
     $("#search-btn").trigger("click");
-
+    $("#word-clouds-echart").on("click", function () {
+        window.href = "/admin/dashboard/keyword";
+    });
 
 
 
