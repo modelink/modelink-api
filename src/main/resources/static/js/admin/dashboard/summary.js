@@ -361,13 +361,13 @@ var insuranceEcharts = {
             },
             series: [
                 {
-                    name: '转化率',
+                    name: '总转化率',
                     type: 'gauge',
+                    min: 0,
+                    max: 10,
                     detail: {
                         fontSize: '14',
                         formatter: function (value) {
-                            value = value / 10;
-                            value.toFixed(2);
                             return value + '‰';
                         }
                     },

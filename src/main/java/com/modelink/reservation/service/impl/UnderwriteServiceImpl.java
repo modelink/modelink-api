@@ -100,7 +100,14 @@ public class UnderwriteServiceImpl implements UnderwriteService {
             criteria.andIn("reserveMobile", paramPagerVo.getMobiles());
         }
         if(StringUtils.hasText(paramPagerVo.getPlatformName())){
-            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+            if("OTHER".equals(paramPagerVo.getPlatformName())) {
+                List<String> list = new ArrayList<>();
+                list.add("PC");
+                list.add("WAP");
+                criteria.andNotIn("platformName", list);
+            }else{
+                criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+            }
         }
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");

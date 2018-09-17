@@ -177,7 +177,7 @@ public class FlowAreaController {
                 // 重复数据校验
                 flowArea = new FlowArea();
                 flowArea.setDate(dataItem.get(1));
-                flowArea.setPlatformName(dataItem.get(3));
+                flowArea.setPlatformName(dataItem.get(3).toUpperCase());
                 flowArea.setProvinceId(provinceId);
                 flowArea.setCityId(cityId);
                 flowArea.setInflowCount(DataUtils.tranform2Integer(dataItem.get(7)));
@@ -202,7 +202,7 @@ public class FlowAreaController {
                 flowArea.setDate(dataItem.get(1));
                 flowArea.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                flowArea.setPlatformName(dataItem.get(3));
+                flowArea.setPlatformName(dataItem.get(3).toUpperCase());
 
                 flowArea.setProvinceId(provinceId);
                 flowArea.setCityId(cityId);

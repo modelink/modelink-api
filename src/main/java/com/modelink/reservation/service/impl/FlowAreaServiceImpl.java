@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -88,7 +89,14 @@ public class FlowAreaServiceImpl implements FlowAreaService {
             criteria.andEqualTo("merchantId", paramPagerVo.getMerchantId());
         }
         if(StringUtils.hasText(paramPagerVo.getPlatformName())){
-            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+            if("OTHER".equals(paramPagerVo.getPlatformName())) {
+                List<String> list = new ArrayList<>();
+                list.add("PC");
+                list.add("WAP");
+                criteria.andNotIn("platformName", list);
+            }else{
+                criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+            }
         }
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");

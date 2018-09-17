@@ -257,9 +257,9 @@ public class UnderwriteController {
 
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                underwrite.setPlatformName(dataItem.get(2));
+                underwrite.setPlatformName(dataItem.get(2).toUpperCase());
                 // 渠道明细
-                underwrite.setAdvertiseActive(dataItem.get(3));
+                underwrite.setAdvertiseActive(dataItem.get(3).toUpperCase());
 
                 underwrite.setProductName(dataItem.get(4));
 

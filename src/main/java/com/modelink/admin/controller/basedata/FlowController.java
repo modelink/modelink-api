@@ -164,7 +164,7 @@ public class FlowController {
                 merchant = merchantService.findByName(dataItem.get(2));
                 flow.setDate(dataItem.get(1));
                 flow.setMerchantId(merchant.getId());
-                flow.setPlatformName(dataItem.get(3));
+                flow.setPlatformName(dataItem.get(3).toUpperCase());
                 flow.setWebsite(dataItem.get(4));
                 flow.setSource(dataItem.get(5));
                 flow.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(6)));
@@ -187,7 +187,7 @@ public class FlowController {
                 flow.setDate(dataItem.get(1));
                 flow.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                flow.setPlatformName(dataItem.get(3));
+                flow.setPlatformName(dataItem.get(3).toUpperCase());
 
                 flow.setWebsite(dataItem.get(4));
                 flow.setSource(dataItem.get(5));

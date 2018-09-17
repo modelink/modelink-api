@@ -50,7 +50,12 @@
             <div class="layui-inline">
                 <label class="layui-form-label">渠道归属</label>
                 <div class="layui-input-inline">
-                    <input type="text" id="platformName" name="platformName" autocomplete="off" class="layui-input">
+                    <select id="platformName" name="platformName" lay-filter="platformName">
+                        <option value="" selected="">全部</option>
+                        <option value="PC">PC</option>
+                        <option value="WAP">WAP</option>
+                        <option value="OTHER">其他</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-inline">

@@ -69,7 +69,12 @@
             <div class="layui-inline">
                 <label class="layui-form-label">渠道归属</label>
                 <div class="layui-input-inline">
-                    <input type="text" id="platformName" name="platformName" autocomplete="off" class="layui-input">
+                    <select id="platformName" name="platformName" lay-filter="platformName">
+                        <option value="" selected="">全部</option>
+                        <option value="PC">PC</option>
+                        <option value="WAP">WAP</option>
+                        <option value="OTHER">其他</option>
+                    </select>
                 </div>
             </div>
             <div class="layui-inline">
@@ -161,7 +166,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">异常数据趋势</div>
+                <div class="layui-card-header">异常数据趋势：单位（个）</div>
                 <div class="layui-card-body">
                     <div id="abnormal-count-echart" style="height: 300px;"></div>
                 </div>
@@ -169,7 +174,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">退保保费趋势</div>
+                <div class="layui-card-header">退保保费趋势：单位（元）</div>
                 <div class="layui-card-body">
                     <div id="repellent-amount-echart" style="height: 300px;"></div>
                 </div>
@@ -179,7 +184,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">转化率</div>
+                <div class="layui-card-header">总转化率：单位（%）</div>
                 <div class="layui-card-body">
                     <div id="transform-rate-echart" style="height: 300px;"></div>
                 </div>
@@ -187,7 +192,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">转化周期</div>
+                <div class="layui-card-header">转化周期：单位（天）</div>
                 <div class="layui-card-body">
                     <div id="transform-cycle-echart" style="height: 300px;"></div>
                 </div>
@@ -205,7 +210,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">转化成本排行榜</div>
+                <div class="layui-card-header">转化成本排行榜：单位（元）</div>
                 <div class="layui-card-body">
                     <div id="transform-cost-rank-echart" style="height: 300px;"></div>
                 </div>
@@ -215,7 +220,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">承保件数排行榜</div>
+                <div class="layui-card-header">承保件数排行榜：单位（件）</div>
                 <div class="layui-card-body">
                     <div id="underwrite-count-rank-echart" style="height: 300px;"></div>
                 </div>
@@ -223,7 +228,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">保费金额排行榜</div>
+                <div class="layui-card-header">保费金额排行榜：单位（元）</div>
                 <div class="layui-card-body">
                     <div id="underwrite-amount-rank-echart" style="height: 300px;"></div>
                 </div>

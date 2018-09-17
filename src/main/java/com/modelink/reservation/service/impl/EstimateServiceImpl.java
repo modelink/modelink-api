@@ -11,6 +11,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -88,7 +89,14 @@ public class EstimateServiceImpl implements EstimateService {
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
         }
         if(StringUtils.hasText(paramPagerVo.getPlatformName())){
-            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+            if("OTHER".equals(paramPagerVo.getPlatformName())) {
+                List<String> list = new ArrayList<>();
+                list.add("PC");
+                list.add("WAP");
+                criteria.andNotIn("platformName", list);
+            }else{
+                criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+            }
         }
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");

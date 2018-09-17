@@ -156,9 +156,9 @@ public class MediaItemController {
                 mediaItem.setDate(dataItem.get(1));
                 mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                mediaItem.setPlatformName(dataItem.get(3));
+                mediaItem.setPlatformName(dataItem.get(3).toUpperCase());
                 // 广告活动
-                mediaItem.setAdvertiseActive(dataItem.get(4));
+                mediaItem.setAdvertiseActive(dataItem.get(4).toUpperCase());
 
                 mediaItem.setAdvertiseMedia(dataItem.get(5));
                 mediaItem.setAdvertiseSeries(dataItem.get(6));
@@ -189,9 +189,9 @@ public class MediaItemController {
                 mediaItem.setDate(dataItem.get(1));
                 mediaItem.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                mediaItem.setPlatformName(dataItem.get(3));
+                mediaItem.setPlatformName(dataItem.get(3).toUpperCase());
                 // 广告活动
-                mediaItem.setAdvertiseActive(dataItem.get(4));
+                mediaItem.setAdvertiseActive(dataItem.get(4).toUpperCase());
 
                 mediaItem.setAdvertiseMedia(dataItem.get(5));
                 mediaItem.setAdvertiseSeries(dataItem.get(6));

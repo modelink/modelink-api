@@ -170,7 +170,7 @@ public class AdminInsuranceController {
             // 预约日期
             insurance.setContactTime(contactTime);
             // 渠道归属
-            insurance.setPlatform(dataItem.get(2));
+            insurance.setPlatform(dataItem.get(2).toUpperCase());
             // 渠道明细
             insurance.setDataType(dataItem.get(3));
             // 投保人电话

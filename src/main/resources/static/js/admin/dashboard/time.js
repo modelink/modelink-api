@@ -131,7 +131,7 @@ var insuranceEcharts = {
     drawHourTable: function ($, table, selectedId, tableItemList) {
         var tableHtml = "";
         tableHtml += "<tr>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'provinceName'}\">地域</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'provinceName'}\">时间段（时）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount'}\">承保数（件）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">占比（%）</th>";
         tableHtml += "</tr>";

@@ -155,7 +155,7 @@ public class MediaTacticsController {
                 mediaTactics = new MediaTactics();
                 mediaTactics.setMerchantId(merchant == null ? 0 : merchant.getId());
                 mediaTactics.setMonth(dataItem.get(2));
-                mediaTactics.setAdvertiseActive(dataItem.get(4));
+                mediaTactics.setAdvertiseActive(dataItem.get(4).toUpperCase());
                 mediaTactics.setSpeedCost(dataItem.get(5));
                 mediaTactics.setReserveCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 mediaTactics = mediaTacticsService.findOneByParam(mediaTactics);
@@ -176,8 +176,8 @@ public class MediaTacticsController {
                 // 保存数据
                 mediaTactics.setMerchantId(merchant == null ? 0 : merchant.getId());
                 mediaTactics.setMonth(dataItem.get(2));
-                mediaTactics.setPlatformName(dataItem.get(3));
-                mediaTactics.setAdvertiseActive(dataItem.get(4));
+                mediaTactics.setPlatformName(dataItem.get(3).toUpperCase());
+                mediaTactics.setAdvertiseActive(dataItem.get(4).toUpperCase());
                 mediaTactics.setSpeedCost(dataItem.get(5));
                 mediaTactics.setReserveCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 mediaTactics.setInsuranceCount(DataUtils.tranform2Integer(dataItem.get(7)));

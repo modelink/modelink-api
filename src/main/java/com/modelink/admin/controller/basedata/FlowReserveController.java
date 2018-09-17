@@ -179,7 +179,7 @@ public class FlowReserveController {
                 flowReserve.setDate(dataItem.get(2));
                 flowReserve.setTime(dataItem.get(3));
                 flowReserve.setReserveMobile(dataItem.get(5));
-                flowReserve.setAdvertiseActive(dataItem.get(7));
+                flowReserve.setAdvertiseActive(dataItem.get(7).toUpperCase());
                 flowReserve = flowReserveService.findOneByParam(flowReserve);
                 if(flowReserve == null){
                     isExist = false;
@@ -200,14 +200,14 @@ public class FlowReserveController {
                 flowReserve.setTime(dataItem.get(3));
                 flowReserve.setMerchantId(merchant == null ? 0L : merchant.getId());
                 // 渠道归属
-                flowReserve.setPlatformName(dataItem.get(6));
+                flowReserve.setPlatformName(dataItem.get(6).toUpperCase());
 
                 flowReserve.setProvinceId(provinceId);
                 flowReserve.setCityId(cityId);
 
                 flowReserve.setReserveNo(dataItem.get(4));
                 flowReserve.setReserveMobile(dataItem.get(5));
-                flowReserve.setAdvertiseActive(dataItem.get(7));
+                flowReserve.setAdvertiseActive(dataItem.get(7).toUpperCase());
                 flowReserve.setAdvertiseMedia(dataItem.get(8));
                 flowReserve.setAdvertiseSeries(dataItem.get(9));
                 flowReserve.setKeyWordGroup(dataItem.get(10));

@@ -70,8 +70,10 @@ public class DashboardSummaryController {
         for(MediaItem mediaItem : mediaItemList){
             dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), DateTypeEnum.日.getValue());
             amount = (double)date2ListMap.get(dateKey);
-            amount += Double.parseDouble(mediaItem.getSpeedCost());
-            consumeTotalAmount += Double.parseDouble(mediaItem.getSpeedCost());
+            if(StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                amount += Double.parseDouble(mediaItem.getSpeedCost());
+                consumeTotalAmount += Double.parseDouble(mediaItem.getSpeedCost());
+            }
             date2ListMap.put(dateKey, amount);
         }
 
@@ -327,14 +329,15 @@ public class DashboardSummaryController {
         }
 
         double transformRate = 0.0d;
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         if(clickTotalCount != 0){
-            transformRate = totalCount * 10000 / clickTotalCount;
+            transformRate = totalCount * 1000 / clickTotalCount;
         }
 
         JSONArray jsonArray = new JSONArray();
         JSONObject transformRateJson = new JSONObject();
-        transformRateJson.put("name", "转化率");
-        transformRateJson.put("value", transformRate);
+        transformRateJson.put("name", "总转化率");
+        transformRateJson.put("value", decimalFormat.format(transformRate));
         jsonArray.add(transformRateJson);
 
         JSONObject resultJson = new JSONObject();
@@ -769,9 +772,14 @@ public class DashboardSummaryController {
         String[] keyArray = keySet.toArray(new String[keySet.size()]);
         Arrays.sort(keyArray);
 
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         for(String key : keyArray){
             titleArray.add(key);
-            contentArray.add(statCountMap.get(key));
+            if(statCountMap.get(key) instanceof Double) {
+                contentArray.add(decimalFormat.format(statCountMap.get(key)));
+            }else{
+                contentArray.add(statCountMap.get(key));
+            }
         }
         resultJson.put("titleList", titleArray);
         resultJson.put("contentList", contentArray);
@@ -795,9 +803,10 @@ public class DashboardSummaryController {
             }
         });
 
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         for (Map.Entry<String, Double> mapping : list) {
             titleArray.add(mapping.getKey());
-            contentArray.add(mapping.getValue());
+            contentArray.add(decimalFormat.format(mapping.getValue()));
         }
 
         resultJson.put("titleList", titleArray);
