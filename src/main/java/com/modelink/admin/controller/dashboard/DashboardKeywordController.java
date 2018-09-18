@@ -540,7 +540,11 @@ public class DashboardKeywordController {
         for(String keywordStr : keywordList){
             reserveCountList.add(reserveCountMap.get(keywordStr));
             underwriteCountList.add(underwriteCountMap.get(keywordStr));
-            underwriteAmountList.add(decimalFormat.format(underwriteAmountMap.get(keywordStr)));
+            if(underwriteAmountMap.get(keywordStr) == null){
+                underwriteAmountList.add("0.00");
+            }else {
+                underwriteAmountList.add(decimalFormat.format(underwriteAmountMap.get(keywordStr)));
+            }
         }
 
         JSONObject resultJson = new JSONObject();

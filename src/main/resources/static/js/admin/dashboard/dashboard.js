@@ -201,7 +201,10 @@ var insuranceEcharts = {
         selectedEchart.clear();
         var echartOption = {
             tooltip: {
-                show: true
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
             },
             xAxis: {
                 show: false,
@@ -223,6 +226,12 @@ var insuranceEcharts = {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             xAxis: [
                 {
                     type: 'value',

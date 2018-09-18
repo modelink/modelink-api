@@ -98,6 +98,9 @@ public class FlowAreaServiceImpl implements FlowAreaService {
                 criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
             }
         }
+        if(paramPagerVo.getProvinceId() != null){
+            criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
+        }
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
         }

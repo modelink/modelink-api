@@ -94,7 +94,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md4">
             <div class="layui-card">
-                <div class="layui-card-header">关键词TOP30（点击量）</div>
+                <div class="layui-card-header">关键词-点击量TOP30</div>
                 <div class="layui-card-body">
                     <div id="click-count-echart" style="height: 300px;"></div>
                 </div>
@@ -102,7 +102,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md4">
             <div class="layui-card">
-                <div class="layui-card-header">关键词TOP30（预约手机号个数）</div>
+                <div class="layui-card-header">关键词-预约数量TOP30</div>
                 <div class="layui-card-body">
                     <div id="reserve-click-echart" style="height: 300px;"></div>
                 </div>
@@ -110,7 +110,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md4">
             <div class="layui-card">
-                <div class="layui-card-header">关键词TOP30（承保保费总额）</div>
+                <div class="layui-card-header">关键词-总保费TOP30</div>
                 <div class="layui-card-body">
                     <div id="underwrite-amount-echart" style="height: 300px;"></div>
                 </div>
@@ -120,7 +120,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">点击率与平均点击价格</div>
+                <div class="layui-card-header">点击率与平均点击价格-广告活动</div>
                 <div class="layui-card-body">
                     <div id="click-rate-cost-echart" style="height: 300px;"></div>
                 </div>
@@ -128,7 +128,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">点击率与平均点击价格（关键词）</div>
+                <div class="layui-card-header">点击率与平均点击价格-关键词</div>
                 <div class="layui-card-body">
                     <div id="click-rate-cost-keyword-echart" style="height: 300px;"></div>
                 </div>
@@ -138,7 +138,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">关键词承保概览</div>
+                <div class="layui-card-header">关键词预约承保概览</div>
                 <div class="layui-card-body">
                     <div id="underwrite-summary-keyword-echart" style="height: 300px;"></div>
                 </div>
@@ -156,7 +156,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">转化率/转化周期TOP30</div>
+                <div class="layui-card-header">关键词-转化率/转化周期</div>
                 <div class="layui-card-body">
                     <div id="transform-rate-cycle-echart" style="height: 300px;"></div>
                 </div>
@@ -172,14 +172,14 @@
                 <th lay-data="{field: 'platformName'}">渠道归属</th>
                 <th lay-data="{field: 'advertiseActive'}">广告活动</th>
                 <th lay-data="{field: 'keyword'}">关键词</th>
-                <th lay-data="{field: 'clickCount'}">点击量（媒体）</th>
-                <th lay-data="{field: 'reserveCount'}">预约数量</th>
-                <th lay-data="{field: 'underwriteCount'}">承保件数</th>
-                <th lay-data="{field: 'underwriteAmount'}">保费</th>
-                <th lay-data="{field: 'transformCost'}">转化成本</th>
-                <th lay-data="{field: 'clickCost'}">点击成本</th>
-                <th lay-data="{field: 'transformCycle'}">转化周期</th>
-                <th lay-data="{field: 'transformRate'}">转化率</th>
+                <th lay-data="{field: 'clickCount', sort: true}">点击量（媒体）</th>
+                <th lay-data="{field: 'reserveCount', sort: true}">预约数量</th>
+                <th lay-data="{field: 'underwriteCount', sort: true}">承保件数</th>
+                <th lay-data="{field: 'underwriteAmount', sort: true}">保费</th>
+                <th lay-data="{field: 'transformCost', sort: true}">转化成本</th>
+                <th lay-data="{field: 'clickCost', sort: true}">点击成本</th>
+                <th lay-data="{field: 'transformCycle', sort: true}">转化周期</th>
+                <th lay-data="{field: 'transformRate', sort: true}">转化率</th>
             </tr>
         </thead>
         <tbody id="keyword-table-body">

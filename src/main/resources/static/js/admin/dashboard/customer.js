@@ -137,8 +137,7 @@ var insuranceEcharts = {
                 orient: 'vertical',
                 top: '20%',
                 right: '20%',
-                data: titleList.slice(0, 10),
-                selected: true
+                data: titleList.slice(0, 10)
             },
             series : [
                 {
@@ -189,6 +188,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -339,8 +344,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            page: false,
+            height: 300,
+            limit: tableItemList.length
         });
     }
 };

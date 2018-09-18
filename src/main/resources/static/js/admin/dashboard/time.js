@@ -16,7 +16,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         if(insuranceEcharts.dateType == "6"){
             insuranceEcharts.getDataJson2DrawHour($, table, "reserve-count", "/admin/dashboard/time/getReserveCountByHour");
         }else{
-            insuranceEcharts.getDataJson2DrawDate($, table, "reserve-count", "/admin/dashboard/time/getUnderwriteSummaryByDate");
+            insuranceEcharts.getDataJson($, table, "reserve-count", "/admin/dashboard/time/getUnderwriteSummaryByDate");
         }
     });
     $("#search-btn").trigger("click");
@@ -91,6 +91,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -108,11 +114,11 @@ var insuranceEcharts = {
             },
             yAxis: [
                 {
-                    name: '承保数（件）',
+                    name: '预约数量（个）',
                     type: 'value',
                     position: 'left',
                     axisLabel: {
-                        formatter: '{value}件'
+                        formatter: '{value}个'
                     }
                 }
             ],
@@ -132,7 +138,7 @@ var insuranceEcharts = {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'provinceName'}\">时间段（时）</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount'}\">承保数（件）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount', sort: true}\">预约数量（个）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">占比（%）</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
@@ -155,8 +161,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            limit: tableItemList.length,
+            page: false,
+            height: 380
         });
     },
 
@@ -165,6 +172,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -172,11 +185,8 @@ var insuranceEcharts = {
                 borderColor: "#c45455",//网格的边框颜色
                 bottom: "20%" //
             },
-            tooltip: {
-
-            },
             legend: {
-                data:['预约个数', '承保件数']
+                data:['预约数量', '承保件数']
             },
             xAxis: {
                 type: 'category',
@@ -189,14 +199,14 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '预约个数',
+                    name: '预约数量（个）',
                     position: 'left',
                     axisLabel: {
                         formatter: '{value}个'
                     }
                 },{
                     type: 'value',
-                    name: '承保件数',
+                    name: '承保件数（件）',
                     position: 'right',
                     axisLabel: {
                         formatter: '{value}件'
@@ -206,6 +216,7 @@ var insuranceEcharts = {
             series: [
                 {
                     data: reserveCountList,
+                    name: '预约数量',
                     barWidth: '35%',
                     yAxisIndex: 0,
                     barGap: '0',
@@ -213,6 +224,7 @@ var insuranceEcharts = {
                 },
                 {
                     data: underwriteCountList,
+                    name: '承保件数',
                     barWidth: '35%',
                     yAxisIndex: 1,
                     barGap: '0',
@@ -227,12 +239,12 @@ var insuranceEcharts = {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'date'}\">日期</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'reserveCount'}\">预约数量</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'transformCost'}\">转化成本</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'transformCycle'}\">转化周期</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount'}\">承保件数</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteAmount'}\">保费</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'transformRate'}\">总转化率</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'reserveCount', sort: true}\">预约数量（个）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'transformCost', sort: true}\">转化成本（元）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'transformCycle', sort: true}\">转化周期（天）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount', sort: true}\">承保件数（件）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'underwriteAmount', sort: true}\">保费（元）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'transformRate'}\">总转化率（%）</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
 
@@ -262,8 +274,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            limit: tableItemList.length,
+            page: false,
+            height: 380
         });
     }
 };

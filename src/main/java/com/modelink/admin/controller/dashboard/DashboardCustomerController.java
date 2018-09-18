@@ -12,6 +12,8 @@ import com.modelink.reservation.service.UnderwriteService;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.service.AreaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,6 +27,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin/dashboard/customer")
 public class DashboardCustomerController {
+
+    public static Logger logger = LoggerFactory.getLogger(DashboardCustomerController.class);
 
     @Resource
     private AreaService areaService;
@@ -393,9 +397,10 @@ public class DashboardCustomerController {
         }
 
         int indexNo = 0;
+        String insuranceFee;
         JSONObject tableItem;
         List<JSONObject> tableItemList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0");
         for (Underwrite underwrite : underwriteList) {
             indexNo ++;
             tableItem = new JSONObject();
@@ -406,7 +411,13 @@ public class DashboardCustomerController {
             tableItem.put("advertiseActive", underwrite.getAdvertiseActive());
             tableItem.put("reserveDate", underwrite.getReserveDate());
             tableItem.put("finishDate", underwrite.getFinishDate());
-            tableItem.put("insuranceFee", decimalFormat.format(underwrite.getInsuranceFee()));
+
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                insuranceFee = decimalFormat.format(Double.parseDouble(underwrite.getInsuranceFee()));
+                tableItem.put("insuranceFee", Integer.valueOf(insuranceFee));
+            }else{
+                tableItem.put("insuranceFee", 0);
+            }
             if(repellentMap.get(underwrite.getInsuranceNo()) == null){
                 tableItem.put("isRepellent", "否");
             } else {

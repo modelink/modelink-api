@@ -208,7 +208,10 @@ var insuranceEcharts = {
         selectedEchart.clear();
         var echartOption = {
             tooltip: {
-                show: true
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
             },
             xAxis: {
                 show: true,
@@ -240,14 +243,14 @@ var insuranceEcharts = {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
-                    type: 'cross'
+                    type: 'shadow'
                 }
             },
             grid: {
                 left: '20%'
             },
             legend: {
-                data:['预约数','承保件数','保费']
+                data:['预约数','承保件数','总保费']
             },
             xAxis: [
                 {
@@ -292,7 +295,7 @@ var insuranceEcharts = {
                 },
                 {
                     type: 'value',
-                    name: '保费',
+                    name: '总保费',
                     position: 'right',
                     axisLine: {
                         lineStyle: {
@@ -317,7 +320,7 @@ var insuranceEcharts = {
                     data: insuranceCountList
                 },
                 {
-                    name: '保费',
+                    name: '总保费',
                     type: 'bar',
                     barWidth: '50%',
                     yAxisIndex: 2,
@@ -333,6 +336,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             xAxis: {
                 type: 'value'
             },
@@ -383,6 +392,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -445,6 +460,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,//是否显示直角坐标系网格。[ default: false ]
                 top: "10%",

@@ -123,6 +123,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 top: '10%',
                 bottom: '10%',

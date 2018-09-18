@@ -33,7 +33,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
             insuranceEcharts.chooseTableItem.push($(this).attr("data-value"));
         }else{
             $(this).addClass("layui-btn-primary");
-            insuranceEcharts.chooseTableItem.pop($(this).attr("data-value"));
+            insuranceEcharts.chooseTableItem.splice($.inArray($(this).attr("data-value"), insuranceEcharts.chooseTableItem),1);
         }
         insuranceEcharts.getTableItemJson($, table, "reserve-item", "/admin/dashboard/client/getReserveItem");
 
@@ -105,13 +105,15 @@ var insuranceEcharts = {
                 orient: 'vertical',
                 top: '20%',
                 right: '20%',
-                data: titleList,
-                selected: true
+                data: titleList
             },
             series : [
                 {
                     name: '名称',
                     type: 'pie',
+                    label: {
+                        show: false
+                    },
                     radius : '55%',
                     center: ['40%', '50%'],
                     data: contentList,
@@ -140,7 +142,7 @@ var insuranceEcharts = {
         }else if(insuranceEcharts.chooseItem.indexOf("deviceType") != -1){
             tableHtml += "<th lay-data=\"{align: 'center', field: 'deviceType'}\">设备类别</th>";
         }
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">预约数量</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'value', sort: true}\">预约数量（个）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
@@ -175,8 +177,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            limit: tableItemList.length,
+            page: false,
+            height: 385
         });
     },
 
@@ -193,9 +196,9 @@ var insuranceEcharts = {
             tableHtml += "<th lay-data=\"{align: 'center', field: 'resolutionRatio'}\">屏幕分辨率</th>";
         }
         if(insuranceEcharts.chooseTableItem.indexOf("deviceType") != -1){
-            tableHtml += "<th tactics\">设备类别</th>";
+            tableHtml += "<th lay-data=\"{align: 'center', field: 'deviceType'}\">设备类别</th>";
         }
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">预约数量</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'value', sort: true}\">预约数量（个）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
@@ -233,8 +236,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            limit: tableItemList.length,
+            page: false,
+            height: 385
         });
     }
 };

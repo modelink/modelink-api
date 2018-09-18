@@ -2,7 +2,9 @@ package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.modelink.admin.vo.DashboardAreaParamVo;
 import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.common.enums.AreaTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
@@ -60,7 +62,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getReserveCount")
-    public ResultVo getReserveCount(DashboardParamVo paramVo){
+    public ResultVo getReserveCount(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -70,23 +73,33 @@ public class DashboardAreaController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,provinceId");
+        paramPagerVo.setColumnFieldIds("date,provinceId,cityId");
         paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
         paramPagerVo.setDateField("date");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
+        Integer areaId;
         int reserveCount;
         Map<Integer, Integer> province2ReserveCountMap = new HashMap<>();
         for (FlowReserve flowReserve : flowReserveList) {
-            if (flowReserve.getProvinceId() == null) {
+            if(StringUtils.hasText(paramVo.getProvinceName())){
+                areaId = flowReserve.getCityId();
+            }else {
+                areaId = flowReserve.getProvinceId();
+            }
+            if (areaId == null) {
                 continue;
             }
             reserveCount = 0;
-            if (province2ReserveCountMap.get(flowReserve.getProvinceId()) != null) {
-                reserveCount = province2ReserveCountMap.get(flowReserve.getProvinceId());
+            if (province2ReserveCountMap.get(areaId) != null) {
+                reserveCount = province2ReserveCountMap.get(areaId);
             }
             reserveCount++;
-            province2ReserveCountMap.put(flowReserve.getProvinceId(), reserveCount);
+            province2ReserveCountMap.put(areaId, reserveCount);
         }
 
         List<Map.Entry<Integer, Integer>> list = new ArrayList<>(province2ReserveCountMap.entrySet());
@@ -98,7 +111,6 @@ public class DashboardAreaController {
         });
 
         int count = 1;
-        Area area = null;
         JSONObject resultJson = new JSONObject();
         List<String> titleList = new ArrayList<>();
         List<Integer> contentList = new ArrayList<>();
@@ -120,7 +132,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getUnderwriteCount")
-    public ResultVo getUnderwriteCount(DashboardParamVo paramVo){
+    public ResultVo getUnderwriteCount(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -130,19 +143,29 @@ public class DashboardAreaController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId");
+        paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId,cityId");
         paramPagerVo.setDateField("reserveDate");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
+        Integer areaId;
         Integer underwriteCount;
         Map<Integer, Integer> underwriteCountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
             underwriteCount = 0;
-            if(underwriteCountMap.get(underwrite.getProvinceId()) != null){
-                underwriteCount = underwriteCountMap.get(underwrite.getProvinceId());
+            if(StringUtils.hasText(paramVo.getProvinceName())) {
+                areaId = underwrite.getCityId();
+            }else{
+                areaId = underwrite.getProvinceId();
+            }
+            if(underwriteCountMap.get(areaId) != null){
+                underwriteCount = underwriteCountMap.get(areaId);
             }
             underwriteCount ++;
-            underwriteCountMap.put(underwrite.getProvinceId(), underwriteCount);
+            underwriteCountMap.put(areaId, underwriteCount);
         }
 
         List<Map.Entry<Integer, Integer>> list = new ArrayList<>(underwriteCountMap.entrySet());
@@ -153,7 +176,6 @@ public class DashboardAreaController {
         });
 
         int count = 1;
-        Area area = null;
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         JSONObject resultJson = new JSONObject();
         List<String> titleList = new ArrayList<>();
@@ -176,7 +198,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getUnderwriteAmount")
-    public ResultVo getUnderwriteAmount(DashboardParamVo paramVo){
+    public ResultVo getUnderwriteAmount(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -186,30 +209,40 @@ public class DashboardAreaController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId,insuranceFee");
+        paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId,cityId,insuranceFee");
         paramPagerVo.setDateField("reserveDate");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
+        Integer areaId;
         double underwriteAmount;
         List<Integer> provinceIdList = new ArrayList<>();
         Map<Integer, Double> underwriteAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
             underwriteAmount = 0.00d;
-            provinceIdList.add(underwrite.getProvinceId());
-            if(underwriteAmountMap.get(underwrite.getProvinceId()) != null){
-                underwriteAmount = underwriteAmountMap.get(underwrite.getProvinceId());
+            if(StringUtils.hasText(paramVo.getProvinceName())) {
+                areaId = underwrite.getCityId();
+            }else{
+                areaId = underwrite.getProvinceId();
+            }
+            provinceIdList.add(areaId);
+            if(underwriteAmountMap.get(areaId) != null){
+                underwriteAmount = underwriteAmountMap.get(areaId);
             }
             if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
                 underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
             }
-            underwriteAmountMap.put(underwrite.getProvinceId(), underwriteAmount);
+            underwriteAmountMap.put(areaId, underwriteAmount);
         }
 
         // 获取省份的名称
         Map<Integer, String> areaNameMap = new HashMap<>();
         List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
+        for(Area areaBean : areaList) {
+            areaNameMap.put(areaBean.getAreaId(), areaBean.getAreaName());
         }
 
         List<Map.Entry<Integer, Double>> list = new ArrayList<>(underwriteAmountMap.entrySet());
@@ -307,7 +340,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getAgainRate")
-    public ResultVo getAgainRate(DashboardParamVo paramVo){
+    public ResultVo getAgainRate(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -317,34 +351,42 @@ public class DashboardAreaController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,provinceId,againClickRate");
+        paramPagerVo.setColumnFieldIds("date,provinceId,cityId,againClickRate");
         paramPagerVo.setDateField("date");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<FlowArea> flowAreaList = flowAreaService.findListByParam(paramPagerVo);
 
+        Integer areaId;
         int cityCount;
         double againRate;
-        Integer provinceId;
         String againClickRate;
         List<Integer> provinceIdList = new ArrayList<>();
         Map<Integer, Double> againRateMap = new HashMap<>();
         Map<Integer, Integer> cityCountMap = new HashMap<>();
         for (FlowArea flowArea : flowAreaList) {
-            provinceId = flowArea.getProvinceId();
-            if(provinceId == null){
+            if(StringUtils.hasText(paramVo.getProvinceName())) {
+                areaId = flowArea.getCityId();
+            }else{
+                areaId = flowArea.getProvinceId();
+            }
+            if(areaId == null){
                 continue;
             }
-            provinceIdList.add(provinceId);
+            provinceIdList.add(areaId);
 
             cityCount = 0;
-            if(cityCountMap.get(provinceId) != null){
-                cityCount = cityCountMap.get(provinceId);
+            if(cityCountMap.get(areaId) != null){
+                cityCount = cityCountMap.get(areaId);
             }
             cityCount ++;
-            cityCountMap.put(provinceId, cityCount);
+            cityCountMap.put(areaId, cityCount);
 
             againRate = 0.0d;
-            if(againRateMap.get(provinceId) != null){
-                againRate = againRateMap.get(provinceId);
+            if(againRateMap.get(areaId) != null){
+                againRate = againRateMap.get(areaId);
             }
             againClickRate = flowArea.getAgainClickRate();
             if(StringUtils.hasText(againClickRate) && !"-".equals(againClickRate)){
@@ -355,24 +397,24 @@ public class DashboardAreaController {
                     againRate += Double.parseDouble(againClickRate);
                 }
             }
-            againRateMap.put(provinceId, againRate);
+            againRateMap.put(areaId, againRate);
         }
 
         // 计算平均二跳率
         Map<Integer, Double> againRateResultMap = new HashMap<>();
         Iterator<Integer> iterator = cityCountMap.keySet().iterator();
         while (iterator.hasNext()) {
-            provinceId = iterator.next();
-            againRate = againRateMap.get(provinceId);
-            cityCount = cityCountMap.get(provinceId);
-            againRateResultMap.put(provinceId, againRate / cityCount);
+            areaId = iterator.next();
+            againRate = againRateMap.get(areaId);
+            cityCount = cityCountMap.get(areaId);
+            againRateResultMap.put(areaId, againRate * 100 / cityCount);
         }
 
         // 获取省份的名称
         Map<Integer, String> areaNameMap = new HashMap<>();
         List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
+        for(Area areaBean : areaList) {
+            areaNameMap.put(areaBean.getAreaId(), areaBean.getAreaName());
         }
 
         List<Map.Entry<Integer, Double>> list = new ArrayList<>(againRateResultMap.entrySet());
@@ -394,7 +436,7 @@ public class DashboardAreaController {
             }
             areaName = areaNameMap.get(mapping.getKey());
             titleList.add(areaName == null ? "未知地区" : areaName);
-            contentList.add(decimalFormat.format(mapping.getValue()));
+            contentList.add(decimalFormat.format(mapping.getValue()) + "%");
             count ++;
         }
         resultJson.put("titleList", titleList);
@@ -406,7 +448,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getUserCount")
-    public ResultVo getUserCount(DashboardParamVo paramVo){
+    public ResultVo getUserCount(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -416,56 +459,64 @@ public class DashboardAreaController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,provinceId,userCount");
+        paramPagerVo.setColumnFieldIds("date,provinceId,cityId,userCount");
         paramPagerVo.setSource(paramVo.getSource());
         paramPagerVo.setDateField("date");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<FlowArea> flowAreaList = flowAreaService.findListByParam(paramPagerVo);
 
         int cityCount;
         int userCount;
-        Integer provinceId;
-        List<Integer> provinceIdList = new ArrayList<>();
+        Integer areaId;
+        List<Integer> areaIdList = new ArrayList<>();
         Map<Integer, Integer> userCountMap = new HashMap<>();
         Map<Integer, Integer> cityCountMap = new HashMap<>();
         for (FlowArea flowArea : flowAreaList) {
-            provinceId = flowArea.getProvinceId();
-            if(provinceId == null){
+            if(StringUtils.hasText(paramVo.getProvinceName())) {
+                areaId = flowArea.getCityId();
+            }else{
+                areaId = flowArea.getProvinceId();
+            }
+            if(areaId == null){
                 continue;
             }
-            provinceIdList.add(provinceId);
+            areaIdList.add(areaId);
 
             cityCount = 0;
-            if(cityCountMap.get(provinceId) != null){
-                cityCount = cityCountMap.get(provinceId);
+            if(cityCountMap.get(areaId) != null){
+                cityCount = cityCountMap.get(areaId);
             }
             cityCount ++;
-            cityCountMap.put(provinceId, cityCount);
+            cityCountMap.put(areaId, cityCount);
 
             userCount = 0;
-            if(userCountMap.get(provinceId) != null){
-                userCount = userCountMap.get(provinceId);
+            if(userCountMap.get(areaId) != null){
+                userCount = userCountMap.get(areaId);
             }
             if(flowArea.getUserCount() != null){
                 userCount += flowArea.getUserCount();
             }
-            userCountMap.put(provinceId, userCount);
+            userCountMap.put(areaId, userCount);
         }
 
         // 计算平均用户数
         Map<Integer, Double> againRateResultMap = new HashMap<>();
         Iterator<Integer> iterator = cityCountMap.keySet().iterator();
         while (iterator.hasNext()) {
-            provinceId = iterator.next();
-            userCount = userCountMap.get(provinceId);
-            cityCount = cityCountMap.get(provinceId);
-            againRateResultMap.put(provinceId, userCount * 100.0d / cityCount);
+            areaId = iterator.next();
+            userCount = userCountMap.get(areaId);
+            cityCount = cityCountMap.get(areaId);
+            againRateResultMap.put(areaId, userCount * 100.0d / cityCount);
         }
 
         // 获取省份的名称
         Map<Integer, String> areaNameMap = new HashMap<>();
-        List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
+        List<Area> areaList = areaService.findByIdList(areaIdList);
+        for(Area areaBean : areaList) {
+            areaNameMap.put(areaBean.getAreaId(), areaBean.getAreaName());
         }
 
         List<Map.Entry<Integer, Double>> list = new ArrayList<>(againRateResultMap.entrySet());
@@ -499,7 +550,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getUserStayTime")
-    public ResultVo getUserStayTime(DashboardParamVo paramVo){
+    public ResultVo getUserStayTime(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -512,24 +564,32 @@ public class DashboardAreaController {
         paramPagerVo.setColumnFieldIds("date,provinceId,averageStayTime");
         paramPagerVo.setSource(paramVo.getSource());
         paramPagerVo.setDateField("date");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<FlowArea> flowAreaList = flowAreaService.findListByParam(paramPagerVo);
 
         String[] stayTimeList;
         int userCount, totalStayTime;
-        Integer provinceId;
+        Integer areaId;
         List<Integer> provinceIdList = new ArrayList<>();
         Map<Integer, Integer> userCountMap = new HashMap<>();
         Map<Integer, Integer> totalStayTimeMap = new HashMap<>();
         for (FlowArea flowArea : flowAreaList) {
-            provinceId = flowArea.getProvinceId();
-            if(provinceId == null){
+            if(StringUtils.hasText(paramVo.getProvinceName())) {
+                areaId = flowArea.getCityId();
+            }else{
+                areaId = flowArea.getProvinceId();
+            }
+            if(areaId == null){
                 continue;
             }
-            provinceIdList.add(provinceId);
+            provinceIdList.add(areaId);
 
             totalStayTime = 0;
-            if(totalStayTimeMap.get(provinceId) != null){
-                totalStayTime = totalStayTimeMap.get(provinceId);
+            if(totalStayTimeMap.get(areaId) != null){
+                totalStayTime = totalStayTimeMap.get(areaId);
             }
             if(StringUtils.hasText(flowArea.getAverageStayTime())) {
                 if(">1h".equals(flowArea.getAverageStayTime())){
@@ -539,31 +599,31 @@ public class DashboardAreaController {
                     totalStayTime += (Integer.parseInt(stayTimeList[0]) * 60 + Integer.parseInt(stayTimeList[1]));
                 }
             }
-            totalStayTimeMap.put(provinceId, totalStayTime);
+            totalStayTimeMap.put(areaId, totalStayTime);
 
             userCount = 0;
-            if(userCountMap.get(provinceId) != null){
-                userCount = userCountMap.get(provinceId);
+            if(userCountMap.get(areaId) != null){
+                userCount = userCountMap.get(areaId);
             }
             userCount ++;
-            userCountMap.put(provinceId, userCount);
+            userCountMap.put(areaId, userCount);
         }
 
         // 计算平均停留时间
         Map<Integer, Double> stayTimeResultMap = new HashMap<>();
         Iterator<Integer> iterator = totalStayTimeMap.keySet().iterator();
         while (iterator.hasNext()) {
-            provinceId = iterator.next();
-            userCount = userCountMap.get(provinceId);
-            totalStayTime = totalStayTimeMap.get(provinceId);
-            stayTimeResultMap.put(provinceId, totalStayTime * 1.0d / userCount);
+            areaId = iterator.next();
+            userCount = userCountMap.get(areaId);
+            totalStayTime = totalStayTimeMap.get(areaId);
+            stayTimeResultMap.put(areaId, totalStayTime * 1.0d / userCount);
         }
 
         // 获取省份的名称
         Map<Integer, String> areaNameMap = new HashMap<>();
         List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
+        for(Area areaBean : areaList) {
+            areaNameMap.put(areaBean.getAreaId(), areaBean.getAreaName());
         }
 
         List<Map.Entry<Integer, Double>> list = new ArrayList<>(stayTimeResultMap.entrySet());
@@ -597,7 +657,8 @@ public class DashboardAreaController {
 
     @ResponseBody
     @RequestMapping("/getUserGender")
-    public ResultVo getUserGender(DashboardParamVo paramVo){
+    public ResultVo getUserGender(DashboardAreaParamVo paramVo){
+        Area area;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -607,62 +668,70 @@ public class DashboardAreaController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("reserveDate,provinceId,gender");
+        paramPagerVo.setColumnFieldIds("reserveDate,provinceId,cityId,gender");
         paramPagerVo.setDateField("reserveDate");
+        if(StringUtils.hasText(paramVo.getProvinceName())) {
+            area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
+            paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
+        }
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         int manCount;
         int womanCount;
         int unknowCount;
         int totalCount;
-        Integer provinceId;
+        Integer areaId;
         List<Integer> provinceIdList = new ArrayList<>();
         Map<Integer, Integer> manCountMap = new HashMap<>();
         Map<Integer, Integer> womanCountMap = new HashMap<>();
         Map<Integer, Integer> totalCountMap = new HashMap<>();
         Map<Integer, Integer> unknowCountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
-            provinceId = underwrite.getProvinceId();
-            if(provinceId == null){
+            if(StringUtils.hasText(paramVo.getProvinceName())) {
+                areaId = underwrite.getCityId();
+            }else{
+                areaId = underwrite.getProvinceId();
+            }
+            if(areaId == null){
                 continue;
             }
-            provinceIdList.add(provinceId);
+            provinceIdList.add(areaId);
 
             if("男".equals(underwrite.getGender())) {
                 manCount = 0;
-                if (manCountMap.get(provinceId) != null) {
-                    manCount = manCountMap.get(provinceId);
+                if (manCountMap.get(areaId) != null) {
+                    manCount = manCountMap.get(areaId);
                 }
                 manCount++;
-                manCountMap.put(provinceId, manCount);
+                manCountMap.put(areaId, manCount);
             }else if("女".equals(underwrite.getGender())) {
                 womanCount = 0;
-                if (womanCountMap.get(provinceId) != null) {
-                    womanCount = womanCountMap.get(provinceId);
+                if (womanCountMap.get(areaId) != null) {
+                    womanCount = womanCountMap.get(areaId);
                 }
                 womanCount++;
-                womanCountMap.put(provinceId, womanCount);
+                womanCountMap.put(areaId, womanCount);
             }else{
                 unknowCount = 0;
-                if (unknowCountMap.get(provinceId) != null) {
-                    unknowCount = unknowCountMap.get(provinceId);
+                if (unknowCountMap.get(areaId) != null) {
+                    unknowCount = unknowCountMap.get(areaId);
                 }
                 unknowCount++;
-                unknowCountMap.put(provinceId, unknowCount);
+                unknowCountMap.put(areaId, unknowCount);
             }
             totalCount = 0;
-            if(totalCountMap.get(provinceId) != null){
-                totalCount = totalCountMap.get(provinceId);
+            if(totalCountMap.get(areaId) != null){
+                totalCount = totalCountMap.get(areaId);
             }
             totalCount ++;
-            totalCountMap.put(provinceId, totalCount);
+            totalCountMap.put(areaId, totalCount);
         }
 
         // 获取省份的名称
         Map<Integer, String> areaNameMap = new HashMap<>();
         List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
+        for(Area areaBean : areaList) {
+            areaNameMap.put(areaBean.getAreaId(), areaBean.getAreaName());
         }
 
         List<Map.Entry<Integer, Integer>> list = new ArrayList<>(totalCountMap.entrySet());
@@ -685,9 +754,9 @@ public class DashboardAreaController {
             }
             areaName = areaNameMap.get(mapping.getKey());
             titleList.add(areaName == null ? "未知地区" : areaName);
-            manCountList.add(manCountMap.get(mapping.getKey()));
-            womanCountList.add(womanCountMap.get(mapping.getKey()));
-            unknowCountList.add(manCountMap.get(mapping.getKey()));
+            manCountList.add(manCountMap.get(mapping.getKey()) != null ? manCountMap.get(mapping.getKey()) : 0);
+            womanCountList.add(womanCountMap.get(mapping.getKey()) != null ? womanCountMap.get(mapping.getKey()) : 0);
+            unknowCountList.add(unknowCountMap.get(mapping.getKey()) != null ? unknowCountMap.get(mapping.getKey()) : 0);
             count ++;
         }
         resultJson.put("titleList", titleList);
@@ -833,8 +902,8 @@ public class DashboardAreaController {
         int indexNo = 0;
         Merchant merchant;
         String[] merchantList;
-        Map<String, String> resultBean;
-        List<Map<String, String>> resultList = new ArrayList<>();
+        Map<String, Object> resultBean;
+        List<Map<String, Object>> resultList = new ArrayList<>();
         for (Integer areaId : cityIdList) {
             indexNo ++;
             resultBean = new HashMap<>();
@@ -849,11 +918,11 @@ public class DashboardAreaController {
                 resultBean.put("platformName", merchantList[1]);
                 resultBean.put("advertiseActive", merchantList[2]);
             }
-            resultBean.put("browseCount", browseCountMap.get(areaId) == null ? "0" : browseCountMap.get(areaId).toString());
-            resultBean.put("reserveCount", reserveCountMap.get(areaId) == null ? "0" : reserveCountMap.get(areaId).toString());
-            resultBean.put("underwriteCount", underwriteCountMap.get(areaId) == null ? "0" : underwriteCountMap.get(areaId).toString());
-            resultBean.put("underwriteAmount", underwriteAmountMap.get(areaId) == null ? "0" : underwriteAmountMap.get(areaId).toString());
-            resultBean.put("transformCycle", transformCycleMap.get(areaId) == null ? "0" : transformCycleMap.get(areaId));
+            resultBean.put("browseCount", browseCountMap.get(areaId) == null ? 0 : browseCountMap.get(areaId).toString());
+            resultBean.put("reserveCount", reserveCountMap.get(areaId) == null ? 0 : reserveCountMap.get(areaId).toString());
+            resultBean.put("underwriteCount", underwriteCountMap.get(areaId) == null ? 0 : underwriteCountMap.get(areaId).toString());
+            resultBean.put("underwriteAmount", underwriteAmountMap.get(areaId) == null ? 0.00d : Double.parseDouble(underwriteAmountMap.get(areaId)));
+            resultBean.put("transformCycle", transformCycleMap.get(areaId) == null ? 0.00d : Double.parseDouble(transformCycleMap.get(areaId)));
             resultList.add(resultBean);
         }
         /** 汇总结果 **/

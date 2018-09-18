@@ -279,10 +279,10 @@ public class DashboardTimeController {
                 clickCount = (int)clickCountMap.get(dateKey);
             }
             if(clickCount == 0 || underwriteCountMap.get(dateKey) == null){
-                transformRateMap.put(dateKey, "0.00");
+                transformRateMap.put(dateKey, "0.00%");
             }else{
                 underwriteCount = underwriteCountMap.get(dateKey);
-                transformRateMap.put(dateKey, decimalFormat.format(underwriteCount * 100.00d / clickCount));
+                transformRateMap.put(dateKey, decimalFormat.format(underwriteCount * 100.00d / clickCount) + "%");
             }
         }
         /** 计算转化成本与点击成本 **/
@@ -326,7 +326,7 @@ public class DashboardTimeController {
                 tableItem.put("underwriteAmount", decimalFormat.format(underwriteAmountMap.get(title)));
             }
             if (transformRateMap.get(title) == null) {
-                tableItem.put("transformRate", "0%");
+                tableItem.put("transformRate", "0.00%");
             } else {
                 tableItem.put("transformRate", transformRateMap.get(title));
             }

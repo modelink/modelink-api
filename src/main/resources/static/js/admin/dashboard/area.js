@@ -1,6 +1,7 @@
 layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], function (exports) {
     var $ = layui.jquery;
     var table = layui.table;
+    var layer = layui.layer;
     var laydate = layui.laydate;
 
     //时间选择器
@@ -10,15 +11,246 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     });
 
     insuranceEcharts.echartsMap["reserve-count-echart"] = echarts.init($("#reserve-count-echart")[0]);
+    insuranceEcharts.echartsMap["reserve-count-echart"].on("click", function (param) {
+        var selected = 'reserve-count-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getReserveCount",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "承保件数（件）";
+                cellJson.cell = "件";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
     insuranceEcharts.echartsMap["underwrite-count-echart"] = echarts.init($("#underwrite-count-echart")[0]);
+    insuranceEcharts.echartsMap["underwrite-count-echart"].on("click", function (param) {
+        var selected = 'underwrite-count-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getUnderwriteCount",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "承保件数（件）";
+                cellJson.cell = "件";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
     insuranceEcharts.echartsMap["underwrite-amount-echart"] = echarts.init($("#underwrite-amount-echart")[0]);
+    insuranceEcharts.echartsMap["underwrite-amount-echart"].on("click", function (param) {
+        var selected = 'underwrite-amount-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getUnderwriteAmount",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "总保费（元）";
+                cellJson.cell = "元";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
 
     insuranceEcharts.echartsMap["underwrite-map-echart"] = echarts.init($("#underwrite-map-echart")[0]);
     insuranceEcharts.echartsMap["again-rate-echart"] = echarts.init($("#again-rate-echart")[0]);
+    insuranceEcharts.echartsMap["again-rate-echart"].on("click", function (param) {
+        var selected = 'again-rate-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getAgainRate",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "二跳率（%）";
+                cellJson.cell = "%";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
 
     insuranceEcharts.echartsMap["user-count-echart"] = echarts.init($("#user-count-echart")[0]);
+    insuranceEcharts.echartsMap["user-count-echart"].on("click", function (param) {
+        var selected = 'user-count-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getUserCount",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "用户数（个）";
+                cellJson.cell = "个";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
     insuranceEcharts.echartsMap["user-stay-echart"] = echarts.init($("#user-stay-echart")[0]);
+    insuranceEcharts.echartsMap["user-stay-echart"].on("click", function (param) {
+        var selected = 'user-stay-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getUserStayTime",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "平均停留时长（秒）";
+                cellJson.cell = "秒";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
     insuranceEcharts.echartsMap["user-gender-echart"] = echarts.init($("#user-gender-echart")[0]);
+    insuranceEcharts.echartsMap["user-gender-echart"].on("click", function (param) {
+        var selected = 'user-gender-city-echart';
+        var tableHtml = '<div id="' + selected + '" style="height: 450px;"></div>';
+        layer.open({
+            type: 1,
+            content: tableHtml,
+            area: ['600px', '500px']
+        });
+
+        $.ajax({
+            url: "/admin/dashboard/area/getUserGender",
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                provinceName: param.name
+            },
+            success: function (response) {
+                insuranceEcharts.echartsMap[selected] = echarts.init($("#" + selected)[0]);
+
+                var cellJson = {};
+                cellJson.name = "平均停留时长（秒）";
+                cellJson.cell = "秒";
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawBarEchart(selected, cellJson,
+                        ["", "", "", "", "", "", "", "", "", ""], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawBarEchart(selected, cellJson, response.rtnData.titleList, response.rtnData.contentList);
+            }
+        })
+    });
     //搜索表单提交
     $("#search-btn").on("click", function () {
         insuranceEcharts.getDataJson2DrawBar($, "reserve-count", "/admin/dashboard/area/getReserveCount");
@@ -113,13 +345,33 @@ var insuranceEcharts = {
                 advertiseActive: $("#advertiseActive").val()
             },
             success: function (response) {
+                var cellJson = {};
+                if(selectedPrefix == 'reserve-count'){
+                    cellJson.name = "预约量（个）";
+                    cellJson.cell = "个";
+                }else if(selectedPrefix == 'underwrite-count'){
+                    cellJson.name = "承保件数（件）";
+                    cellJson.cell = "件";
+                }else if(selectedPrefix == 'underwrite-amount'){
+                    cellJson.name = "保费总额（元）";
+                    cellJson.cell = "元";
+                }else if(selectedPrefix == 'again-rate'){
+                    cellJson.name = "二跳率（%）";
+                    cellJson.cell = "%";
+                }else if(selectedPrefix == 'user-count'){
+                    cellJson.name = "用户数（个）";
+                    cellJson.cell = "个";
+                }else if(selectedPrefix == 'user-stay'){
+                    cellJson.name = "平均停留时长（秒）";
+                    cellJson.cell = "秒";
+                }
                 if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
-                    insuranceEcharts.drawBarEchart(selectedPrefix + "-echart",
+                    insuranceEcharts.drawBarEchart(selectedPrefix + "-echart", cellJson,
                         ["北京市", "上海市", "广东省", "山东省", "江苏省", "浙江省", "四川省", "重庆市", "河南省", "湖北省"],
                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
                     return;
                 }
-                insuranceEcharts.drawBarEchart(selectedPrefix + "-echart", response.rtnData.titleList, response.rtnData.contentList);
+                insuranceEcharts.drawBarEchart(selectedPrefix + "-echart", cellJson, response.rtnData.titleList, response.rtnData.contentList);
             }
         });
     },
@@ -133,13 +385,16 @@ var insuranceEcharts = {
                 advertiseActive: $("#advertiseActive").val()
             },
             success: function (response) {
+                var cellJson = {};
+                cellJson.name = "承保件数（件）";
+                cellJson.cell = "件";
                 if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
-                    insuranceEcharts.drawGenderBarEchart(selectedPrefix + "-echart",
+                    insuranceEcharts.drawGenderBarEchart(selectedPrefix + "-echart", cellJson,
                         ["北京市", "上海市", "广东省", "山东省", "江苏省", "浙江省", "四川省", "重庆市", "河南省", "湖北省"],
                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
                     return;
                 }
-                insuranceEcharts.drawGenderBarEchart(selectedPrefix + "-echart",
+                insuranceEcharts.drawGenderBarEchart(selectedPrefix + "-echart", cellJson,
                     response.rtnData.titleList, response.rtnData.manList, response.rtnData.womanList, response.rtnData.unknowList);
             }
         });
@@ -173,11 +428,13 @@ var insuranceEcharts = {
         selectedEchart.clear();
         var echartOption = {
             backgroundColor: '#FFFFFF',
-            tooltip : {
-                trigger: 'item'
+            tooltip: {
+                trigger: 'item',
+                axisPointer: {
+                    type: 'shadow'
+                }
             },
-
-            //配置属性
+           //配置属性
             series: [{
                 name: '保费',
                 type: 'map',
@@ -198,21 +455,31 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawBarEchart: function (selectedId, titleList, contentList) {
+    drawBarEchart: function (selectedId, cellJson, titleList, contentList) {
 
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
-                top: "10%",
-                right: "10%",
-                borderColor: "#c45455",//网格的边框颜色
-                bottom: "20%" //
+                top: "40",
+                left: "80",
+                right: "20",
+                bottom: "80",
+                borderColor: "#c45455"
             },
             xAxis: {
                 type: 'category',
+                splitLine:{
+                    show:false
+                },
                 axisLabel: {
                     interval: 0,
                     rotate: "45"
@@ -221,10 +488,14 @@ var insuranceEcharts = {
             },
             yAxis: [
                 {
+                    name: cellJson.name,
                     type: 'value',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
-                        formatter: '{value}'
+                        formatter: '{value}' + cellJson.cell
                     }
                 }
             ],
@@ -241,20 +512,50 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawGenderBarEchart: function (selectedId, titleList, manList, womanList, unknowList) {
+    drawGenderBarEchart: function (selectedId, cellJson, titleList, manList, womanList, unknowList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            legend: {
+                data:['男','女','未知']
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                },
+                formatter: function (param) {
+                    var result;
+                    var totalCount = 0;
+                    for (var index in param) {
+                        totalCount += param[index].value;
+                        result = param[index].name;
+                    }
+                    if(totalCount == 0) totalCount = 1;
+                    result += "<br/>";
+                    for (var index in param) {
+                        result += (param[index].seriesName + " : "
+                            + param[index].value + "件 : "
+                            + (param[index].value * 100 / totalCount).toFixed(2)
+                            + "%" + "<br/>");
+                    }
+                    return result;
+                }
+            },
             grid: {
                 show: true,
-                top: "10%",
-                right: "10%",
-                borderColor: "#c45455",//网格的边框颜色
-                bottom: "20%" //
+                top: "40",
+                left: "80",
+                right: "20",
+                bottom: "80",
+                borderColor: "#c45455"
             },
             xAxis: {
                 type: 'category',
+                splitLine:{
+                    show:false
+                },
                 axisLabel: {
                     interval: 0,
                     rotate: "45"
@@ -263,15 +564,20 @@ var insuranceEcharts = {
             },
             yAxis: [
                 {
+                    name: cellJson.name,
                     type: 'value',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
-                        formatter: '{value}'
+                        formatter: '{value}' + cellJson.cell
                     }
                 }
             ],
             series: [
                 {
+                    name: '男',
                     data: manList,
                     barWidth: '50%',
                     barGap: '0',
@@ -279,6 +585,7 @@ var insuranceEcharts = {
                     type: 'bar',
                 },
                 {
+                    name: '女',
                     data: womanList,
                     barWidth: '50%',
                     barGap: '0',
@@ -286,6 +593,7 @@ var insuranceEcharts = {
                     type: 'bar',
                 },
                 {
+                    name: '未知',
                     data: unknowList,
                     barWidth: '50%',
                     barGap: '0',
@@ -332,8 +640,9 @@ var insuranceEcharts = {
         $("#" + selectedId).html(tableHtml);
 
         table.init("area-table", {
-            limit: 10,
-            page: true
+            page: false,
+            height: 300,
+            limit: gridDataList.length
         });
     }
 };

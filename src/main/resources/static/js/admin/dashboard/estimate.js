@@ -298,7 +298,7 @@ var insuranceEcharts = {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
-                    type: 'cross'
+                    type: 'shadow'
                 }
             },
             grid: {
@@ -397,7 +397,7 @@ var insuranceEcharts = {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
-                    type: 'cross'
+                    type: 'shadow'
                 }
             },
             grid: {
@@ -471,6 +471,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -527,6 +533,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -534,12 +546,6 @@ var insuranceEcharts = {
                 right: "10%",
                 borderColor: "#c45455",//网格的边框颜色
                 bottom: "10%" //
-            },
-            tooltip: {
-                trigger: 'axis',
-                    axisPointer: {
-                    type: 'shadow'
-                }
             },
             xAxis: {
                 type: 'value'
@@ -566,7 +572,7 @@ var insuranceEcharts = {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
-                    type: 'cross'
+                    type: 'shadow'
                 }
             },
             grid: {

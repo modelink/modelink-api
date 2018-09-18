@@ -248,6 +248,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -256,10 +262,13 @@ var insuranceEcharts = {
                 bottom: "20%" //
             },
             legend: {
-                data:['点击率','点击价格']
+                data:['点击率（%）','点击价格（元）']
             },
             xAxis: {
                 type: 'category',
+                splitLine:{
+                    show:false
+                },
                 axisLabel: {
                     interval: 0,
                     rotate: "45"
@@ -269,16 +278,22 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '点击价格',
+                    name: '点击价格（元）',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         formatter: '{value}元'
                     }
                 },
                 {
                     type: 'value',
-                    name: '点击率',
+                    name: '点击率（%）',
                     position: 'right',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         formatter: '{value}%'
                     }
@@ -291,13 +306,13 @@ var insuranceEcharts = {
                     yAxisIndex: 0,
                     barGap: '0',
                     type: 'bar',
-                    name: '点击价格'
+                    name: '点击价格（元）'
                 },
                 {
                     data: clickRateList,
                     yAxisIndex: 1,
                     type: 'line',
-                    name: '点击率'
+                    name: '点击率（%）'
                 }
             ]
         };
@@ -316,18 +331,22 @@ var insuranceEcharts = {
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
-                    type: 'cross'
+                    type: 'shadow'
                 }
             },
             grid: {
+                left: '20%',
                 bottom: '30%'
             },
             legend: {
-                data:['预约数','承保件数','保费']
+                data:['预约数（个）','承保件数（件）','总保费（元）']
             },
             xAxis: [
                 {
                     type: 'category',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         interval: 0,
                         rotate: "45"
@@ -341,8 +360,11 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '预约数',
+                    name: '预约数（个）',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[0]
@@ -354,9 +376,12 @@ var insuranceEcharts = {
                 },
                 {
                     type: 'value',
-                    name: '承保件数',
+                    name: '承保件数（件）',
                     position: 'left',
                     offset: 80,
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[1]
@@ -368,8 +393,11 @@ var insuranceEcharts = {
                 },
                 {
                     type: 'value',
-                    name: '保费',
+                    name: '总保费（元）',
                     position: 'right',
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[2]
@@ -382,18 +410,18 @@ var insuranceEcharts = {
             ],
             series: [
                 {
-                    name: '预约数',
+                    name: '预约数（个）',
                     type: 'line',
                     data: reserveCountList
                 },
                 {
-                    name: '承保件数',
+                    name: '承保件数（件）',
                     type: 'line',
                     yAxisIndex: 1,
                     data: insuranceCountList
                 },
                 {
-                    name: '保费',
+                    name: '总保费（元）',
                     type: 'bar',
                     barWidth: '50%',
                     yAxisIndex: 2,
@@ -409,6 +437,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -417,28 +451,38 @@ var insuranceEcharts = {
                 bottom: "30%" //
             },
             legend: {
-                data:['点击成本','转化成本']
+                data:['点击成本（元）','转化成本（元）']
             },
             xAxis: {
                 type: 'category',
+                splitLine:{
+                    show:false
+                },
                 axisLabel: {
                     interval: 0,
                     rotate: "45"
                 },
                 data: titleList
             },
-            yAxis: [{
-                type: 'value',
-                name: '点击成本',
-                position: 'left',
-                axisLabel: {
-                    formatter: '{value}元'
-                }
-            },
+            yAxis: [
                 {
                     type: 'value',
-                    name: '转化成本',
+                    name: '点击成本（元）',
+                    position: 'left',
+                    splitLine:{
+                        show:false
+                    },
+                    axisLabel: {
+                        formatter: '{value}元'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '转化成本（元）',
                     position: 'right',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         formatter: '{value}元'
                     }
@@ -451,7 +495,7 @@ var insuranceEcharts = {
                     yAxisIndex: 0,
                     barGap: '0',
                     type: 'bar',
-                    name: '点击成本'
+                    name: '点击成本（元）'
                 },
                 {
                     data: transformCostList,
@@ -459,7 +503,7 @@ var insuranceEcharts = {
                     yAxisIndex: 1,
                     barGap: '0',
                     type: 'bar',
-                    name: '转化成本'
+                    name: '转化成本（元）'
                 }
             ]
         };
@@ -472,6 +516,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
             grid: {
                 show: true,
                 top: "10%",
@@ -480,10 +530,13 @@ var insuranceEcharts = {
                 bottom: "30%" //
             },
             legend: {
-                data:['转化率','转化周期']
+                data:['转化率（%）','转化周期（天）']
             },
             xAxis: {
                 type: 'category',
+                splitLine:{
+                    show:false
+                },
                 axisLabel: {
                     interval: 0,
                     rotate: "45"
@@ -493,16 +546,22 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '转化周期',
+                    name: '转化周期（天）',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
-                        formatter: '{value}元'
+                        formatter: '{value}天'
                     }
                 },
                 {
                     type: 'value',
-                    name: '转化率',
+                    name: '转化率（%）',
                     position: 'right',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         formatter: '{value}%'
                     }
@@ -515,13 +574,13 @@ var insuranceEcharts = {
                     yAxisIndex: 0,
                     barGap: '0',
                     type: 'bar',
-                    name: '转化周期'
+                    name: '转化周期（天）'
                 },
                 {
                     data: transformRateList,
                     yAxisIndex: 1,
                     type: 'line',
-                    name: '转化率'
+                    name: '转化率（%）'
                 }
             ]
         };
@@ -569,8 +628,9 @@ var insuranceEcharts = {
         $("#" + selectedId).html(tableHtml);
 
         table.init("keyword-table", {
-            limit: 10,
-            page: true
+            page: false,
+            height: 300,
+            limit: gridDataList.length
         });
     }
 };

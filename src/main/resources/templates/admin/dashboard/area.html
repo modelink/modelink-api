@@ -115,7 +115,7 @@
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">各省份保费总额</div>
+                <div class="layui-card-header">各省份保费分布情况</div>
                 <div class="layui-card-body">
                     <div id="underwrite-map-echart" style="height: 300px;"></div>
                 </div>
@@ -141,7 +141,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md4">
             <div class="layui-card">
-                <div class="layui-card-header">各省份用户平均停留时长（小时）</div>
+                <div class="layui-card-header">各省份用户平均停留时长（秒）</div>
                 <div class="layui-card-body">
                     <div id="user-stay-echart" style="height: 300px;"></div>
                 </div>
@@ -166,11 +166,11 @@
                 <th lay-data="{field: 'advertiseActive'}">广告活动</th>
                 <th lay-data="{field: 'provinceName'}">地区名称</th>
                 <th lay-data="{field: 'cityName'}">城市名称</th>
-                <th lay-data="{field: 'browseCount'}">浏览量</th>
-                <th lay-data="{field: 'reserveCount'}">预约数量</th>
-                <th lay-data="{field: 'underwriteCount'}">承保件数</th>
-                <th lay-data="{field: 'underwriteAmount'}">保费</th>
-                <th lay-data="{field: 'transformCycle'}">转化周期</th>
+                <th lay-data="{field: 'browseCount', sort: true}">浏览量</th>
+                <th lay-data="{field: 'reserveCount', sort: true}">预约数量</th>
+                <th lay-data="{field: 'underwriteCount', sort: true}">承保件数</th>
+                <th lay-data="{field: 'underwriteAmount', sort: true}">保费</th>
+                <th lay-data="{field: 'transformCycle', sort: true}">转化周期</th>
             </tr>
         </thead>
         <tbody id="area-table-body">
