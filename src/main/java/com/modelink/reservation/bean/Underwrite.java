@@ -26,6 +26,7 @@ public class Underwrite {
     private String platformName;
     /** 广告活动 **/
     private String advertiseActive;
+    private String advertiseSeries;
     /** 关键词 **/
     private String keyword;
     /** 数据来源 **/
@@ -121,6 +122,14 @@ public class Underwrite {
 
     public void setAdvertiseActive(String advertiseActive) {
         this.advertiseActive = advertiseActive;
+    }
+
+    public String getAdvertiseSeries() {
+        return advertiseSeries;
+    }
+
+    public void setAdvertiseSeries(String advertiseSeries) {
+        this.advertiseSeries = advertiseSeries;
     }
 
     public String getSource() {

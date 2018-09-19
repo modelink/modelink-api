@@ -12,6 +12,7 @@ import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
 import com.modelink.reservation.service.*;
 import com.modelink.reservation.vo.*;
+import org.apache.xmlbeans.impl.jam.JSourcePosition;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,6 +84,115 @@ public class DashboardSummaryController {
         resultJson.put("consumeTotalAmount", decimalFormat.format(consumeTotalAmount));
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getConsumePieByDate")
+    public ResultVo getConsumePieByDate(String date, Long merchantId, String platformName){
+        ResultVo resultVo = new ResultVo();
+        String dateKey = DateUtils.dateFormatTransform(date, "yyyyMMdd", "yyyy-MM-dd");
+        // 查询符合条件的数据
+        MediaItemParamPagerVo paramPagerVo = new MediaItemParamPagerVo();
+        paramPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        paramPagerVo.setMerchantId(merchantId);
+        paramPagerVo.setPlatformName(platformName);
+        paramPagerVo.setColumnFieldIds("id,advertiseActive,speedCost");
+        paramPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
+
+        String advertiseActive;
+        Double speedCost;
+        Map<String, Double> speedCostMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            advertiseActive = mediaItem.getAdvertiseActive();
+            if (StringUtils.isEmpty(advertiseActive)) {
+                advertiseActive = "-";
+            }
+
+            speedCost = 0.00d;
+            if (speedCostMap.get(advertiseActive) != null) {
+                speedCost = speedCostMap.get(advertiseActive);
+            }
+
+            if (StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                speedCost += Double.parseDouble(mediaItem.getSpeedCost());
+            }
+            speedCostMap.put(advertiseActive, speedCost);
+        }
+
+        JSONObject tableItem;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        Iterator<String> iterator = speedCostMap.keySet().iterator();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        while (iterator.hasNext()) {
+            advertiseActive = iterator.next();
+            tableItem = new JSONObject();
+            tableItem.put("name", advertiseActive);
+            tableItem.put("value", decimalFormat.format(speedCostMap.get(advertiseActive)));
+            tableItemList.add(tableItem);
+        }
+
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(tableItemList);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getConsumeTableByDate")
+    public ResultVo getConsumeTableByDate(String date, Long merchantId, String platformName, String advertiseActive){
+        ResultVo resultVo = new ResultVo();
+        String dateKey = DateUtils.dateFormatTransform(date, "yyyyMMdd", "yyyy-MM-dd");
+        // 查询符合条件的数据
+        MediaItemParamPagerVo paramPagerVo = new MediaItemParamPagerVo();
+        paramPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        paramPagerVo.setMerchantId(merchantId);
+        paramPagerVo.setPlatformName(platformName);
+        paramPagerVo.setAdvertiseActive(advertiseActive);
+        paramPagerVo.setColumnFieldIds("id,advertiseSeries,keyWord,speedCost");
+        paramPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
+
+        Double speedCost;
+        String advertiseSeries, keyword, key;
+        Map<String, Double> speedCostMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            advertiseSeries = mediaItem.getAdvertiseSeries();
+            if (StringUtils.isEmpty(advertiseSeries)) {
+                advertiseSeries = "-";
+            }
+            keyword = mediaItem.getKeyWord();
+            if (StringUtils.isEmpty(keyword)) {
+                keyword = "-";
+            }
+            key = advertiseSeries + "+" + keyword;
+            speedCost = 0.00d;
+            if (speedCostMap.get(key) != null) {
+                speedCost = speedCostMap.get(key);
+            }
+            if (StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                speedCost += Double.parseDouble(mediaItem.getSpeedCost());
+            }
+            speedCostMap.put(key, speedCost);
+        }
+
+        JSONObject tableItem;
+        String[] keyArray;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        Iterator<String> iterator = speedCostMap.keySet().iterator();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        while (iterator.hasNext()) {
+            key = iterator.next();
+            keyArray = key.split("\\+");
+            tableItem = new JSONObject();
+            tableItem.put("advertiseSeries", keyArray[0]);
+            tableItem.put("keyword", keyArray[1]);
+            tableItem.put("speedCost", decimalFormat.format(speedCostMap.get(key)));
+            tableItemList.add(tableItem);
+        }
+
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(tableItemList);
         return resultVo;
     }
 
@@ -178,6 +288,124 @@ public class DashboardSummaryController {
         // 构建返回数据
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getTransformSummaryByDate")
+    public ResultVo getTransformSummaryByDate(String date, Long merchantId, String platformName, String advertiseActive){
+
+        ResultVo resultVo = new ResultVo();
+
+        String dateKey = DateUtils.dateFormatTransform(date, "yyyyMMdd", "yyyy-MM-dd");
+        /** 查询预约数量 **/
+        FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+        flowReserveParamPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        flowReserveParamPagerVo.setMerchantId(merchantId);
+        flowReserveParamPagerVo.setPlatformName(platformName);
+        flowReserveParamPagerVo.setAdvertiseActive(advertiseActive);
+        flowReserveParamPagerVo.setColumnFieldIds("id,date,advertiseActive,advertiseSeries,advertiseDesc");
+        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+
+        String key;
+        int reserveCount;
+        Set<String> keySet = new HashSet<>();
+        Map<String, Integer> reserveCountMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            if(StringUtils.hasText(advertiseActive)){
+                key = flowReserve.getAdvertiseSeries() + "+" + flowReserve.getAdvertiseDesc();
+            }else{
+                key = flowReserve.getAdvertiseActive();
+            }
+            keySet.add(key);
+
+            reserveCount = 0;
+            if(reserveCountMap.get(key) != null){
+                reserveCount = reserveCountMap.get(key);
+            }
+            reserveCount ++;
+            reserveCountMap.put(key, reserveCount);
+        }
+        /** 查询预约数量 **/
+
+        /** 查询承保件数和保费 **/
+        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+        paramPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        paramPagerVo.setMerchantId(merchantId);
+        paramPagerVo.setPlatformName(platformName);
+        paramPagerVo.setAdvertiseActive(advertiseActive);
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,advertiseActive,keyword,advertiseSeries,insuranceFee");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+
+        int underwriteCount;
+        double underwriteAmount;
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, Double> underwriteAmountMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            if(StringUtils.hasText(advertiseActive)){
+                key = underwrite.getAdvertiseSeries() + "+" + underwrite.getKeyword();
+            }else{
+                key = underwrite.getAdvertiseActive();
+            }
+            keySet.add(key);
+            underwriteCount = 0;
+            if(underwriteCountMap.get(key) != null){
+                underwriteCount = underwriteCountMap.get(key);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(key, underwriteCount);
+
+            underwriteAmount = 0.00;
+            if(underwriteAmountMap.get(key) != null){
+                underwriteAmount = underwriteAmountMap.get(key);
+            }
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                underwriteAmount += Double.valueOf(underwrite.getInsuranceFee());
+            }
+            underwriteAmountMap.put(key, underwriteAmount);
+        }
+        /** 查询承保件数和保费 **/
+        JSONObject tableItem;
+        String[] keywordArray;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        for (String keyword : keySet) {
+            tableItem = new JSONObject();
+            if (StringUtils.hasText(advertiseActive)) {
+                keywordArray = keyword.split("\\+");
+                tableItem.put("advertiseSeries", keywordArray[0]);
+                tableItem.put("keyword", keywordArray[1]);
+            } else {
+                tableItem.put("advertiseActive", keyword);
+            }
+
+            if (reserveCountMap.get(keyword) == null) {
+                tableItem.put("reserveCount", 0);
+            } else {
+                tableItem.put("reserveCount", reserveCountMap.get(keyword));
+            }
+
+            if (underwriteCountMap.get(keyword) == null) {
+                tableItem.put("underwriteCount", 0);
+            } else {
+                tableItem.put("underwriteCount", underwriteCountMap.get(keyword));
+            }
+
+            if (underwriteAmountMap.get(keyword) == null) {
+                tableItem.put("underwriteAmount", 0);
+            } else {
+                tableItem.put("underwriteAmount", decimalFormat.format(underwriteAmountMap.get(keyword)));
+            }
+
+            tableItemList.add(tableItem);
+        }
+
+        // 构建返回数据
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(tableItemList);
         return resultVo;
     }
 

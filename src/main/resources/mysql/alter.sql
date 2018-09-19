@@ -11,3 +11,5 @@ update flow as a, flow as b set a.average_stay_time = b.average_browse_page_coun
 
 ALTER TABLE `flow_area` ADD INDEX rds_idx_date (`date`);
 ALTER TABLE `media_item` ADD INDEX rds_idx_date (`date`);
+
+alter table `flow_reserve` add column `fee_type` varchar(8) not null default '预约' after `device_type`;

@@ -100,6 +100,7 @@ public class UnderwriteController {
                     if(difference > 0){
                         underwrite.setReserveDate(reserveDate);
                         underwrite.setKeyword(flowReserve.getAdvertiseDesc());
+                        underwrite.setAdvertiseSeries(flowReserve.getAdvertiseSeries());
                         logger.info("[underwriteController|modify]承保数据更新成功。id={}, oldNum={}", underwrite.getId(), flowReserveList.size());
                         break;
                     }
@@ -317,6 +318,7 @@ public class UnderwriteController {
                         if(difference > 0){
                             underwrite.setReserveDate(reserveDate);
                             underwrite.setKeyword(flowReserve.getAdvertiseDesc());
+                            underwrite.setAdvertiseSeries(flowReserve.getAdvertiseSeries());
                             break;
                         }
                     }
