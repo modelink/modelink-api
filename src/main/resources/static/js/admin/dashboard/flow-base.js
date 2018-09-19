@@ -24,11 +24,11 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'layer'], functio
         tableHtml += '<thead id="inflow-source-item-table-head">';
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'areaName'}\">地区</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'inflowCount'}\">流入量</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'browseCount'}\">浏览量</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'userCount'}\">用户数</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'stayTime'}\">平均停留时间</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'againRate'}\">二跳率</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'inflowCount'}\">流入量（次）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'browseCount'}\">浏览量（次）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'userCount'}\">用户数（个）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'stayTime'}\">平均停留时间（秒）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'againRate'}\">二跳率（%）</th>";
         tableHtml += "</tr>";
         tableHtml += '</thead>';
         tableHtml += '<tbody id="inflow-source-item-table-body">';
@@ -37,7 +37,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'layer'], functio
         layer.open({
             type: 1,
             content: tableHtml,
-            area: ['600px', '450px']
+            area: ['900px', '450px']
         });
 
         var tableItemList = [{areaName: "", inflowCount: 0, browseCount: 0, userCount: 0,  stayTime: 0, againRate: '0%'}];
@@ -291,7 +291,7 @@ var insuranceEcharts = {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'name'}\">地区</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">用户数</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'value', sort: true}\">用户数（个）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
@@ -314,7 +314,8 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10
+            limit: tableItemList.length,
+            page: false
         });
     },
 
@@ -322,9 +323,9 @@ var insuranceEcharts = {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'website'}\">来源网站</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'inflowCount'}\">流入数</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'againRate'}\">二跳率</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'stayTime'}\">平均停留时间(S)</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'inflowCount', sort: true}\">流入数（次）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'againRate'}\">二跳率（%）</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'stayTime', sort: true}\">平均停留时间（秒）</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
 
@@ -348,8 +349,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            limit: tableItemList.length,
+            page: false,
+            height: 380
         });
     },
 
@@ -386,7 +388,7 @@ var insuranceEcharts = {
         var tableHtml = "";
         tableHtml += "<tr>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'name'}\">访问来源</th>";
-        tableHtml += "<th lay-data=\"{align: 'center', field: 'value'}\">用户数</th>";
+        tableHtml += "<th lay-data=\"{align: 'center', field: 'value', sort: true}\">用户数（个）</th>";
         tableHtml += "<th lay-data=\"{align: 'center', field: 'proportion'}\">百分比</th>";
         tableHtml += "</tr>";
         $("#" + selectedId + "-table-head").html(tableHtml);
@@ -409,7 +411,8 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10
+            limit: tableItemList.length,
+            page: false
         });
     },
     drawInflowSourceItemTable: function ($, table, selectedId, tableItemList) {
@@ -437,8 +440,9 @@ var insuranceEcharts = {
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            limit: 10,
-            page: true
+            limit: tableItemList.length,
+            page: false,
+            height: 380
         });
     }
 };

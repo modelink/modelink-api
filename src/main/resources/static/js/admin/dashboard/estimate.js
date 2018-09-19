@@ -575,6 +575,9 @@ var insuranceEcharts = {
                     type: 'shadow'
                 }
             },
+            legend: {
+                data: ["男性", "女性"]
+            },
             grid: {
                 top: '10%',
                 bottom: '10%'
@@ -584,10 +587,11 @@ var insuranceEcharts = {
                     max: maxAmount,
                     min: -maxAmount,
                     type: 'value',
+                    name: '总保费（元）',
                     show: true,
                     axisLabel: {
                         formatter: function (data) {
-                            return (Math.abs(data));
+                            return Math.abs(data) + "元";
                         }
                     }
                 }
