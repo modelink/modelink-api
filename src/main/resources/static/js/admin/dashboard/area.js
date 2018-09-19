@@ -293,7 +293,7 @@ var insuranceEcharts = {
             },
             success: function (response) {
                 if(!response || response.rtnCode != 200 || !response.rtnData){
-                    insuranceEcharts.drawMapEchart(selectedPrefix + "-echart", [
+                    insuranceEcharts.drawMapEchart(selectedPrefix + "-echart", {maxAmount: 0, provinceList: [
                         {name: '北京市',value: 0 },
                         {name: '天津市',value: 0 },
                         {name: '上海市',value: 0 },
@@ -328,7 +328,7 @@ var insuranceEcharts = {
                         {name: '台湾省',value: 0 },
                         {name: '香港特别行政区',value: 0 },
                         {name: '澳门特别行政区',value: 0 }
-                    ]);
+                    ]});
                     return;
                 }
                 insuranceEcharts.drawMapEchart(selectedPrefix + "-echart", response.rtnData);
@@ -422,7 +422,7 @@ var insuranceEcharts = {
     },
 
     // echarts 画图方法
-    drawMapEchart: function (selectedId, contentList) {
+    drawMapEchart: function (selectedId, resultJson) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
@@ -432,12 +432,22 @@ var insuranceEcharts = {
                 trigger: 'item',
                 formatter: function (param) {
                     var result = param.name + "<br />";
-                    result += ("保费: " + param.value + "元<br />");
-                    result += ("占比: " + param.data.ratio + "%");
+                    if (param.data && param.data.ratio) {
+                        result += ("保费: " + param.value + "元<br />");
+                        result += ("占比: " + param.data.ratio + "%");
+                    }
                     return result;
                 }
             },
-           //配置属性
+            visualMap: {
+                min: 0,
+                max: resultJson.maxAmount + 10000,
+                left: 'left',
+                top: 'bottom',
+                text:['高','低'],           // 文本，默认为数值文本
+                calculable : true
+            },
+            //配置属性
             series: [{
                 name: '保费',
                 type: 'map',
@@ -451,7 +461,7 @@ var insuranceEcharts = {
                         show: false
                     }
                 },
-                data: contentList  //数据
+                data: resultJson.provinceList  //数据
             }]
         };
 

@@ -294,6 +294,7 @@ public class DashboardAreaController {
         Integer provinceId;
         String insuranceFee;
         double underwriteAmount;
+        double maxAmount = 0.00d;
         double underwriteTotalAmount = 0.00d;
         Map<Integer, Double> underwriteAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
@@ -310,6 +311,7 @@ public class DashboardAreaController {
             if(StringUtils.hasText(insuranceFee) && !"-".equals(insuranceFee)){
                 underwriteAmount += Double.parseDouble(insuranceFee);
                 underwriteTotalAmount += Double.parseDouble(insuranceFee);
+                maxAmount = (maxAmount >= Double.parseDouble(insuranceFee) ? maxAmount : Double.parseDouble(insuranceFee));
             }
             underwriteAmountMap.put(provinceId, underwriteAmount);
         }
@@ -334,8 +336,11 @@ public class DashboardAreaController {
             provinceArray.add(provinceJson);
         }
 
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("provinceList", provinceArray);
+        resultJson.put("maxAmount", maxAmount);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
-        resultVo.setRtnData(provinceArray);
+        resultVo.setRtnData(resultJson);
         return resultVo;
     }
 
