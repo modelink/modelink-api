@@ -296,12 +296,12 @@ var insuranceEcharts = {
         var echartOption = {
             backgroundColor: '#FFFFFF',
             tooltip : {
-                trigger: 'item'
+                trigger: 'item',
+                formatter: '{a}<br />{b}: {c}%'
             },
-
             //配置属性
             series: [{
-                name: '保费',
+                name: '保费分布',
                 type: 'map',
                 mapType: 'china',
                 roam: true,

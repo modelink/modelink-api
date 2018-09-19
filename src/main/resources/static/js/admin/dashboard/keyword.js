@@ -262,7 +262,7 @@ var insuranceEcharts = {
                 bottom: "20%" //
             },
             legend: {
-                data:['点击率（%）','点击价格（元）']
+                data:['点击率','点击价格']
             },
             xAxis: {
                 type: 'category',
@@ -306,13 +306,13 @@ var insuranceEcharts = {
                     yAxisIndex: 0,
                     barGap: '0',
                     type: 'bar',
-                    name: '点击价格（元）'
+                    name: '点击价格'
                 },
                 {
                     data: clickRateList,
                     yAxisIndex: 1,
                     type: 'line',
-                    name: '点击率（%）'
+                    name: '点击率'
                 }
             ]
         };
@@ -339,7 +339,7 @@ var insuranceEcharts = {
                 bottom: '30%'
             },
             legend: {
-                data:['预约数（个）','承保件数（件）','总保费（元）']
+                data:['预约数量','承保件数','总保费']
             },
             xAxis: [
                 {
@@ -360,7 +360,7 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '预约数（个）',
+                    name: '预约数量（个）',
                     position: 'left',
                     splitLine:{
                         show:false
@@ -410,18 +410,18 @@ var insuranceEcharts = {
             ],
             series: [
                 {
-                    name: '预约数（个）',
+                    name: '预约数量',
                     type: 'line',
                     data: reserveCountList
                 },
                 {
-                    name: '承保件数（件）',
+                    name: '承保件数',
                     type: 'line',
                     yAxisIndex: 1,
                     data: insuranceCountList
                 },
                 {
-                    name: '总保费（元）',
+                    name: '总保费',
                     type: 'bar',
                     barWidth: '50%',
                     yAxisIndex: 2,
@@ -451,7 +451,7 @@ var insuranceEcharts = {
                 bottom: "30%" //
             },
             legend: {
-                data:['点击成本（元）','转化成本（元）']
+                data:['点击成本','转化成本']
             },
             xAxis: {
                 type: 'category',
@@ -495,7 +495,7 @@ var insuranceEcharts = {
                     yAxisIndex: 0,
                     barGap: '0',
                     type: 'bar',
-                    name: '点击成本（元）'
+                    name: '点击成本'
                 },
                 {
                     data: transformCostList,
@@ -503,7 +503,7 @@ var insuranceEcharts = {
                     yAxisIndex: 1,
                     barGap: '0',
                     type: 'bar',
-                    name: '转化成本（元）'
+                    name: '转化成本'
                 }
             ]
         };
@@ -530,7 +530,7 @@ var insuranceEcharts = {
                 bottom: "30%" //
             },
             legend: {
-                data:['转化率（%）','转化周期（天）']
+                data:['转化率','转化周期']
             },
             xAxis: {
                 type: 'category',
@@ -574,13 +574,13 @@ var insuranceEcharts = {
                     yAxisIndex: 0,
                     barGap: '0',
                     type: 'bar',
-                    name: '转化周期（天）'
+                    name: '转化周期'
                 },
                 {
                     data: transformRateList,
                     yAxisIndex: 1,
                     type: 'line',
-                    name: '转化率（%）'
+                    name: '转化率'
                 }
             ]
         };

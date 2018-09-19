@@ -294,14 +294,13 @@ public class DashboardAreaController {
         Integer provinceId;
         String insuranceFee;
         double underwriteAmount;
-        List<Integer> provinceIdList = new ArrayList<>();
+        double underwriteTotalAmount = 0.00d;
         Map<Integer, Double> underwriteAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
             provinceId = underwrite.getProvinceId();
             if(provinceId == null || provinceId == 0){
                 continue;
             }
-            provinceIdList.add(provinceId);
 
             underwriteAmount = 0.0d;
             if(underwriteAmountMap.get(provinceId) != null){
@@ -310,26 +309,28 @@ public class DashboardAreaController {
             insuranceFee = underwrite.getInsuranceFee();
             if(StringUtils.hasText(insuranceFee) && !"-".equals(insuranceFee)){
                 underwriteAmount += Double.parseDouble(insuranceFee);
+                underwriteTotalAmount += Double.parseDouble(insuranceFee);
             }
             underwriteAmountMap.put(provinceId, underwriteAmount);
         }
 
         // 获取省份的名称
-        Map<Integer, String> areaNameMap = new HashMap<>();
-        List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
-        }
-
         JSONObject provinceJson;
+        Area areaParam = new Area();
+        areaParam.setAreaType(AreaTypeEnum.省.getValue());
+        List<Area> areaList = areaService.findListByParam(areaParam);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         JSONArray provinceArray = new JSONArray();
-        Iterator<Integer> iterator = underwriteAmountMap.keySet().iterator();
-        while(iterator.hasNext()){
-            provinceId = iterator.next();
+        for (Area area : areaList) {
             provinceJson = new JSONObject();
-            provinceJson.put("name", areaNameMap.get(provinceId));
-            provinceJson.put("value", decimalFormat.format(underwriteAmountMap.get(provinceId)));
+            provinceJson.put("name", area.getAreaName());
+            if (underwriteAmountMap.get(area.getAreaId()) == null) {
+                provinceJson.put("ratio", "0.00");
+                provinceJson.put("value", "0.00");
+            } else {
+                provinceJson.put("ratio", decimalFormat.format(underwriteAmountMap.get(area.getAreaId()) * 100 / underwriteTotalAmount));
+                provinceJson.put("value", decimalFormat.format(underwriteAmountMap.get(area.getAreaId())));
+            }
             provinceArray.add(provinceJson);
         }
 

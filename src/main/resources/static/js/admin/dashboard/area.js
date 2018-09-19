@@ -113,7 +113,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         })
     });
 
-    insuranceEcharts.echartsMap["underwrite-map-echart"] = echarts.init($("#underwrite-map-echart")[0]);
+    insuranceEcharts.echartsMap["underwrite-map-echart"] = echarts.init($("#underwrite-map-echart")[0], "light");
     insuranceEcharts.echartsMap["again-rate-echart"] = echarts.init($("#again-rate-echart")[0]);
     insuranceEcharts.echartsMap["again-rate-echart"].on("click", function (param) {
         var selected = 'again-rate-city-echart';
@@ -427,11 +427,14 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#9ad0e6',
             tooltip: {
                 trigger: 'item',
-                axisPointer: {
-                    type: 'shadow'
+                formatter: function (param) {
+                    var result = param.name + "<br />";
+                    result += ("保费: " + param.value + "元<br />");
+                    result += ("占比: " + param.data.ratio + "%");
+                    return result;
                 }
             },
            //配置属性

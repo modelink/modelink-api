@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.common.enums.AgePartEnum;
+import com.modelink.common.enums.AreaTypeEnum;
 import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.utils.DataUtils;
@@ -743,8 +744,6 @@ public class DashboardController {
         paramPagerVo.setDateField("finishDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
         Integer provinceId;
-        String insuranceFee;
-        List<Integer> provinceIdList = new ArrayList<>();
         double underwriteAmount, insuranceTotalAmount = 0.00d;
         Map<Integer, Double> mapAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
@@ -752,8 +751,6 @@ public class DashboardController {
             if(provinceId == null || provinceId == 0){
                 continue;
             }
-            provinceIdList.add(provinceId);
-
             underwriteAmount = 0.0d;
             if(mapAmountMap.get(provinceId) != null){
                 underwriteAmount = mapAmountMap.get(provinceId);
@@ -763,26 +760,24 @@ public class DashboardController {
                 insuranceTotalAmount += Double.parseDouble(underwrite.getInsuranceFee());
             }
 
-            mapAmountMap.put(provinceId, insuranceTotalAmount);
+            mapAmountMap.put(provinceId, underwriteAmount);
         }
 
         // 获取省份的名称
-        Map<Integer, String> areaNameMap = new HashMap<>();
-        List<Area> areaList = areaService.findByIdList(provinceIdList);
-        for(Area area : areaList) {
-            areaNameMap.put(area.getAreaId(), area.getAreaName());
-        }
-
         JSONObject provinceJson;
-
+        Area areaParam = new Area();
+        areaParam.setAreaType(AreaTypeEnum.省.getValue());
+        List<Area> areaList = areaService.findListByParam(areaParam);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         JSONArray provinceArray = new JSONArray();
-        Iterator<Integer> iterator = mapAmountMap.keySet().iterator();
-        while(iterator.hasNext()){
-            provinceId = iterator.next();
+        for (Area area : areaList) {
             provinceJson = new JSONObject();
-            provinceJson.put("name", areaNameMap.get(provinceId));
-            provinceJson.put("value", decimalFormat.format(mapAmountMap.get(provinceId) * 100 / insuranceTotalAmount) + "%");
+            provinceJson.put("name", area.getAreaName());
+            if (mapAmountMap.get(area.getAreaId()) == null) {
+                provinceJson.put("value", "0.00");
+            } else {
+                provinceJson.put("value", decimalFormat.format(mapAmountMap.get(area.getAreaId()) * 100 / insuranceTotalAmount));
+            }
             provinceArray.add(provinceJson);
         }
 
