@@ -10,6 +10,9 @@ import java.util.*;
 public class DataUtils {
 
     public static int tranform2Integer(String varchar){
+        if("-".equals(varchar)){
+            return 0;
+        }
         if(StringUtils.hasText(varchar)){
             return Integer.parseInt(varchar);
         }

@@ -97,6 +97,8 @@ public class DashboardController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setColumnFieldIds("finishDate,reserveMobile");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String dateKey;
@@ -217,6 +219,8 @@ public class DashboardController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String dateKey;
@@ -333,15 +337,16 @@ public class DashboardController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("id,finishDate,reserveMobile");
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,finishDate,reserveMobile");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String dateKey;
         List<Underwrite> tempList;
         Map<String, List<Underwrite>> underwriteListMap = new HashMap<>();
         for(Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), paramVo.getDateType());
             tempList = underwriteListMap.get(dateKey);
             if(tempList == null){
                 tempList = new ArrayList<>();
@@ -418,13 +423,14 @@ public class DashboardController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("finishDate,insuranceNo");
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setColumnFieldIds("reserveDate,insuranceNo");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
         int totalCount;
         Map<String, Object> totalCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getFinishDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), paramVo.getDateType());
             totalCount = (int)totalCountMap.get(dateKey);
             totalCount ++;
             totalCountMap.put(dateKey, totalCount);
@@ -509,6 +515,7 @@ public class DashboardController {
         underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
         underwriteParamPagerVo.setColumnFieldIds("reserveDate,insuranceNo");
         underwriteParamPagerVo.setDateField("reserveDate");
+        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         Set<String> insuranceSet = new HashSet<>();
@@ -575,8 +582,8 @@ public class DashboardController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("finishDate,gender,age,insuranceFee");
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setColumnFieldIds("reserveDate,gender,age,insuranceFee");
+        paramPagerVo.setDateField("reserveDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         Map<Integer, Double> manMap = DataUtils.initAgeMap();
@@ -738,8 +745,9 @@ public class DashboardController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("finishDate,provinceId,insuranceFee");
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setColumnFieldIds("reserveDate,provinceId,insuranceFee");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
         Integer provinceId;
         double underwriteAmount, insuranceTotalAmount = 0.00d;

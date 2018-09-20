@@ -145,6 +145,7 @@ public class DashboardAreaController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId,cityId");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         if(StringUtils.hasText(paramVo.getProvinceName())) {
             area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
             paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
@@ -211,6 +212,7 @@ public class DashboardAreaController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId,cityId,insuranceFee");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         if(StringUtils.hasText(paramVo.getProvinceName())) {
             area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
             paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
@@ -289,6 +291,7 @@ public class DashboardAreaController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("reserveDate,provinceId,insuranceFee");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         Integer provinceId;
@@ -676,6 +679,7 @@ public class DashboardAreaController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("reserveDate,provinceId,cityId,gender");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         if(StringUtils.hasText(paramVo.getProvinceName())) {
             area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
             paramPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
@@ -820,6 +824,7 @@ public class DashboardAreaController {
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
+        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         List<Underwrite> tempUnderwriteList;

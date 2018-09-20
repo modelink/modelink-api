@@ -44,10 +44,20 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.echartsMap["transform-summary-keyword-echart"] = echarts.init($("#transform-summary-keyword-echart")[0]);
 
     insuranceEcharts.echartsMap["transform-rate-cycle-echart"] = echarts.init($("#transform-rate-cycle-echart")[0]);
+    insuranceEcharts.echartsMap["reserve-underwrite-keyword-echart"] = echarts.init($("#reserve-underwrite-keyword-echart")[0]);
 
 
     //搜索表单提交
     $("#search-btn").on("click", function () {
+        var platformName = $("#platformName").val();
+        var advertiseActive = $("#advertiseActive").val();
+        if(!platformName && advertiseActive){
+            layer.open({
+                type: 1,
+                content: "请选择渠道归属"
+            });
+            return;
+        }
 
         insuranceEcharts.getDataJson2WordCloudsMap($, "click-count", "/admin/dashboard/keyword/getClickCount");
         insuranceEcharts.getDataJson2WordCloudsMap($, "reserve-click", "/admin/dashboard/keyword/getReserveCount");
@@ -59,10 +69,29 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         insuranceEcharts.getDataJson2DrawUnderwriteSummary($, "underwrite-summary-keyword", "/admin/dashboard/keyword/getUnderwriteSummaryByKeyword");
         insuranceEcharts.getDataJson2DrawCostSummary($, "transform-summary-keyword", "/admin/dashboard/keyword/getCostSummaryByKeyword");
 
-        insuranceEcharts.getDataJson2DrawTransformRateAndCycle($, "transform-rate-cycle", "/admin/dashboard/keyword/getTransformCycleAndRate");
+        insuranceEcharts.getDataJson2DrawTransformRateAndCycle2($, "transform-rate-cycle", "/admin/dashboard/keyword/getTransformCycleAndRate2");
+        insuranceEcharts.getDataJson2DrawReserveUnderwriteKeyword($, "reserve-underwrite-keyword", "/admin/dashboard/keyword/getReserveUnderwriteKeyword");
+
         insuranceEcharts.getDataJson2DrawKeywordTableGrid($, table, "keyword-table-body", "/admin/dashboard/keyword/keywordTableGrid");
     });
     $("#search-btn").trigger("click");
+
+    $("#transformRateCycle .layui-btn-group button").on("click", function (selected) {
+        $("#transformRateCycle .layui-btn-group button").addClass("layui-btn-primary");
+        $(this).removeClass("layui-btn-primary");
+
+        insuranceEcharts.transformChooseItem = [];
+        insuranceEcharts.transformChooseItem.push($(this).attr("data-value"));
+        insuranceEcharts.getDataJson2DrawTransformRateAndCycle2($, "transform-rate-cycle", "/admin/dashboard/keyword/getTransformCycleAndRate2");
+    });
+    $("#reserveUnderwriteKeyword .layui-btn-group button").on("click", function (selected) {
+        $("#reserveUnderwriteKeyword .layui-btn-group button").addClass("layui-btn-primary");
+        $(this).removeClass("layui-btn-primary");
+
+        insuranceEcharts.keywordChooseItem = [];
+        insuranceEcharts.keywordChooseItem.push($(this).attr("data-value"));
+        insuranceEcharts.getDataJson2DrawReserveUnderwriteKeyword($, "reserve-underwrite-keyword", "/admin/dashboard/keyword/getReserveUnderwriteKeyword");
+    });
 
 
     window.onresize = function () {
@@ -75,7 +104,10 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 });
 
 var insuranceEcharts = {
+
     echartsMap: {},
+    transformChooseItem: ["transformRate"],
+    keywordChooseItem: ["reserveKeyword"],
 
     // 获取后台JSON数据画折线图
     getDataJson2WordCloudsMap: function ($, selectedPrefix, dataUrl) {
@@ -183,6 +215,50 @@ var insuranceEcharts = {
                 }
                 insuranceEcharts.drawTransformRateAndCycleEchart($, selectedPrefix + "-echart",
                     response.rtnData.titleList, response.rtnData.transformRateList, response.rtnData.transformCycleList);
+            }
+        });
+    },
+    getDataJson2DrawTransformRateAndCycle2: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                chooseItems: insuranceEcharts.transformChooseItem.join(",")
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawTransformRateAndCycleEchart2($, response.rtnData.cellJson, selectedPrefix + "-echart",
+                        ["", "", "", "", "", "", ""],
+                        [0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawTransformRateAndCycleEchart2($, response.rtnData.cellJson, selectedPrefix + "-echart",
+                    response.rtnData.titleList, response.rtnData.contentList);
+            }
+        });
+    },
+    getDataJson2DrawReserveUnderwriteKeyword: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val(),
+                chooseItems: insuranceEcharts.keywordChooseItem.join(",")
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.titleList.length <= 0){
+                    insuranceEcharts.drawReserveUnderwriteKeywordEchart($, response.rtnData.cellJson, selectedPrefix + "-echart",
+                        ["", "", "", "", "", "", ""],
+                        [0, 0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawReserveUnderwriteKeywordEchart($, response.rtnData.cellJson, selectedPrefix + "-echart",
+                    response.rtnData.titleList, response.rtnData.contentList);
             }
         });
     },
@@ -613,6 +689,132 @@ var insuranceEcharts = {
                     yAxisIndex: 1,
                     type: 'line',
                     name: '转化率'
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+        extension($, selectedEchart);
+    },
+    drawTransformRateAndCycleEchart2: function ($, cellJson, selectedId, titleList, contentList) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        // 指定图表的配置项和数据
+        selectedEchart.clear();
+        var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                show: true,
+                top: "10%",
+                right: "10%",
+                borderColor: "#c45455",//网格的边框颜色
+                bottom: "30%" //
+            },
+            xAxis: {
+                triggerEvent: true,
+                type: 'category',
+                splitLine:{
+                    show:false
+                },
+                axisLabel: {
+                    interval: 0,
+                    rotate: "45",
+                    formatter: function(value) {
+                        var result = value;
+                        if(result.length > 8) {
+                            result = result.substring(0, 7) + "…";
+                        }
+                        return result;
+                    }
+                },
+                data: titleList
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: cellJson.name,
+                    position: 'left',
+                    splitLine:{
+                        show:false
+                    },
+                    axisLabel: {
+                        formatter: '{value}' + cellJson.cell
+                    }
+                }
+            ],
+            series: [
+                {
+                    data: contentList,
+                    barWidth: '50%',
+                    barGap: '0',
+                    type: 'bar',
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+        extension($, selectedEchart);
+    },
+    drawReserveUnderwriteKeywordEchart: function ($, cellJson, selectedId, titleList, contentList) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        // 指定图表的配置项和数据
+        selectedEchart.clear();
+        var echartOption = {
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                show: true,
+                top: "10%",
+                right: "10%",
+                borderColor: "#c45455",//网格的边框颜色
+                bottom: "30%" //
+            },
+            xAxis: {
+                triggerEvent: true,
+                type: 'category',
+                splitLine:{
+                    show:false
+                },
+                axisLabel: {
+                    interval: 0,
+                    rotate: "45",
+                    formatter: function(value) {
+                        var result = value;
+                        if(result.length > 8) {
+                            result = result.substring(0, 7) + "…";
+                        }
+                        return result;
+                    }
+                },
+                data: titleList
+            },
+            yAxis: [
+                {
+                    type: 'value',
+                    name: cellJson.name,
+                    position: 'left',
+                    splitLine:{
+                        show:false
+                    },
+                    axisLabel: {
+                        formatter: '{value}' + cellJson.cell
+                    }
+                }
+            ],
+            series: [
+                {
+                    data: contentList,
+                    barWidth: '50%',
+                    barGap: '0',
+                    type: 'bar',
                 }
             ]
         };

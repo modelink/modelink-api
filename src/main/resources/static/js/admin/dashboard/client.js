@@ -22,7 +22,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         $(".layui-label.reserve-count .layui-btn-group button").addClass("layui-btn-primary");
         $(this).removeClass("layui-btn-primary");
 
-        insuranceEcharts.chooseItem = [];
+        insuranceEcharts.transformChooseItem = [];
         insuranceEcharts.chooseItem.push($(this).attr("data-value"));
         insuranceEcharts.getClientEchartJson($, table, "reserve-count", "/admin/dashboard/client/getReserveSummary");
 
@@ -48,7 +48,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
 });
 
 var insuranceEcharts = {
-    chooseItem: ["browser"],
+    transformChooseItem: ["browser"],
     chooseTableItem: ["browser"],
     echartsMap: {},
 

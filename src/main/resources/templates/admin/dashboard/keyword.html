@@ -155,10 +155,30 @@
     </div>
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md6">
-            <div class="layui-card">
-                <div class="layui-card-header">关键词-转化率/转化周期</div>
+            <div class="layui-card" id="transformRateCycle">
+                <div class="layui-card-header">
+                    <div style="float:left;">关键词-转化率/转化周期</div>
+                    <div style="float:right;" class="layui-btn-group">
+                        <button data-value="transformRate" class="layui-btn layui-btn-sm">转化率</button>
+                        <button data-value="transformCycle" class="layui-btn layui-btn-primary layui-btn-sm">转化周期</button>
+                    </div>
+                </div>
                 <div class="layui-card-body">
                     <div id="transform-rate-cycle-echart" style="height: 300px;"></div>
+                </div>
+            </div>
+        </div>
+        <div class="layui-col-sm12 layui-col-md6">
+            <div class="layui-card" id="reserveUnderwriteKeyword">
+                <div class="layui-card-header">
+                    <div style="float:left;">地域-预约词/承保词</div>
+                    <div style="float:right;" class="layui-btn-group">
+                        <button data-value="reserveKeyword" class="layui-btn layui-btn-sm">预约词</button>
+                        <button data-value="underwriteKeyword" class="layui-btn layui-btn-primary layui-btn-sm">承保词</button>
+                    </div>
+                </div>
+                <div class="layui-card-body">
+                    <div id="reserve-underwrite-keyword-echart" style="height: 300px;"></div>
                 </div>
             </div>
         </div>

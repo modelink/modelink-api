@@ -242,8 +242,9 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("reserveDate");
         paramPagerVo.setColumnFieldIds("id,reserveDate,platformName,advertiseActive,insuranceFee");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         int insuranceCount, underwriteTotalCount = 0;
@@ -336,8 +337,9 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(merchantId);
         paramPagerVo.setPlatformName(platformName);
         paramPagerVo.setAdvertiseActive(advertiseActive);
-        paramPagerVo.setDateField("reserveDate");
         paramPagerVo.setColumnFieldIds("id,reserveDate,advertiseActive,keyword,advertiseSeries,insuranceFee");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         int underwriteCount;
@@ -706,8 +708,9 @@ public class DashboardSummaryController {
         UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("finishDate,insuranceNo");
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setColumnFieldIds("reserveDate,insuranceNo");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
         int totalCount = underwriteList.size();
 
@@ -756,6 +759,7 @@ public class DashboardSummaryController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         Set<String> mobileSet = new HashSet<>();
@@ -1115,8 +1119,9 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("finishDate");
-        paramPagerVo.setColumnFieldIds("id,finishDate,platformName,advertiseActive");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,platformName,advertiseActive");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String channelKey;
@@ -1194,8 +1199,9 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("finishDate,reserveMobile,platformName,advertiseActive");
-        paramPagerVo.setDateField("finishDate");
+        paramPagerVo.setColumnFieldIds("reserveDate,reserveMobile,platformName,advertiseActive");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String channelKey;
@@ -1229,8 +1235,9 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("finishDate");
-        paramPagerVo.setColumnFieldIds("id,finishDate,platformName,advertiseActive,insuranceFee");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,platformName,advertiseActive,insuranceFee");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String channelKey;

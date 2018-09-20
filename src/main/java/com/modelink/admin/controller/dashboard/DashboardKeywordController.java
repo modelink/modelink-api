@@ -2,7 +2,10 @@ package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.modelink.admin.vo.DashboardChooseItemParamVo;
+import com.modelink.admin.vo.DashboardClientParamVo;
 import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.common.enums.AreaTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
@@ -15,7 +18,9 @@ import com.modelink.reservation.service.UnderwriteService;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 import com.modelink.reservation.vo.MediaItemParamPagerVo;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
+import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.bean.Merchant;
+import com.modelink.usercenter.service.AreaService;
 import com.modelink.usercenter.service.MerchantService;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -31,6 +36,8 @@ import java.util.*;
 @RequestMapping("/admin/dashboard/keyword")
 public class DashboardKeywordController {
 
+    @Resource
+    private AreaService areaService;
     @Resource
     private MerchantService merchantService;
     @Resource
@@ -174,64 +181,35 @@ public class DashboardKeywordController {
 
         initDashboardParam(paramVo);
 
-        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setColumnFieldIds("id,keyword,insuranceFee");
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("date,reserveMobile");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
-        paramPagerVo.setDateField("date");
-        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
-        Set<String> mobileSet = new HashSet<>();
-        for (FlowReserve flowReserve : flowReserveList) {
-            mobileSet.add(flowReserve.getReserveMobile());
-        }
         double insuranceFee;
         Map<String, Double> insuranceFeeMap = new HashMap<>();
-        List<Underwrite> underwriteList = underwriteService.findListByMobiles(mobileSet, "finish_date");
         for (Underwrite underwrite : underwriteList) {
-            if(StringUtils.isEmpty(underwrite.getInsuranceFee()) || "-".equals(underwrite.getInsuranceFee())){
-                continue;
-            }
-            if(insuranceFeeMap.get(underwrite.getReserveMobile()) == null){
-                insuranceFee = 0.0d;
-            }else{
-                insuranceFee = insuranceFeeMap.get(underwrite.getReserveMobile());
+
+            insuranceFee = 0.0d;
+            if(insuranceFeeMap.get(underwrite.getKeyword()) != null){
+                insuranceFee = insuranceFeeMap.get(underwrite.getKeyword());
             }
             if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
                 insuranceFee += Double.parseDouble(underwrite.getInsuranceFee());
             }
-            insuranceFeeMap.put(underwrite.getReserveMobile(), insuranceFee);
+            insuranceFeeMap.put(underwrite.getKeyword(), insuranceFee);
         }
 
-
-        Map<String, Double> searchWordMap = new HashMap<>();
-        for (FlowReserve flowReserve : flowReserveList) {
-            if ("-".equals(flowReserve.getSearchWord()) || "".equals(flowReserve.getSearchWord())) {
-                continue;
-            }
-            if (StringUtils.isEmpty(flowReserve.getReserveMobile()) ||
-                    insuranceFeeMap.get(flowReserve.getReserveMobile()) == null){
-                continue;
-            }
-            if (searchWordMap.get(flowReserve.getSearchWord()) == null) {
-                insuranceFee = 0.0d;
-            } else {
-                insuranceFee = searchWordMap.get(flowReserve.getSearchWord());
-            }
-
-            insuranceFee += insuranceFeeMap.get(flowReserve.getReserveMobile());
-            searchWordMap.put(flowReserve.getSearchWord(), insuranceFee);
-        }
-
-        List<Map.Entry<String, Double>> list = new ArrayList<>(searchWordMap.entrySet());
+        List<Map.Entry<String, Double>> list = new ArrayList<>(insuranceFeeMap.entrySet());
         Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
             public int compare(Map.Entry<String, Double> o1, Map.Entry<String, Double> o2) {
                 return o2.getValue().compareTo(o1.getValue());
             }
-
         });
 
         int count = 1;
@@ -504,6 +482,7 @@ public class DashboardKeywordController {
         underwriteParamPagerVo.setMobiles(mobileSet);
         underwriteParamPagerVo.setColumnFieldIds("id,reserveMobile,insuranceFee");
         underwriteParamPagerVo.setDateField("reserveDate");
+        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         int underwriteCount;
@@ -689,7 +668,7 @@ public class DashboardKeywordController {
 
     @ResponseBody
     @RequestMapping("/getTransformCycleAndRate")
-    public ResultVo getTransformCycleAndRate(DashboardParamVo paramVo){
+    public ResultVo getTransformCycleAndRate(DashboardChooseItemParamVo paramVo){
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -701,6 +680,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         List<Underwrite> tempUnderwriteList;
@@ -817,6 +797,274 @@ public class DashboardKeywordController {
     }
 
     @ResponseBody
+    @RequestMapping("/getTransformCycleAndRate2")
+    public ResultVo getTransformCycleAndRate2(DashboardChooseItemParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        initDashboardParam(paramVo);
+
+        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+        paramPagerVo.setChooseDate(paramVo.getChooseDate());
+        paramPagerVo.setMerchantId(paramVo.getMerchantId());
+        paramPagerVo.setColumnFieldIds("id,reserveDate,platformName,advertiseActive,advertiseSeries,finishDate,keyword");
+        paramPagerVo.setPlatformName(paramVo.getPlatformName());
+        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+
+        String keyword;
+        String reserveDate, finishDate;
+        int underwriteCount, difference;
+        Set<String> keySet = new HashSet<>();
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, Integer> underwriteDifferenceMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            if (StringUtils.isEmpty(paramVo.getPlatformName()) && StringUtils.isEmpty(paramVo.getAdvertiseActive())) {
+                keyword = underwrite.getPlatformName() + "+" + underwrite.getAdvertiseActive(); // 渠道+广告活动
+            } else if (StringUtils.isEmpty(paramVo.getAdvertiseActive())) {
+                keyword = underwrite.getAdvertiseActive(); // 广告系列
+            } else {
+                keyword = underwrite.getKeyword(); // 关键词
+            }
+            keySet.add(keyword);
+
+            underwriteCount = 0;
+            if(underwriteCountMap.get(keyword) != null){
+                underwriteCount = underwriteCountMap.get(keyword);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(keyword, underwriteCount);
+
+            difference = 0;
+            if(underwriteDifferenceMap.get(keyword) != null){
+                difference = underwriteDifferenceMap.get(keyword);
+            }
+            finishDate = underwrite.getFinishDate();
+            reserveDate = underwrite.getReserveDate();
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            underwriteDifferenceMap.put(keyword, difference);
+        }
+
+        JSONObject cellJson = new JSONObject();
+        List<String> titleList = new ArrayList<>();
+        List<String> contentList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        if (paramVo.getChooseItems().contains("transformRate")) {
+
+            // 查询符合条件的数据
+            MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+            mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
+            mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
+            mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
+            mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+            paramPagerVo.setColumnFieldIds("id,platformName,advertiseActive,advertiseSeries,clickCount");
+            paramPagerVo.setDateField("date");
+            List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
+
+            String transformRate;
+            int clickCount;
+            Map<String, Integer> clickCountMap = new HashMap<>();
+            for (MediaItem mediaItem : mediaItemList) {
+                if(StringUtils.isEmpty(mediaItem.getClickCount())){
+                    continue;
+                }
+                if (StringUtils.isEmpty(paramVo.getPlatformName()) && StringUtils.isEmpty(paramVo.getAdvertiseActive())) {
+                    keyword = mediaItem.getPlatformName() + "+" + mediaItem.getAdvertiseActive(); // 渠道+广告活动
+                } else if (StringUtils.isEmpty(paramVo.getAdvertiseActive())) {
+                    keyword = mediaItem.getAdvertiseActive(); // 广告系列
+                } else {
+                    keyword = mediaItem.getKeyWord(); // 关键词
+                }
+                keySet.add(keyword);
+
+                clickCount = 0;
+                if(clickCountMap.get(keyword) != null){
+                    clickCount = clickCountMap.get(keyword);
+                }
+                clickCount += mediaItem.getClickCount();
+                clickCountMap.put(keyword, clickCount);
+            }
+
+            Map<String, String> transformRateMap = new HashMap<>();
+            for (String key : keySet) {
+                underwriteCount = 0;
+                if(underwriteCountMap.get(key) != null){
+                    underwriteCount = underwriteCountMap.get(key);
+                }
+
+                if(clickCountMap.get(key)== null || clickCountMap.get(key) == 0){
+                    transformRate = "0.00";
+                }else {
+                    transformRate = decimalFormat.format(underwriteCount * 1000.00d / clickCountMap.get(key));
+                }
+                transformRateMap.put(key, transformRate);
+            }
+
+            // 计算出转化率最高的TOP30
+            List<Map.Entry<String, String>> entryList = new ArrayList<>(transformRateMap.entrySet());
+            Collections.sort(entryList, new Comparator<Map.Entry<String, String>>() {
+                @Override
+                public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                    return new Double(o2.getValue()).compareTo(new Double(o1.getValue()));
+                }
+            });
+            int idx = 1;
+            for (Map.Entry<String, String> entry : entryList) {
+                if(idx > 30) break;
+                titleList.add(entry.getKey());
+                contentList.add(transformRateMap.get(entry.getKey()));
+                idx ++;
+            }
+
+            cellJson.put("name", "转化率（‰）");
+            cellJson.put("cell", "‰");
+        } else if (paramVo.getChooseItems().contains("transformCycle")) {
+
+            Map<String, String> transformCycleMap = new HashMap<>();
+            for (String key : keySet) {
+                underwriteCount = 0;
+                if(underwriteCountMap.get(key) != null){
+                    underwriteCount = underwriteCountMap.get(key);
+                }
+
+                difference = 0;
+                if(underwriteDifferenceMap.get(key) != null){
+                    difference = underwriteDifferenceMap.get(key);
+                }
+
+                if(underwriteCount == 0){
+                    transformCycleMap.put(key, "0.00");
+                }else{
+                    transformCycleMap.put(key, decimalFormat.format(difference / underwriteCount));
+                }
+            }
+
+            // 计算出转化率最高的TOP30
+            List<Map.Entry<String, String>> entryList = new ArrayList<>(transformCycleMap.entrySet());
+            Collections.sort(entryList, new Comparator<Map.Entry<String, String>>() {
+                @Override
+                public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
+                    return new Double(o2.getValue()).compareTo(new Double(o1.getValue()));
+                }
+            });
+            int idx = 1;
+            for (Map.Entry<String, String> entry : entryList) {
+                if(idx > 30) break;
+                titleList.add(entry.getKey());
+                contentList.add(transformCycleMap.get(entry.getKey()));
+                idx ++;
+            }
+
+            cellJson.put("name", "转化周期（天）");
+            cellJson.put("cell", "天");
+        }
+
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("titleList", titleList);
+        resultJson.put("contentList", contentList);
+        resultJson.put("cellJson", cellJson);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getReserveUnderwriteKeyword")
+    public ResultVo getReserveUnderwriteKeyword(DashboardChooseItemParamVo paramVo){
+        ResultVo resultVo = new ResultVo();
+
+        initDashboardParam(paramVo);
+
+        Area areaParam = new Area();
+        areaParam.setAreaType(AreaTypeEnum.省.getValue());
+        List<Area> areaList = areaService.findListByParam(areaParam);
+        Map<Integer, String> areaNameMap = new HashMap<>();
+        areaNameMap.put(0, "未知地区");
+        for (Area area : areaList) {
+            areaNameMap.put(area.getAreaId(), area.getAreaName());
+        }
+
+        String keyword;
+        Integer totalCount;
+        JSONObject cellJson = new JSONObject();
+        List<String> titleList = new ArrayList<>();
+        List<Integer> contentList = new ArrayList<>();
+        Map<String, Integer> totalCountMap = new HashMap<>();
+        if (paramVo.getChooseItems().contains("reserveKeyword")) {
+            cellJson.put("name", "预约数量（个）");
+            cellJson.put("cell", "个");
+            // 查询符合条件的数据
+            FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+            paramPagerVo.setChooseDate(paramVo.getChooseDate());
+            paramPagerVo.setMerchantId(paramVo.getMerchantId());
+            paramPagerVo.setPlatformName(paramVo.getPlatformName());
+            paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+            paramPagerVo.setColumnFieldIds("id,provinceId,advertiseDesc");
+            paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+            paramPagerVo.setDateField("date");
+            List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+
+            for (FlowReserve flowReserve : flowReserveList) {
+                keyword = areaNameMap.get(flowReserve.getProvinceId()) + "+" + flowReserve.getAdvertiseDesc();
+
+                totalCount = 0;
+                if (totalCountMap.get(keyword) != null) {
+                    totalCount = totalCountMap.get(keyword);
+                }
+                totalCount ++;
+                totalCountMap.put(keyword, totalCount);
+            }
+        } else if (paramVo.getChooseItems().contains("underwriteKeyword")) {
+            cellJson.put("name", "承保件数（件）");
+            cellJson.put("cell", "件");
+            // 查询符合条件的数据
+            UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
+            paramPagerVo.setChooseDate(paramVo.getChooseDate());
+            paramPagerVo.setMerchantId(paramVo.getMerchantId());
+            paramPagerVo.setColumnFieldIds("id,provinceId,keyword");
+            paramPagerVo.setPlatformName(paramVo.getPlatformName());
+            paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+            paramPagerVo.setSource("!产品测保");
+            paramPagerVo.setDateField("reserveDate");
+            List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+            for (Underwrite underwrite : underwriteList) {
+                keyword = areaNameMap.get(underwrite.getProvinceId()) + "+" + underwrite.getKeyword();
+
+                totalCount = 0;
+                if (totalCountMap.get(keyword) != null) {
+                    totalCount = totalCountMap.get(keyword);
+                }
+                totalCount ++;
+                totalCountMap.put(keyword, totalCount);
+            }
+        }
+        // 计算出最高的TOP30
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(totalCountMap.entrySet());
+        Collections.sort(entryList, new Comparator<Map.Entry<String, Integer>>() {
+            @Override
+            public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+        int idx = 1;
+        for (Map.Entry<String, Integer> entry : entryList) {
+            if(idx > 30) break;
+            titleList.add(entry.getKey());
+            contentList.add(totalCountMap.get(entry.getKey()));
+            idx ++;
+        }
+
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("titleList", titleList);
+        resultJson.put("contentList", contentList);
+        resultJson.put("cellJson", cellJson);
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
     @RequestMapping("/keywordTableGrid")
     public ResultVo keywordTableGrid(DashboardParamVo paramVo){
         ResultVo resultVo = new ResultVo();
@@ -860,6 +1108,7 @@ public class DashboardKeywordController {
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
+        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         List<Underwrite> tempUnderwriteList;

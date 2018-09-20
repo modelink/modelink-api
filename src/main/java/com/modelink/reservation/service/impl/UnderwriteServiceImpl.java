@@ -116,7 +116,14 @@ public class UnderwriteServiceImpl implements UnderwriteService {
             criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
         }
         if(StringUtils.hasText(paramPagerVo.getSource())){
-            criteria.andEqualTo("source", paramPagerVo.getSource());
+            if(paramPagerVo.getSource().startsWith("!")){
+                criteria.andNotEqualTo("source", paramPagerVo.getSource());
+                criteria.andNotEqualTo("source", "非平台数据");
+                criteria.andNotEqualTo("source", "其他");
+                criteria.andNotLike("source", "%加保%");
+            }else {
+                criteria.andEqualTo("source", paramPagerVo.getSource());
+            }
         }
         List<Underwrite> underwriteList = underwriteMapper.selectByExample(example);
         return underwriteList;

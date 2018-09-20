@@ -150,6 +150,7 @@ public class DashboardTimeController {
         underwriteParamPagerVo.setColumnFieldIds("id,reserveDate,finishDate,insuranceFee");
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        underwriteParamPagerVo.setSource("!产品测保");
         underwriteParamPagerVo.setDateField("reserveDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 

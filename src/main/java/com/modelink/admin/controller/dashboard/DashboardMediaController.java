@@ -73,6 +73,7 @@ public class DashboardMediaController {
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
+        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         String finishDate, reserveDate;
@@ -162,6 +163,7 @@ public class DashboardMediaController {
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
+        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
         if(underwriteList.size() <= 0){
             return resultVo;

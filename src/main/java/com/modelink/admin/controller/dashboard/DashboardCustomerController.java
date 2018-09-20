@@ -59,6 +59,7 @@ public class DashboardCustomerController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,reserveMobile,provinceId");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         int totalCount = 0;
@@ -124,6 +125,7 @@ public class DashboardCustomerController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,gender,age,insuranceFee");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         Map<Integer, Double> manAmountMap = initDoubleAgeMap();
@@ -238,6 +240,7 @@ public class DashboardCustomerController {
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,age,gender,keyword");
         paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String gender;
