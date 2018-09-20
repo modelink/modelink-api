@@ -424,25 +424,11 @@ public class DashboardSummaryController {
         paramPagerVo.setProblemData("是");
         List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);
 
-        Set<String> mobileSet = new HashSet<>();
-        for (Abnormal abnormal : abnormalList) {
-            mobileSet.add(abnormal.getMobile());
-        }
-
-        List<FlowReserve> flowReserveList = flowReserveService.findListByMobiles(mobileSet, "date");
         String dateKey;
         int abnormalCount, abnormalTotalCount = 0;
         Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
-        for (FlowReserve flowReserve : flowReserveList) {
-            if(StringUtils.hasText(paramVo.getPlatformName()) &&
-                    !paramVo.getPlatformName().equals(flowReserve.getPlatformName())){
-                continue;
-            }
-            if(StringUtils.hasText(paramVo.getAdvertiseActive()) &&
-                    !paramVo.getAdvertiseActive().equals(flowReserve.getAdvertiseActive())){
-                continue;
-            }
-            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), DateTypeEnum.日.getValue());
+        for (Abnormal abnormal : abnormalList) {
+            dateKey = DataUtils.getDateKeyByDateType(abnormal.getReserveDate(), DateTypeEnum.日.getValue());
             abnormalCount = 0;
             if(statCountMap.get(dateKey) != null){
                 abnormalCount = (Integer)statCountMap.get(dateKey);
@@ -471,7 +457,7 @@ public class DashboardSummaryController {
         RepellentParamPagerVo repellentParamPagerVo = new RepellentParamPagerVo();
         repellentParamPagerVo.setChooseDate(paramVo.getChooseDate());
         repellentParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        repellentParamPagerVo.setColumnFieldIds("id,hesitateDate,insuranceNo");
+        repellentParamPagerVo.setColumnFieldIds("id,hesitateDate,insuranceNo,insuranceFee");
         repellentParamPagerVo.setDateField("hesitateDate");
         List<Repellent> repellentList = repellentService.findListByParam(repellentParamPagerVo);
 
