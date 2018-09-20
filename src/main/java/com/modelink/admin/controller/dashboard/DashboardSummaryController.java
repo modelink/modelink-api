@@ -412,23 +412,53 @@ public class DashboardSummaryController {
     @ResponseBody
     @RequestMapping("/getAbnormalCount")
     public ResultVo getAbnormalCount(DashboardSummaryParamVo paramVo){
+        String dateKey;
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
 
+        /** 查询预约数量 **/
+        FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+        flowReserveParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        flowReserveParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
+        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+
+        Map<String, FlowReserve> reserveMap = new HashMap<>();
+        if (StringUtils.hasText(paramVo.getPlatformName()) || StringUtils.hasText(paramVo.getAdvertiseActive())) {
+            for (FlowReserve flowReserve : flowReserveList) {
+                if (StringUtils.isEmpty(flowReserve.getReserveMobile())) {
+                    continue;
+                }
+                dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), DateTypeEnum.日.getValue());
+                reserveMap.put(dateKey + flowReserve.getReserveMobile(), flowReserve);
+            }
+        }
+
         AbnormalParamPagerVo paramPagerVo = new AbnormalParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("id,reserveDate,problemData");
+        paramPagerVo.setColumnFieldIds("id,reserveDate,mobile,problemData");
         paramPagerVo.setDateField("reserveDate");
         paramPagerVo.setProblemData("是");
         List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);
 
-        String dateKey;
+        FlowReserve flowReserve;
         int abnormalCount, abnormalTotalCount = 0;
         Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
         for (Abnormal abnormal : abnormalList) {
             dateKey = DataUtils.getDateKeyByDateType(abnormal.getReserveDate(), DateTypeEnum.日.getValue());
+            flowReserve = reserveMap.get(dateKey + abnormal.getMobile());
+            if (StringUtils.hasText(paramVo.getPlatformName()) || StringUtils.hasText(paramVo.getAdvertiseActive())) {
+                if (flowReserve == null) {
+                    continue;
+                }
+            }
+
             abnormalCount = 0;
             if(statCountMap.get(dateKey) != null){
                 abnormalCount = (Integer)statCountMap.get(dateKey);
@@ -442,6 +472,157 @@ public class DashboardSummaryController {
         resultJson.put("abnormalTotalCount", abnormalTotalCount);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getAbnormalPieByDate")
+    public ResultVo getAbnormalPieByDate(String date, Long merchantId, String platformName){
+        ResultVo resultVo = new ResultVo();
+        String dateKey = DateUtils.dateFormatTransform(date, "yyyyMMdd", "yyyy-MM-dd");
+
+        /** 查询预约数量 **/
+        FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+        flowReserveParamPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        flowReserveParamPagerVo.setMerchantId(merchantId);
+        flowReserveParamPagerVo.setPlatformName(platformName);
+        flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
+        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+
+        Map<String, FlowReserve> reserveMap = new HashMap<>();
+        if (StringUtils.hasText(platformName)) {
+            for (FlowReserve flowReserve : flowReserveList) {
+                if (StringUtils.isEmpty(flowReserve.getReserveMobile())) {
+                    continue;
+                }
+                dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), DateTypeEnum.日.getValue());
+                reserveMap.put(dateKey + flowReserve.getReserveMobile(), flowReserve);
+            }
+        }
+        // 查询符合条件的数据
+        AbnormalParamPagerVo paramPagerVo = new AbnormalParamPagerVo();
+        paramPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        paramPagerVo.setMerchantId(merchantId);
+        paramPagerVo.setColumnFieldIds("id,reserveDate,sourceMedia,problemData");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setProblemData("是");
+        List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);
+
+        String sourceMedia;
+        Integer abnormalCount;
+        FlowReserve flowReserve;
+        Map<String, Integer> abnormalCountMap = new HashMap<>();
+        for (Abnormal abnormal : abnormalList) {
+
+            flowReserve = reserveMap.get(dateKey + abnormal.getMobile());
+            if (StringUtils.hasText(platformName)) {
+                if (flowReserve == null) {
+                    continue;
+                }
+            }
+
+            sourceMedia = abnormal.getSourceMedia();
+            if (StringUtils.isEmpty(sourceMedia)) {
+                sourceMedia = "-";
+            }
+            abnormalCount = 0;
+            if (abnormalCountMap.get(sourceMedia) != null) {
+                abnormalCount = abnormalCountMap.get(sourceMedia);
+            }
+            abnormalCount ++;
+            abnormalCountMap.put(sourceMedia, abnormalCount);
+        }
+
+        JSONObject tableItem;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        Iterator<String> iterator = abnormalCountMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            sourceMedia = iterator.next();
+            tableItem = new JSONObject();
+            tableItem.put("name", sourceMedia);
+            tableItem.put("value", abnormalCountMap.get(sourceMedia));
+            tableItemList.add(tableItem);
+        }
+
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(tableItemList);
+        return resultVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/getAbnormalTableByDate")
+    public ResultVo getAbnormalTableByDate(String date, Long merchantId, String platformName, String advertiseActive){
+        ResultVo resultVo = new ResultVo();
+        String dateKey = DateUtils.dateFormatTransform(date, "yyyyMMdd", "yyyy-MM-dd");
+
+        /** 查询预约数量 **/
+        FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+        flowReserveParamPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        flowReserveParamPagerVo.setMerchantId(merchantId);
+        flowReserveParamPagerVo.setPlatformName(platformName);
+        flowReserveParamPagerVo.setColumnFieldIds("id,date,reserveMobile,advertiseSeries,advertiseDesc");
+        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+
+        Map<String, FlowReserve> reserveMap = new HashMap<>();
+        if (StringUtils.hasText(platformName) || StringUtils.hasText(advertiseActive)) {
+            for (FlowReserve flowReserve : flowReserveList) {
+                if (StringUtils.isEmpty(flowReserve.getReserveMobile())) {
+                    continue;
+                }
+                reserveMap.put(dateKey + flowReserve.getReserveMobile(), flowReserve);
+            }
+        }
+        // 查询符合条件的数据
+        AbnormalParamPagerVo paramPagerVo = new AbnormalParamPagerVo();
+        paramPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        paramPagerVo.setMerchantId(merchantId);
+        paramPagerVo.setColumnFieldIds("id,mobile,sourceMedia,problemData");
+        paramPagerVo.setDateField("reserveDate");
+        paramPagerVo.setProblemData("是");
+        List<Abnormal> abnormalList = abnormalService.findListByParam(paramPagerVo);
+
+        String key;
+        Integer abnormalCount;
+        FlowReserve flowReserve;
+        Map<String, Integer> abnormalCountMap = new HashMap<>();
+        for (Abnormal abnormal : abnormalList) {
+
+            flowReserve = reserveMap.get(dateKey + abnormal.getMobile());
+            if (StringUtils.hasText(platformName) || StringUtils.hasText(advertiseActive)) {
+                if (flowReserve == null) {
+                    continue;
+                }
+            }
+
+            key = flowReserve.getAdvertiseSeries() + "+" + flowReserve.getAdvertiseDesc();
+            abnormalCount = 0;
+            if (abnormalCountMap.get(key) != null) {
+                abnormalCount = abnormalCountMap.get(key);
+            }
+            abnormalCount ++;
+            abnormalCountMap.put(key, abnormalCount);
+        }
+
+        String[] keyArray;
+        JSONObject tableItem;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        Iterator<String> iterator = abnormalCountMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            key = iterator.next();
+            keyArray = key.split("\\+");
+            tableItem = new JSONObject();
+            tableItem.put("advertiseSeries", keyArray[0]);
+            tableItem.put("keyword", keyArray[1]);
+            tableItem.put("abnormalCount", abnormalCountMap.get(key));
+            tableItemList.add(tableItem);
+        }
+
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(tableItemList);
         return resultVo;
     }
 
@@ -793,6 +974,132 @@ public class DashboardSummaryController {
         resultJson.put("transformCostList", transformCostResultJson.get("contentList"));
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
+        return resultVo;
+    }
+
+
+    @ResponseBody
+    @RequestMapping("/getCostSummaryByDate")
+    public ResultVo getCostSummaryByDate(String date, Long merchantId, String platformName, String advertiseActive){
+        ResultVo resultVo = new ResultVo();
+        String dateKey = DateUtils.dateFormatTransform(date, "yyyyMMdd", "yyyy-MM-dd");
+
+        FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
+        paramPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        paramPagerVo.setMerchantId(merchantId);
+        paramPagerVo.setPlatformName(platformName);
+        paramPagerVo.setAdvertiseActive(advertiseActive);
+        paramPagerVo.setColumnFieldIds("id,date,advertiseActive,advertiseSeries,advertiseDesc");
+        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+
+        String key;
+        int reserveCount;
+        Set<String> keySet = new HashSet<>();
+        Map<String, Integer> reserveCountMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            if (StringUtils.hasText(advertiseActive)){
+                key = flowReserve.getAdvertiseSeries() + "+" + flowReserve.getAdvertiseDesc();
+            } else {
+                key = flowReserve.getAdvertiseActive();
+            }
+            keySet.add(key);
+
+            reserveCount = 0;
+            if(reserveCountMap.get(key) != null){
+                reserveCount = reserveCountMap.get(key);
+            }
+            reserveCount ++;
+            reserveCountMap.put(key, reserveCount);
+        }
+
+        int clickCount;
+        double totalAmount;
+        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+        mediaItemParamPagerVo.setChooseDate(dateKey + " - " + dateKey);
+        mediaItemParamPagerVo.setMerchantId(merchantId);
+        mediaItemParamPagerVo.setPlatformName(platformName);
+        mediaItemParamPagerVo.setAdvertiseActive(advertiseActive);
+        mediaItemParamPagerVo.setColumnFieldIds("id,date,keyWord,advertiseActive,advertiseSeries,clickCount,speedCost");
+        mediaItemParamPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
+        Map<String, Double> statAmountMap = new HashMap<>();
+        Map<String, Integer> clickCountMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            if (StringUtils.hasText(advertiseActive)){
+                key = mediaItem.getAdvertiseSeries() + "+" + mediaItem.getKeyWord();
+            } else {
+                key = mediaItem.getAdvertiseActive();
+            }
+            keySet.add(key);
+
+            clickCount = 0;
+            if(clickCountMap.get(key) != null) {
+                clickCount = clickCountMap.get(key);
+            }
+            if(mediaItem.getClickCount() != null) {
+                clickCount += mediaItem.getClickCount();
+            }
+            clickCountMap.put(key, clickCount);
+
+            totalAmount = 0.00d;
+            if(statAmountMap.get(key) != null) {
+                totalAmount = statAmountMap.get(key);
+            }
+            if(StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                totalAmount += Double.valueOf(mediaItem.getSpeedCost());
+            }
+            statAmountMap.put(key, totalAmount);
+        }
+
+
+        double amount;
+        String[] keyArray;
+        JSONObject tableItem;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        for (String keyword : keySet) {
+            if(StringUtils.isEmpty(statAmountMap.get(keyword))){
+                amount = 0.00;
+            }else{
+                amount = statAmountMap.get(keyword);
+            }
+            tableItem = new JSONObject();
+            if (StringUtils.hasText(advertiseActive)){
+                keyArray = keyword.split("\\+");
+                tableItem.put("advertiseSeries", keyArray[0]);
+                tableItem.put("keyword", keyArray[1]);
+            } else {
+                tableItem.put("advertiseActive", keyword);
+            }
+            // 计算转化成本
+            if(StringUtils.isEmpty(reserveCountMap.get(keyword))){
+                reserveCount = 0;
+            }else{
+                reserveCount = reserveCountMap.get(keyword);
+            }
+            if(reserveCount == 0){
+                tableItem.put("transformCost", "0.00");
+            }else{
+                tableItem.put("transformCost", decimalFormat.format(amount / reserveCount));
+            }
+            // 计算点击成本
+            if(StringUtils.isEmpty(clickCountMap.get(keyword))){
+                clickCount = 0;
+            }else{
+                clickCount = (int)clickCountMap.get(keyword);
+            }
+            if(clickCount == 0){
+                tableItem.put("clickCost", "0.00");
+            }else{
+                tableItem.put("clickCost", decimalFormat.format(amount / clickCount));
+            }
+            tableItemList.add(tableItem);
+        }
+
+        resultVo.setRtnCode(RetStatus.Ok.getValue());
+        resultVo.setRtnData(tableItemList);
         return resultVo;
     }
 

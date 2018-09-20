@@ -303,15 +303,13 @@ public class DashboardController {
         int reserveCount;
         Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Abnormal abnormal : abnormalList) {
-            if("是".equals(abnormal.getProblemData())){
-                dateKey = DataUtils.getDateKeyByDateType(abnormal.getDate(), paramVo.getDateType());
-                reserveCount = 0;
-                if(statCountMap.get(dateKey) != null){
-                    reserveCount = (Integer)statCountMap.get(dateKey);
-                }
-                reserveCount ++;
-                statCountMap.put(dateKey, reserveCount);
+            dateKey = DataUtils.getDateKeyByDateType(abnormal.getDate(), paramVo.getDateType());
+            reserveCount = 0;
+            if(statCountMap.get(dateKey) != null){
+                reserveCount = (Integer)statCountMap.get(dateKey);
             }
+            reserveCount ++;
+            statCountMap.put(dateKey, reserveCount);
         }
 
         JSONObject resultJson = formLineEchartResultJson(statCountMap);

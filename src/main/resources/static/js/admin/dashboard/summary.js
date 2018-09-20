@@ -68,7 +68,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                             area: ['600px', '450px']
                         });
                         insuranceEcharts.echartsMap[selectedId] = echarts.init($("#" + selectedId)[0]);;
-                        insuranceEcharts.drawPieEchart(selectedId, response.rtnData);
+                        insuranceEcharts.drawConsumePieEchart(selectedId, response.rtnData);
                     }
                 }
             });
@@ -113,11 +113,111 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         });
     });
     insuranceEcharts.echartsMap["abnormal-count-echart"] = echarts.init($("#abnormal-count-echart")[0]);
+    insuranceEcharts.echartsMap["abnormal-count-echart"].on("click", function (param) {
+        var selectedId;
+        var advertiseActive = $("#advertiseActive").val();
+
+        if(advertiseActive){
+            selectedId = "abnormal-count-table";
+            var date = param.name;
+            $.ajax({
+                url: "/admin/dashboard/summary/getAbnormalTableByDate",
+                data: {
+                    date: date,
+                    merchantId: $("#merchant").val(),
+                    platformName: $("#platformName").val(),
+                    advertiseActive: $("#advertiseActive").val()
+                },
+                success: function (response) {
+                    if(response && response.rtnCode === 200 && response.rtnData){
+                        var tableHtml = "";
+                        tableHtml += '<table class="layui-table" lay-size="sm" lay-filter="' + selectedId + '-table">';
+                        tableHtml += '<thead id="' + selectedId + '-table-head">';
+                        tableHtml += "<tr>";
+                        tableHtml += "<th lay-data=\"{align: 'center', field: 'advertiseSeries'}\">广告系列</th>";
+                        tableHtml += "<th lay-data=\"{align: 'center', field: 'keyword'}\">关键词</th>";
+                        tableHtml += "<th lay-data=\"{align: 'center', field: 'abnormalCount', sort: true}\">异常数量（个）</th>";
+                        tableHtml += "</tr>";
+                        tableHtml += '</thead>';
+                        tableHtml += '<tbody id="' + selectedId + '-table-body">';
+                        tableHtml += '</tbody>';
+                        tableHtml += '</table>';
+                        layer.open({
+                            type: 1,
+                            content: tableHtml,
+                            area: ['600px', '450px']
+                        });
+                        insuranceEcharts.drawConsumeTrendTable($, table, selectedId, response.rtnData);
+                    }
+                }
+            });
+        }else{
+            selectedId = "abnormal-count-pie-echart";
+            var date = param.name;
+            $.ajax({
+                url: "/admin/dashboard/summary/getAbnormalPieByDate",
+                data: {
+                    date: date,
+                    merchantId: $("#merchant").val(),
+                    platformName: $("#platformName").val()
+                },
+                success: function (response) {
+                    if(response && response.rtnCode === 200 && response.rtnData){
+                        var tableHtml = '<div id="' + selectedId + '" style="height: 400px;"></div>';
+                        layer.open({
+                            type: 1,
+                            content: tableHtml,
+                            area: ['600px', '450px']
+                        });
+                        insuranceEcharts.echartsMap[selectedId] = echarts.init($("#" + selectedId)[0]);;
+                        insuranceEcharts.drawAbnormalPieEchart(selectedId, response.rtnData);
+                    }
+                }
+            });
+        }
+    });
     insuranceEcharts.echartsMap["repellent-amount-echart"] = echarts.init($("#repellent-amount-echart")[0]);
 
     insuranceEcharts.echartsMap["transform-cycle-echart"] = echarts.init($("#transform-cycle-echart")[0]);
     insuranceEcharts.echartsMap["transform-rate-echart"] = echarts.init($("#transform-rate-echart")[0]);
     insuranceEcharts.echartsMap["cost-summary-echart"] = echarts.init($("#cost-summary-echart")[0]);
+    insuranceEcharts.echartsMap["cost-summary-echart"].on("click", function (param) {
+        var selectedId;
+        var date = param.name;
+        var advertiseActive = $("#advertiseActive").val();
+
+        if(advertiseActive){
+            selectedId = "cost-summary-keyword";
+        }else{
+            selectedId = "cost-summary-advertiseActive";
+        }
+        $.ajax({
+            url: "/admin/dashboard/summary/getCostSummaryByDate",
+            data: {
+                date: date,
+                merchantId: $("#merchant").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val()
+            },
+            success: function (response) {
+                if(response && response.rtnCode === 200 && response.rtnData){
+                    var tableHtml = "";
+                    tableHtml += '<table class="layui-table" lay-size="sm" lay-filter="' + selectedId + '-table">';
+                    tableHtml += '<thead id="' + selectedId + '-table-head">';
+                    tableHtml += '</thead>';
+                    tableHtml += '<tbody id="' + selectedId + '-table-body">';
+                    tableHtml += '</tbody>';
+                    tableHtml += '</table>';
+                    layer.open({
+                        type: 1,
+                        content: tableHtml,
+                        area: ['600px', '450px']
+                    });
+                    insuranceEcharts.drawCostSummaryTable($, table, selectedId, response.rtnData);
+                }
+            }
+        });
+    });
 
     insuranceEcharts.echartsMap["transform-cost-rank-echart"] = echarts.init($("#transform-cost-rank-echart")[0]);
     insuranceEcharts.echartsMap["underwrite-count-rank-echart"] = echarts.init($("#underwrite-count-rank-echart")[0]);
@@ -636,7 +736,7 @@ var insuranceEcharts = {
         selectedEchart.setOption(echartOption);
     },
 
-    drawPieEchart: function (selectedId, tableItemList) {
+    drawConsumePieEchart: function (selectedId, tableItemList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
@@ -680,7 +780,7 @@ var insuranceEcharts = {
             tableHtml += "<tr>";
             tableHtml += "<td>" + tableItemList[index].advertiseSeries + "</td>";
             tableHtml += "<td>" + tableItemList[index].keyword + "</td>";
-            tableHtml += "<td>" + tableItemList[index].speedCost + "</td>";
+            tableHtml += "<td>" + tableItemList[index].abnormalCount + "</td>";
             tableHtml += "</tr>";
         }
         $("#" + selectedId + "-table-body").html(tableHtml);
@@ -703,8 +803,8 @@ var insuranceEcharts = {
             if(tableItemList[0].hasOwnProperty("keyword")){
                 headHtml += "<th lay-data=\"{align: 'center', field: 'keyword'}\">关键词</th>";
             }
-            headHtml += "<th lay-data=\"{align: 'center', field: 'reserveCount'}\">预约数量（个）</th>";
-            headHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount'}\">承保件数（件）</th>";
+            headHtml += "<th lay-data=\"{align: 'center', field: 'reserveCount', sort: true}\">预约数量（个）</th>";
+            headHtml += "<th lay-data=\"{align: 'center', field: 'underwriteCount', sort: true}\">承保件数（件）</th>";
             headHtml += "<th lay-data=\"{align: 'center', field: 'underwriteAmount', sort: true}\">总保费（元）</th>";
             headHtml += "</tr>";
             $("#" + selectedId + "-table-head").html(headHtml);
@@ -725,6 +825,104 @@ var insuranceEcharts = {
             tableHtml += "<td>" + tableItemList[index].reserveCount + "</td>";
             tableHtml += "<td>" + tableItemList[index].underwriteCount + "</td>";
             tableHtml += "<td>" + tableItemList[index].underwriteAmount + "</td>";
+            tableHtml += "</tr>";
+        }
+        $("#" + selectedId + "-table-body").html(tableHtml);
+
+        table.init(selectedId + "-table", {
+            limit: tableItemList.length,
+            page: false,
+            height: 360
+        });
+    },
+
+    drawAbnormalPieEchart: function (selectedId, tableItemList) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        // 指定图表的配置项和数据
+        selectedEchart.clear();
+        var echartOption = {
+            tooltip : {
+                trigger: 'item',
+                formatter: "{b} <br/>数量: {c}<br/>占比: {d}%"
+            },
+            series : [
+                {
+                    type: 'pie',
+                    radius : '55%',
+                    center: ['50%', '50%'],
+                    data: tableItemList,
+                    label: {
+                        show: false
+                    },
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+    },
+    drawAbnormalTable: function ($, table, selectedId, tableItemList) {
+        var tableHtml = "";
+        if(!tableItemList || tableItemList.length <= 0){
+            tableHtml += "<tr>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "<td></td>";
+            tableHtml += "</tr>";
+        }
+        for(var index in tableItemList){
+            tableHtml += "<tr>";
+            tableHtml += "<td>" + tableItemList[index].advertiseSeries + "</td>";
+            tableHtml += "<td>" + tableItemList[index].keyword + "</td>";
+            tableHtml += "<td>" + tableItemList[index].speedCost + "</td>";
+            tableHtml += "</tr>";
+        }
+        $("#" + selectedId + "-table-body").html(tableHtml);
+
+        table.init(selectedId + "-table", {
+            limit: tableItemList.length,
+            page: false,
+            height: 360
+        });
+    },
+    drawCostSummaryTable: function ($, table, selectedId, tableItemList) {
+        if (tableItemList[0]) {
+            var headHtml = "<tr>";
+            if(tableItemList[0].hasOwnProperty("advertiseActive")){
+                headHtml += "<th lay-data=\"{align: 'center', field: 'advertiseActive'}\">广告活动</th>";
+            }
+            if(tableItemList[0].hasOwnProperty("advertiseSeries")){
+                headHtml += "<th lay-data=\"{align: 'center', field: 'advertiseSeries'}\">广告系列</th>";
+            }
+            if(tableItemList[0].hasOwnProperty("keyword")){
+                headHtml += "<th lay-data=\"{align: 'center', field: 'keyword'}\">关键词</th>";
+            }
+            headHtml += "<th lay-data=\"{align: 'center', field: 'transformCost', sort: true}\">转化成本（元）</th>";
+            headHtml += "<th lay-data=\"{align: 'center', field: 'clickCost', sort: true}\">点击成本（元）</th>";
+            headHtml += "</tr>";
+            $("#" + selectedId + "-table-head").html(headHtml);
+        }
+
+        var tableHtml = "";
+        for(var index in tableItemList){
+            tableHtml += "<tr>";
+            if(tableItemList[index].hasOwnProperty("advertiseActive")){
+                tableHtml += "<td>" + tableItemList[index].advertiseActive + "</td>";
+            }
+            if(tableItemList[index].hasOwnProperty("advertiseSeries")){
+                tableHtml += "<td>" + tableItemList[index].advertiseSeries + "</td>";
+            }
+            if(tableItemList[index].hasOwnProperty("keyword")){
+                tableHtml += "<td>" + tableItemList[index].keyword + "</td>";
+            }
+            tableHtml += "<td>" + tableItemList[index].transformCost + "</td>";
+            tableHtml += "<td>" + tableItemList[index].clickCost + "</td>";
             tableHtml += "</tr>";
         }
         $("#" + selectedId + "-table-body").html(tableHtml);
