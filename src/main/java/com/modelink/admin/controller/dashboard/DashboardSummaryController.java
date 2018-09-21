@@ -10,6 +10,7 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
+import com.modelink.reservation.enums.FeeTypeEnum;
 import com.modelink.reservation.service.*;
 import com.modelink.reservation.vo.*;
 import org.apache.xmlbeans.impl.jam.JSourcePosition;
@@ -214,7 +215,7 @@ public class DashboardSummaryController {
         flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
         flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
-        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -306,7 +307,7 @@ public class DashboardSummaryController {
         flowReserveParamPagerVo.setPlatformName(platformName);
         flowReserveParamPagerVo.setAdvertiseActive(advertiseActive);
         flowReserveParamPagerVo.setColumnFieldIds("id,date,advertiseActive,advertiseSeries,advertiseDesc");
-        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -426,7 +427,7 @@ public class DashboardSummaryController {
         flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
         flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
-        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -489,7 +490,7 @@ public class DashboardSummaryController {
         flowReserveParamPagerVo.setMerchantId(merchantId);
         flowReserveParamPagerVo.setPlatformName(platformName);
         flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
-        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -565,7 +566,7 @@ public class DashboardSummaryController {
         flowReserveParamPagerVo.setMerchantId(merchantId);
         flowReserveParamPagerVo.setPlatformName(platformName);
         flowReserveParamPagerVo.setColumnFieldIds("id,date,reserveMobile,advertiseSeries,advertiseDesc");
-        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -884,7 +885,7 @@ public class DashboardSummaryController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,date");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -994,7 +995,7 @@ public class DashboardSummaryController {
         paramPagerVo.setPlatformName(platformName);
         paramPagerVo.setAdvertiseActive(advertiseActive);
         paramPagerVo.setColumnFieldIds("id,date,advertiseActive,advertiseSeries,advertiseDesc");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 

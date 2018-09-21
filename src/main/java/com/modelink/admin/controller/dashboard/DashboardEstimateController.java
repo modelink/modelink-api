@@ -9,6 +9,7 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
+import com.modelink.reservation.enums.FeeTypeEnum;
 import com.modelink.reservation.service.*;
 import com.modelink.reservation.vo.EstimateParamPagerVo;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
@@ -42,6 +43,8 @@ public class DashboardEstimateController {
     private UnderwriteService underwriteService;
     @Resource
     private RepellentService repellentService;
+    @Resource
+    private MediaItemService mediaItemService;
 
     @RequestMapping
     public ModelAndView index(){
@@ -58,27 +61,27 @@ public class DashboardEstimateController {
 
         initDashboardParam(paramVo);
 
-        EstimateParamPagerVo estimateParamPagerVo = new EstimateParamPagerVo();
-        estimateParamPagerVo.setChooseDate(paramVo.getChooseDate());
-        estimateParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        estimateParamPagerVo.setPlatformName(paramVo.getPlatformName());
-        estimateParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        estimateParamPagerVo.setColumnFieldIds("id,date,transformCount");
-        estimateParamPagerVo.setDateField("date");
-        List<Estimate> estimateList = estimateService.findListByParam(estimateParamPagerVo);
+        /** 查询预约数量 **/
+        FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+        flowReserveParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        flowReserveParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
+        flowReserveParamPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
         String dateKey;
         int transformCount;
+        int transformTotalCount = 0;
         Map<String, Object> transformCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
-        for (Estimate estimate : estimateList) {
-            dateKey = DataUtils.getDateKeyByDateType(estimate.getDate(), DateTypeEnum.日.getValue());
+        for (FlowReserve flowReserve : flowReserveList) {
+            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), DateTypeEnum.日.getValue());
 
-            transformCount = 0;
-            if (transformCountMap.get(dateKey) != null) {
-                transformCount = (int)transformCountMap.get(dateKey);
-            }
-
-            transformCount += estimate.getTransformCount();
+            transformCount = (int)transformCountMap.get(dateKey);
+            transformCount ++;
+            transformTotalCount ++;
             transformCountMap.put(dateKey, transformCount);
         }
 
@@ -109,6 +112,8 @@ public class DashboardEstimateController {
 
         int underwriteCount;
         double underwriteAmount;
+        int underwriteTotalCount = 0;
+        double underwriteTotalAmount = 0.00d;
         Map<String, Integer> underwriteCountMap = new HashMap<>();
         Map<String, Double> underwriteAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
@@ -119,6 +124,7 @@ public class DashboardEstimateController {
                 underwriteCount = underwriteCountMap.get(dateKey);
             }
             underwriteCount ++;
+            underwriteTotalCount ++;
             underwriteCountMap.put(dateKey, underwriteCount);
 
             underwriteAmount = 0.0d;
@@ -127,9 +133,11 @@ public class DashboardEstimateController {
             }
             if (StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
                 underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+                underwriteTotalAmount += Double.parseDouble(underwrite.getInsuranceFee());
             }
             if (repellentMap.get(underwrite.getInsuranceNo()) != null) {
                 underwriteAmount -= Double.parseDouble(repellentMap.get(underwrite.getInsuranceNo()));
+                underwriteTotalAmount -= Double.parseDouble(repellentMap.get(underwrite.getInsuranceNo()));
             }
             underwriteAmountMap.put(dateKey, underwriteAmount);
         }
@@ -169,6 +177,9 @@ public class DashboardEstimateController {
         resultJson.put("transformCountList", transformCountList);
         resultJson.put("underwriteCountList", underwriteCountList);
         resultJson.put("underwriteAmountList", underwriteAmountList);
+        resultJson.put("transformTotalCount", transformTotalCount);
+        resultJson.put("underwriteTotalCount", underwriteTotalCount);
+        resultJson.put("underwriteTotalAmount", underwriteTotalAmount);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;
@@ -181,36 +192,57 @@ public class DashboardEstimateController {
 
         initDashboardParam(paramVo);
 
-        EstimateParamPagerVo estimateParamPagerVo = new EstimateParamPagerVo();
-        estimateParamPagerVo.setChooseDate(paramVo.getChooseDate());
-        estimateParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        estimateParamPagerVo.setPlatformName(paramVo.getPlatformName());
-        estimateParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        estimateParamPagerVo.setColumnFieldIds("id,date,transformCount");
-        estimateParamPagerVo.setDateField("date");
-        List<Estimate> estimateList = estimateService.findListByParam(estimateParamPagerVo);
+        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+        mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
+        mediaItemParamPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
         String dateKey;
-        double transformCost, transformAmount;
-        Map<String, Object> transformCostMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
-        Map<String, Object> transformAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
-        for (Estimate estimate : estimateList) {
-            dateKey = DataUtils.getDateKeyByDateType(estimate.getDate(), DateTypeEnum.日.getValue());
+        Double speedCost;
+        double transformTotalAmount = 0.00d;
+        Map<String, Double> speedCostMap = new HashMap<>();
+        for (MediaItem mediaItem : mediaItemList) {
+            dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), DateTypeEnum.日.getValue());
 
-            transformCost = (double)transformCostMap.get(dateKey);
-            if (estimate.getDirectTransformCost() != null && !"-".equals(estimate.getDirectTransformCost())) {
-                transformCost += Double.parseDouble(estimate.getDirectTransformCost());
+            speedCost = 0.00d;
+            if (speedCostMap.get(dateKey) != null) {
+                speedCost = speedCostMap.get(dateKey);
             }
-            transformCostMap.put(dateKey, transformCost);
-
-            transformAmount = (double)transformAmountMap.get(dateKey);
-            if (estimate.getTotalAmount() != null && !"-".equals(estimate.getTotalAmount())) {
-                transformAmount += Double.parseDouble(estimate.getTotalAmount());
+            if (StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
+                speedCost += Double.parseDouble(mediaItem.getSpeedCost());
+                transformTotalAmount += Double.parseDouble(mediaItem.getSpeedCost());
             }
-            transformAmountMap.put(dateKey, transformAmount);
+            speedCostMap.put(dateKey, speedCost);
         }
 
-        Set<String> keySet = transformCostMap.keySet();
+        /** 查询预约数量 **/
+        FlowReserveParamPagerVo flowReserveParamPagerVo = new FlowReserveParamPagerVo();
+        flowReserveParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        flowReserveParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        flowReserveParamPagerVo.setColumnFieldIds("date,reserveMobile");
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
+        flowReserveParamPagerVo.setDateField("date");
+        List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
+        int transformCount;
+        int transformTotalCount = 0;
+        Map<String, Object> transformCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
+        for (FlowReserve flowReserve : flowReserveList) {
+            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate(), DateTypeEnum.日.getValue());
+
+            transformCount = (int)transformCountMap.get(dateKey);
+            transformTotalCount ++;
+            transformCount ++;
+            transformCountMap.put(dateKey, transformCount);
+        }
+
+        Set<String> keySet = transformCountMap.keySet();
         String[] keyArray = keySet.toArray(new String[keySet.size()]);
         Arrays.sort(keyArray, new Comparator<String>() {
             @Override
@@ -226,14 +258,25 @@ public class DashboardEstimateController {
         for (String key : keyArray) {
             titleList.add(key);
 
-            transformCostList.add(decimalFormat.format((double)transformCostMap.get(key) * 100));
-            transformAmountList.add(decimalFormat.format((double)transformAmountMap.get(key) * 100));
+            if (speedCostMap.get(key) == null) {
+                transformAmountList.add("0.00");
+                transformCostList.add("0.00");
+            } else if ((int) transformCountMap.get(key) == 0) {
+                transformCostList.add("0.00");
+                transformAmountList.add(decimalFormat.format(speedCostMap.get(key)));
+            } else {
+                transformAmountList.add(decimalFormat.format(speedCostMap.get(key)));
+                transformCostList.add(decimalFormat.format(speedCostMap.get(key) / (int)transformCountMap.get(key)));
+            }
         }
 
+        if (transformTotalCount == 0) transformTotalCount = 1;
         JSONObject resultJson = new JSONObject();
         resultJson.put("titleList", titleList);
         resultJson.put("transformCostList", transformCostList);
         resultJson.put("transformAmountList", transformAmountList);
+        resultJson.put("transformTotalAmount", decimalFormat.format(transformTotalAmount));
+        resultJson.put("transformTotalCost", decimalFormat.format(transformTotalAmount / transformTotalCount));
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;
@@ -246,69 +289,68 @@ public class DashboardEstimateController {
 
         initDashboardParam(paramVo);
 
-        EstimateParamPagerVo estimateParamPagerVo = new EstimateParamPagerVo();
-        estimateParamPagerVo.setChooseDate(paramVo.getChooseDate());
-        estimateParamPagerVo.setMerchantId(paramVo.getMerchantId());
-        estimateParamPagerVo.setPlatformName(paramVo.getPlatformName());
-        estimateParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        estimateParamPagerVo.setColumnFieldIds("id,date,arriveRate,againRate,mediaClickRate");
-        estimateParamPagerVo.setDateField("date");
-        List<Estimate> estimateList = estimateService.findListByParam(estimateParamPagerVo);
+        MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
+        mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
+        mediaItemParamPagerVo.setDateField("date");
+        List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
         String dateKey;
-        double arriveRate, againRate, clickRate;
-        Map<String, Object> arriveRateMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
-        Map<String, Object> againRateMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
-        Map<String, Object> clickRateMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
-        for (Estimate estimate : estimateList) {
-            dateKey = DataUtils.getDateKeyByDateType(estimate.getDate(), DateTypeEnum.日.getValue());
+        Integer showCount;
+        Integer clickCount;
+        Integer showTotalCount = 0;
+        Integer clickTotalCount = 0;
+        Map<String, Object> showCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
+        Map<String, Object> clickCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "int");
+        for (MediaItem mediaItem : mediaItemList) {
+            dateKey = DataUtils.getDateKeyByDateType(mediaItem.getDate(), DateTypeEnum.日.getValue());
 
-            arriveRate = (double)arriveRateMap.get(dateKey);
-            if (estimate.getArriveRate() != null && !"-".equals(estimate.getArriveRate())) {
-                arriveRate += Double.parseDouble(estimate.getArriveRate());
+            showCount = (int)showCountMap.get(dateKey);
+            if (mediaItem.getShowCount() != null) {
+                showCount += mediaItem.getShowCount();
+                showTotalCount += mediaItem.getShowCount();
             }
-            arriveRateMap.put(dateKey, arriveRate);
+            showCountMap.put(dateKey, showCount);
 
-            againRate = (double)againRateMap.get(dateKey);
-            if (estimate.getAgainRate() != null && !"-".equals(estimate.getAgainRate())) {
-                againRate += Double.parseDouble(estimate.getAgainRate());
+            clickCount = (int)clickCountMap.get(dateKey);
+            if (mediaItem.getClickCount() != null) {
+                clickCount += mediaItem.getClickCount();
+                clickTotalCount += mediaItem.getClickCount();
             }
-            againRateMap.put(dateKey, againRate);
-
-            clickRate = (double)clickRateMap.get(dateKey);
-            if (estimate.getMediaClickRate() != null && !"-".equals(estimate.getMediaClickRate())) {
-                clickRate += Double.parseDouble(estimate.getMediaClickRate());
-            }
-            clickRateMap.put(dateKey, clickRate);
+            clickCountMap.put(dateKey, clickCount);
         }
 
-        Set<String> keySet = arriveRateMap.keySet();
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
-        Arrays.sort(keyArray, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-
         List<String> titleList = new ArrayList<>();
-        List<String> arriveRateList = new ArrayList<>();
-        List<String> againRateList = new ArrayList<>();
+        List<Integer> clickCountList = new ArrayList<>();
         List<String> clickRateList = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        List<String> keyArray = DataUtils.initDateList(paramVo.getChooseDate(), DateTypeEnum.日.getValue());
         for (String key : keyArray) {
             titleList.add(key);
+            clickCountList.add((int)clickCountMap.get(key));
+            if ((int)showCountMap.get(key) == 0) {
+                clickRateList.add("0.00");
+            } else {
+                clickRateList.add(decimalFormat.format((int)clickCountMap.get(key) * 100 / (int)showCountMap.get(key)));
+            }
+        }
 
-            arriveRateList.add(decimalFormat.format((double)arriveRateMap.get(key) * 100));
-            againRateList.add(decimalFormat.format((double)againRateMap.get(key) * 100));
-            clickRateList.add(decimalFormat.format((double)clickRateMap.get(key) * 100));
+        String clickTotalRate = "0.00";
+        if (showTotalCount != 0) {
+            clickTotalRate = decimalFormat.format(clickTotalCount * 100 / showTotalCount);
         }
 
         JSONObject resultJson = new JSONObject();
         resultJson.put("titleList", titleList);
-        resultJson.put("arriveRateList", arriveRateList);
-        resultJson.put("againRateList", againRateList);
         resultJson.put("clickRateList", clickRateList);
+        resultJson.put("clickCountList", clickCountList);
+
+        resultJson.put("clickTotalRate", clickTotalRate);
+        resultJson.put("clickTotalCount", clickTotalCount);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;
@@ -351,7 +393,7 @@ public class DashboardEstimateController {
             flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
             flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
             flowReserveParamPagerVo.setColumnFieldIds("id,advertiseDesc");
-            flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_ESTIMATE);
+            flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
             flowReserveParamPagerVo.setDateField("date");
             List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
 
@@ -442,7 +484,7 @@ public class DashboardEstimateController {
             flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
             flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
             flowReserveParamPagerVo.setColumnFieldIds("id,provinceId,cityId");
-            flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_ESTIMATE);
+            flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
             flowReserveParamPagerVo.setDateField("date");
             if(StringUtils.hasText(paramVo.getProvinceName())) {
                 flowReserveParamPagerVo.setProvinceId(area == null ? 0 : area.getAreaId());
@@ -516,7 +558,7 @@ public class DashboardEstimateController {
         flowReserveParamPagerVo.setPlatformName(paramVo.getPlatformName());
         flowReserveParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowReserveParamPagerVo.setColumnFieldIds("id,browser,os,resolutionRatio");
-        flowReserveParamPagerVo.setFeeType(FlowReserve.FEE_TYPE_ESTIMATE);
+        flowReserveParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_ESTIMATE.getText());
         flowReserveParamPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(flowReserveParamPagerVo);
         if("os".equals(paramVo.getSource())) {
@@ -778,6 +820,8 @@ public class DashboardEstimateController {
 
         int totalCount, difference;
         String finishDate, reserveDate;
+        Integer underwriteTotalCount = 0;
+        Integer totalDifference = 0;
         Map<Integer, Integer> transformCycleMap;
         Set<String> advertiseActiveList = new HashSet<>();
         Map<String, Map<Integer, Integer>> advertiseActiveMap = new HashMap<>();
@@ -788,6 +832,8 @@ public class DashboardEstimateController {
             if(difference <= 0){
                 continue;
             }
+            underwriteTotalCount ++;
+            totalDifference += difference;
             advertiseActiveList.add(underwrite.getAdvertiseActive());
             if (advertiseActiveMap.get(underwrite.getAdvertiseActive()) == null) {
                 transformCycleMap = new HashMap<>(11);
@@ -882,10 +928,16 @@ public class DashboardEstimateController {
             labelList.add(transformCycleEnum.getText());
         }
 
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         JSONObject resultJson = new JSONObject();
         resultJson.put("titleList", titleList);
         resultJson.put("contentList", contentList);
         resultJson.put("labelList", labelList);
+        if (underwriteTotalCount == 0) {
+            resultJson.put("transformTotalCycle", 0);
+        } else {
+            resultJson.put("transformTotalCycle", decimalFormat.format(totalDifference / underwriteTotalCount));
+        }
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;

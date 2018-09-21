@@ -9,6 +9,7 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
+import com.modelink.reservation.enums.FeeTypeEnum;
 import com.modelink.reservation.service.*;
 import com.modelink.reservation.vo.*;
 import com.modelink.usercenter.bean.Area;
@@ -60,7 +61,7 @@ public class DashboardMediaController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,advertiseDesc");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
         int reserveCount = flowReserveList.size();

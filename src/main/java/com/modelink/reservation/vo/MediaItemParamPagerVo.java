@@ -9,6 +9,7 @@ public class MediaItemParamPagerVo extends PagerVo {
     private String platformName;
     private String advertiseActive;
 
+    private String feeType;
     private String dateField;
     private String columnFieldIds;
 
@@ -42,6 +43,14 @@ public class MediaItemParamPagerVo extends PagerVo {
 
     public void setAdvertiseActive(String advertiseActive) {
         this.advertiseActive = advertiseActive;
+    }
+
+    public String getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(String feeType) {
+        this.feeType = feeType;
     }
 
     public String getDateField() {

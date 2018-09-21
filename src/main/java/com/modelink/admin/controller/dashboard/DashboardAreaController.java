@@ -12,6 +12,7 @@ import com.modelink.reservation.bean.FlowArea;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.bean.MediaItem;
 import com.modelink.reservation.bean.Underwrite;
+import com.modelink.reservation.enums.FeeTypeEnum;
 import com.modelink.reservation.service.FlowAreaService;
 import com.modelink.reservation.service.FlowReserveService;
 import com.modelink.reservation.service.MediaItemService;
@@ -74,7 +75,7 @@ public class DashboardAreaController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,provinceId,cityId");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         if(StringUtils.hasText(paramVo.getProvinceName())) {
             area = areaService.findByNameAndType(paramVo.getProvinceName(), AreaTypeEnum.省.getValue());
@@ -795,7 +796,7 @@ public class DashboardAreaController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,provinceId,cityId");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 

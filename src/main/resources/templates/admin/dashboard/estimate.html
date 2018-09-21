@@ -95,7 +95,59 @@
         </div>
     </form>
 
+    <div class="layui-row layui-col-space15 ml-table">
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>测保转化数（个）</label>
+                <label id="transformTotalCount"></label>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>承保件数（件）</label>
+                <label id="underwriteTotalCount"></label>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>承保保费（元）</label>
+                <label id="underwriteTotalAmount"></label>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>总花费（元）</label>
+                <label id="transformTotalAmount"></label>
+            </div>
+        </div>
+    </div>
 
+    <div class="layui-row layui-col-space15 ml-table">
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>直接转化成本（元）</label>
+                <label id="transformTotalCost"></label>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>点击数（个）</label>
+                <label id="clickTotalCount"></label>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>点击率（%）</label>
+                <label id="clickTotalRate"></label>
+            </div>
+        </div>
+        <div class="layui-col-sm6 layui-col-md3">
+            <div class="layui-label layui-card">
+                <label>测保转化周期（天）</label>
+                <label id="transformTotalCycle"></label>
+            </div>
+        </div>
+    </div>
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm12 layui-col-md4">
             <div class="layui-card">
@@ -129,12 +181,12 @@
                 <div class="layui-card-header" id="estimate-keyword">
                     <div style="float:left;">广告描述（TOP30）</div>
                     <div style="float:right;" class="layui-btn-group">
-                        <button data-value="estimate" class="layui-btn layui-btn-sm">测保</button>
-                        <button data-value="underwrite" class="layui-btn layui-btn-primary layui-btn-sm">承保</button>
+                        <button data-value="estimate" class="layui-btn layui-btn-sm">测保-转化数</button>
+                        <button data-value="underwrite" class="layui-btn layui-btn-primary layui-btn-sm">测保（承保）-件数</button>
                     </div>
                 </div>
                 <div class="layui-card-body">
-                    <div id="estimate-keyword-echart" style="height: 600px;"></div>
+                    <div id="estimate-keyword-echart" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
@@ -143,12 +195,12 @@
                 <div class="layui-card-header" id="estimate-area">
                     <div style="float:left;">地区名称（TOP30）</div>
                     <div style="float:right;" class="layui-btn-group">
-                        <button data-value="estimate" class="layui-btn layui-btn-sm">测保</button>
-                        <button data-value="underwrite" class="layui-btn layui-btn-primary layui-btn-sm">承保</button>
+                        <button data-value="estimate" class="layui-btn layui-btn-sm">测保-转化数</button>
+                        <button data-value="underwrite" class="layui-btn layui-btn-primary layui-btn-sm">测保（承保）-件数</button>
                     </div>
                 </div>
                 <div class="layui-card-body">
-                    <div id="estimate-area-echart" style="height: 600px;"></div>
+                    <div id="estimate-area-echart" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
@@ -163,7 +215,7 @@
                     </div>
                 </div>
                 <div class="layui-card-body">
-                    <div id="estimate-client-echart" style="height: 600px;"></div>
+                    <div id="estimate-client-echart" style="height: 400px;"></div>
                 </div>
             </div>
         </div>
@@ -180,7 +232,7 @@
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="layui-card">
-                <div class="layui-card-header">测保——转化周期分布</div>
+                <div class="layui-card-header">测保（承保用户）-转化周期分布</div>
                 <div class="layui-card-body">
                     <div id="transform-cycle-echart" style="height: 300px;"></div>
                 </div>

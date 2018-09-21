@@ -11,6 +11,7 @@ import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
+import com.modelink.reservation.enums.FeeTypeEnum;
 import com.modelink.reservation.service.*;
 import com.modelink.reservation.vo.*;
 import com.modelink.usercenter.bean.Area;
@@ -59,7 +60,7 @@ public class DashboardController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setColumnFieldIds("date,reserveMobile");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         String dateKey;
@@ -494,7 +495,7 @@ public class DashboardController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setColumnFieldIds("date,reserveMobile");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         int reserveCount;
@@ -808,7 +809,7 @@ public class DashboardController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setColumnFieldIds("date,advertiseDesc");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
         int searchCount;

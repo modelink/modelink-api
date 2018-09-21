@@ -10,6 +10,7 @@ import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.bean.MediaItem;
 import com.modelink.reservation.bean.Underwrite;
+import com.modelink.reservation.enums.FeeTypeEnum;
 import com.modelink.reservation.service.FlowReserveService;
 import com.modelink.reservation.service.MediaItemService;
 import com.modelink.reservation.service.UnderwriteService;
@@ -58,7 +59,7 @@ public class DashboardClientController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,date,os,browser,resolutionRatio,deviceType");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
@@ -156,7 +157,7 @@ public class DashboardClientController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,date,os,browser,resolutionRatio,deviceType");
-        paramPagerVo.setFeeType(FlowReserve.FEE_TYPE_RESERVE);
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 

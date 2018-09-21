@@ -120,6 +120,9 @@ var insuranceEcharts = {
                 }
                 insuranceEcharts.drawEstimateResultEchart(selectedPrefix + "-echart", response.rtnData.titleList,
                     response.rtnData.transformCountList, response.rtnData.underwriteCountList, response.rtnData.underwriteAmountList);
+                $("#transformTotalCount").html(response.rtnData.transformTotalCount);
+                $("#underwriteTotalCount").html(response.rtnData.underwriteTotalCount);
+                $("#underwriteTotalAmount").html(response.rtnData.underwriteTotalAmount);
             }
         });
     },
@@ -142,6 +145,8 @@ var insuranceEcharts = {
                 }
                 insuranceEcharts.drawEstimateTransformEchart(selectedPrefix + "-echart",
                     response.rtnData.titleList, response.rtnData.transformCostList, response.rtnData.transformAmountList);
+                $("#transformTotalAmount").html(response.rtnData.transformTotalAmount);
+                $("#transformTotalCost").html(response.rtnData.transformTotalCost);
             }
         });
     },
@@ -159,15 +164,15 @@ var insuranceEcharts = {
                     insuranceEcharts.drawEstimateBrowseEchart(selectedPrefix + "-echart",
                         ["", "", "", "", "", "", ""],
                         ["0","0","0","0","0","0","0"],
-                        ["0","0","0","0","0","0","0"],
                         ["0","0","0","0","0","0","0"]);
                     return;
                 }
                 insuranceEcharts.drawEstimateBrowseEchart(selectedPrefix + "-echart",
                     response.rtnData.titleList,
-                    response.rtnData.arriveRateList,
-                    response.rtnData.againRateList,
-                    response.rtnData.clickRateList);
+                    response.rtnData.clickRateList,
+                    response.rtnData.clickCountList);
+                $("#clickTotalRate").html(response.rtnData.clickTotalRate);
+                $("#clickTotalCount").html(response.rtnData.clickTotalCount);
             }
         });
     },
@@ -282,6 +287,7 @@ var insuranceEcharts = {
                     response.rtnData.titleList,
                     response.rtnData.labelList,
                     response.rtnData.contentList);
+                $("#transformTotalCycle").html(response.rtnData.transformTotalCycle);
             }
         });
     },
@@ -302,7 +308,7 @@ var insuranceEcharts = {
                 }
             },
             grid: {
-                left: '120',
+                left: '150',
                 bottom: '20%'
             },
             legend: {
@@ -324,8 +330,11 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '测保转化数',
+                    name: '测保转化数（个）',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[0]
@@ -337,9 +346,12 @@ var insuranceEcharts = {
                 },
                 {
                     type: 'value',
-                    name: '承保件数',
+                    name: '承保件数（件）',
                     position: 'left',
-                    offset: 80,
+                    offset: 100,
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[1]
@@ -351,8 +363,11 @@ var insuranceEcharts = {
                 },
                 {
                     type: 'value',
-                    name: '保费',
+                    name: '保费（元）',
                     position: 'right',
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[2]
@@ -409,6 +424,9 @@ var insuranceEcharts = {
             xAxis: [
                 {
                     type: 'category',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         interval: 0,
                         rotate: "45"
@@ -424,6 +442,9 @@ var insuranceEcharts = {
                     type: 'value',
                     name: '直接转化成本',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[0]
@@ -437,6 +458,9 @@ var insuranceEcharts = {
                     type: 'value',
                     name: '总花费',
                     position: 'right',
+                    splitLine:{
+                        show:false
+                    },
                     axisLine: {
                         lineStyle: {
                             color: colors[1]
@@ -466,7 +490,7 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawEstimateBrowseEchart: function (selectedId, titleList, arriveRateList, againRateList, clickRateList) {
+    drawEstimateBrowseEchart: function (selectedId, titleList, clickRateList, clickCountList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
@@ -479,16 +503,18 @@ var insuranceEcharts = {
             },
             grid: {
                 show: true,
-                top: "10%",
                 right: "10%",
                 borderColor: "#c45455",//网格的边框颜色
                 bottom: "20%" //
             },
             legend: {
-                data:['到达率','二跳率','点击率']
+                data:['点击率','点击量']
             },
             xAxis: {
                 type: 'category',
+                splitLine:{
+                    show:false
+                },
                 axisLabel: {
                     interval: 0,
                     rotate: "45"
@@ -498,29 +524,39 @@ var insuranceEcharts = {
             yAxis: [
                 {
                     type: 'value',
-                    name: '百分比',
+                    name: '点击率（%）',
                     position: 'left',
+                    splitLine:{
+                        show:false
+                    },
                     axisLabel: {
                         formatter: '{value}%'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '点击量（个）',
+                    position: 'right',
+                    splitLine:{
+                        show:false
+                    },
+                    axisLabel: {
+                        formatter: '{value}个'
                     }
                 }
             ],
             series: [
                 {
-                    data: arriveRateList,
-                    type: 'line',
-                    name: '到达率'
-                },
-                {
-                    data: againRateList,
-                    type: 'line',
-                    name: '二跳率'
-                }
-                ,
-                {
                     data: clickRateList,
+                    yAxisIndex: 0,
                     type: 'line',
                     name: '点击率'
+                },
+                {
+                    data: clickCountList,
+                    yAxisIndex: 1,
+                    type: 'bar',
+                    name: '点击量'
                 }
             ]
         };
@@ -541,24 +577,35 @@ var insuranceEcharts = {
             },
             grid: {
                 show: true,
-                top: "10%",
+                top: "5%",
                 left: "20%",
-                right: "10%",
+                right: "5%",
+                bottom: "10%",
                 borderColor: "#c45455",//网格的边框颜色
-                bottom: "10%" //
             },
+            dataZoom: [
+                {
+                    type: 'slider',
+                    show: true,
+                    yAxisIndex: [0],
+                    start: 0,
+                    end: 30,//设置X轴刻度之间的间隔
+                    zoomLock: true, //锁定区域禁止缩放(鼠标滚动会缩放,所以禁止)
+                }
+
+            ],
             xAxis: {
                 type: 'value'
             },
             yAxis: {
                 type: 'category',
-                data: titleList
+                data: titleList.reverse()
             },
             series: [
                 {
                     type: 'bar',
                     barWidth: '50%',
-                    data: contentList
+                    data: contentList.reverse()
                 }
             ]
         };
