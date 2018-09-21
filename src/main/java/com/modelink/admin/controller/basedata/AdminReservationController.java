@@ -78,6 +78,7 @@ public class AdminReservationController {
         columnNameList.add("预约入口");
         columnNameList.add("创建时间");
         // 创建Excel 数据
+        Merchant merchant;
         List<String> rowValueList;
         List<List<String>> dataList = new ArrayList<>();
         List<Reservation> reservationList = reservationService.findListByParam(paramPagerVo);
@@ -86,8 +87,13 @@ public class AdminReservationController {
             rowValueList.add(reservation.getContactName());
             rowValueList.add(reservation.getContactMobile());
             rowValueList.add(reservation.getContactTime());
-            rowValueList.add("小米渠道");
-            rowValueList.add(ResourceTypeEnum.getTextByValue(reservation.getSourceType()));
+            merchant = merchantService.findById(reservation.getChannel());
+            rowValueList.add(merchant == null ? "" : merchant.getName());
+            if(merchant.getAppKey() == 10000L){
+                rowValueList.add("H5:塑料姐妹情");
+            }else if(merchant.getAppKey() == 10001L){
+                rowValueList.add(HXSourceTypeEnum.getTextByValue(reservation.getSourceType()));
+            }
             rowValueList.add(DateUtils.formatDate(reservation.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
             dataList.add(rowValueList);
         }
