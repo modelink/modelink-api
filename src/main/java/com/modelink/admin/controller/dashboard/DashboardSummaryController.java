@@ -2,6 +2,7 @@ package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.admin.vo.DashboardSummaryParamVo;
 import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
@@ -753,55 +754,52 @@ public class DashboardSummaryController {
 
         initDashboardParam(paramVo);
 
-        UnderwriteParamPagerVo paramPagerVo = new UnderwriteParamPagerVo();
-        paramPagerVo.setChooseDate(paramVo.getChooseDate());
-        paramPagerVo.setMerchantId(paramVo.getMerchantId());
-        paramPagerVo.setColumnFieldIds("id,reserveDate,reserveMobile");
-        paramPagerVo.setPlatformName(paramVo.getPlatformName());
-        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setDateField("reserveDate");
-        paramPagerVo.setSource("!产品测保");
-        List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
+        // 保费汇总
+        UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
+        underwriteParamPagerVo.setChooseDate(paramVo.getChooseDate());
+        underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
+        underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
+        underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
+        underwriteParamPagerVo.setColumnFieldIds("id,reserveDate,finishDate,advertiseActive");
+        underwriteParamPagerVo.setSource("!产品测保");
+        underwriteParamPagerVo.setDateField("reserveDate");
+        List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
-        Set<String> mobileSet = new HashSet<>();
-        for (Underwrite underwrite : underwriteList) {
-            mobileSet.add(underwrite.getReserveMobile());
-        }
-
-        List<FlowReserve> flowReserveList = flowReserveService.findListByMobiles(mobileSet, "date");
-        Map<String, String> mobile2DateMap = new HashMap<>();
-        for (FlowReserve flowReserve : flowReserveList) {
-            mobile2DateMap.put(flowReserve.getReserveMobile(), flowReserve.getDate());
-        }
-
-        String mobile;
-        int difference, totalCount;
-        int totalDifference = 0, reserveTotalCount = 0;
-        String reserveDate, finishDate;
-
-        Map<Integer, Integer> transformCycleMap = new HashMap<>();
-        transformCycleMap.put(TransformCycleEnum.from_1.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_2.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_3.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_4.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_5.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_6.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_7_14.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_15_30.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_31_60.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_61_90.getValue(), 0);
-        transformCycleMap.put(TransformCycleEnum.from_91.getValue(), 0);
-        for (Underwrite underwrite : underwriteList) {
-            mobile = underwrite.getReserveMobile();
-            if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(mobile2DateMap.get(mobile))){
-                continue;
-            }
+        int totalCount, difference;
+        String finishDate, reserveDate;
+        Integer underwriteTotalCount = 0;
+        Integer totalDifference = 0;
+        Map<Integer, Integer> transformCycleMap;
+        Set<String> advertiseActiveList = new HashSet<>();
+        Map<String, Map<Integer, Integer>> advertiseActiveMap = new HashMap<>();
+        for(Underwrite underwrite : underwriteList){
             finishDate = underwrite.getFinishDate();
             reserveDate = underwrite.getReserveDate();
             difference = DateUtils.getDateDifference(reserveDate, finishDate);
             if(difference <= 0){
-                difference = 0;
-            }else if(difference > 90){
+                continue;
+            }
+            underwriteTotalCount ++;
+            totalDifference += difference;
+            advertiseActiveList.add(underwrite.getAdvertiseActive());
+            if (advertiseActiveMap.get(underwrite.getAdvertiseActive()) == null) {
+                transformCycleMap = new HashMap<>(11);
+                transformCycleMap.put(TransformCycleEnum.from_1.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_2.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_3.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_4.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_5.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_6.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_7_14.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_15_30.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_31_60.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_61_90.getValue(), 0);
+                transformCycleMap.put(TransformCycleEnum.from_91.getValue(), 0);
+            } else {
+                transformCycleMap = advertiseActiveMap.get(underwrite.getAdvertiseActive());
+            }
+
+            if(difference > 90){
                 totalCount = transformCycleMap.get(TransformCycleEnum.from_91.getValue());
                 totalCount ++;
                 transformCycleMap.put(TransformCycleEnum.from_91.getValue(), totalCount);
@@ -846,27 +844,47 @@ public class DashboardSummaryController {
                 totalCount ++;
                 transformCycleMap.put(TransformCycleEnum.from_1.getValue(), totalCount);
             }
-            totalDifference += difference;
-            reserveTotalCount ++;
+            advertiseActiveMap.put(underwrite.getAdvertiseActive(), transformCycleMap);
         }
 
-        // 组装数据视图JSON
+        Set<Integer> keySet;
+        Integer[] keyArray;
+        List<Integer> itemList;
+        List<String> titleList = new ArrayList<>();
+        List<List<Integer>> contentList = new ArrayList<>();
+        for (String advertiseActive : advertiseActiveList) {
+            titleList.add(advertiseActive);
+
+            transformCycleMap = advertiseActiveMap.get(advertiseActive);
+            keySet = transformCycleMap.keySet();
+            keyArray = keySet.toArray(new Integer[keySet.size()]);
+            Arrays.sort(keyArray, new Comparator<Integer>() {
+                @Override
+                public int compare(Integer o1, Integer o2) {
+                    return o1.compareTo(o2);
+                }
+            });
+            itemList = new ArrayList<>();
+            for (Integer key : keyArray) {
+                itemList.add(transformCycleMap.get(key));
+            }
+            contentList.add(itemList);
+        }
+        List<String> labelList = new ArrayList<>();
+        for (TransformCycleEnum transformCycleEnum : TransformCycleEnum.values()) {
+            labelList.add(transformCycleEnum.getText());
+        }
+
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         JSONObject resultJson = new JSONObject();
-        JSONArray titleArray = new JSONArray();
-        JSONArray contentArray = new JSONArray();
-        Set<Integer> keySet = transformCycleMap.keySet();
-        Integer[] keyArray = keySet.toArray(new Integer[keySet.size()]);
-        Arrays.sort(keyArray);
-
-        for(Integer key : keyArray){
-            titleArray.add(TransformCycleEnum.getTextByValue(key));
-            contentArray.add(transformCycleMap.get(key));
+        resultJson.put("titleList", titleList);
+        resultJson.put("contentList", contentList);
+        resultJson.put("labelList", labelList);
+        if (underwriteTotalCount == 0) {
+            resultJson.put("transformCycle", 0);
+        } else {
+            resultJson.put("transformCycle", decimalFormat.format(totalDifference / underwriteTotalCount));
         }
-        if(reserveTotalCount == 0) reserveTotalCount = 1;
-        resultJson.put("transformCycle", decimalFormat.format(totalDifference / reserveTotalCount));
-        resultJson.put("titleList", titleArray);
-        resultJson.put("contentList", contentArray);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultVo.setRtnData(resultJson);
         return resultVo;

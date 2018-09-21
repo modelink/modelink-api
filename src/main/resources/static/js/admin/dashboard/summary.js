@@ -326,12 +326,12 @@ var insuranceEcharts = {
             },
             success: function (response) {
                 if(!response || response.rtnCode != 200 || !response.rtnData || response.rtnData.contentList.length <= 0){
-                    insuranceEcharts.drawTransformCycleEchart(selectedPrefix + "-echart",
-                        ["1天", "2天", "3天", "4天", "5天", "6天", "7天-14天", "15天-30天", "31天-60天", "61天-90天", "90天以上"],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
                     return;
                 }
-                insuranceEcharts.drawTransformCycleEchart(selectedPrefix + "-echart", response.rtnData.titleList, response.rtnData.contentList);
+                insuranceEcharts.drawTransformCycleEchart(selectedPrefix + "-echart",
+                    response.rtnData.titleList,
+                    response.rtnData.labelList,
+                    response.rtnData.contentList);
                 if(response.rtnData.hasOwnProperty("transformCycle")){
                     $("#transformCycle").val(response.rtnData.transformCycle);
                 }
@@ -551,37 +551,44 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawTransformCycleEchart: function (selectedId, titleList, contentList) {
+    drawTransformCycleEchart: function (selectedId, titleList, labelList, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
-        // 指定图表的配置项和数据
         selectedEchart.clear();
+
+        var series;
+        var seriesList = [];
+        for (var index in titleList) {
+            series = {};
+            series.name = titleList[index];
+            series.type = 'bar';
+            series.stack = '总量';
+            series.data = contentList[index];
+            seriesList.push(series);
+        }
         var echartOption = {
-            tooltip: {
+            tooltip : {
                 trigger: 'axis',
-                axisPointer: {
-                    type: 'shadow'
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
                 }
             },
-            xAxis: {
-                type: 'value',
-                splitLine:{
-                    show:false
-                },
+            legend: {
+                data: titleList
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis:  {
+                type: 'value'
             },
             yAxis: {
                 type: 'category',
-                splitLine:{
-                    show:false
-                },
-                data: titleList
+                data: labelList
             },
-            series: [
-                {
-                    type: 'bar',
-                    barWidth: '50%',
-                    data: contentList
-                }
-            ]
+            series: seriesList
         };
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
