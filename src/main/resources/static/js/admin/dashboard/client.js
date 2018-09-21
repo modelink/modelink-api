@@ -23,7 +23,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         $(this).removeClass("layui-btn-primary");
 
         insuranceEcharts.transformChooseItem = [];
-        insuranceEcharts.chooseItem.push($(this).attr("data-value"));
+        insuranceEcharts.transformChooseItem.push($(this).attr("data-value"));
         insuranceEcharts.getClientEchartJson($, table, "reserve-count", "/admin/dashboard/client/getReserveSummary");
 
     });
@@ -56,7 +56,7 @@ var insuranceEcharts = {
         $.ajax({
             url: dataUrl,
             data: {
-                chooseItems: insuranceEcharts.chooseItem.join(","),
+                chooseItems: insuranceEcharts.transformChooseItem.join(","),
                 merchantId: $("#merchant").val(),
                 chooseDate: $("#chooseDate").val(),
                 platformName: $("#platformName").val(),
@@ -133,13 +133,13 @@ var insuranceEcharts = {
     drawClientTable: function ($, table, selectedId, tableItemList) {
         var tableHtml = "";
         tableHtml += "<tr>";
-        if(insuranceEcharts.chooseItem.indexOf("browser") != -1){
+        if(insuranceEcharts.transformChooseItem.indexOf("browser") != -1){
             tableHtml += "<th lay-data=\"{align: 'center', field: 'browser'}\">浏览器</th>";
-        }else if(insuranceEcharts.chooseItem.indexOf("os") != -1){
+        }else if(insuranceEcharts.transformChooseItem.indexOf("os") != -1){
             tableHtml += "<th lay-data=\"{align: 'center', field: 'os'}\">操作系统</th>";
-        }else if(insuranceEcharts.chooseItem.indexOf("resolutionRatio") != -1){
+        }else if(insuranceEcharts.transformChooseItem.indexOf("resolutionRatio") != -1){
             tableHtml += "<th lay-data=\"{align: 'center', field: 'resolutionRatio'}\">屏幕分辨率</th>";
-        }else if(insuranceEcharts.chooseItem.indexOf("deviceType") != -1){
+        }else if(insuranceEcharts.transformChooseItem.indexOf("deviceType") != -1){
             tableHtml += "<th lay-data=\"{align: 'center', field: 'deviceType'}\">设备类别</th>";
         }
         tableHtml += "<th lay-data=\"{align: 'center', field: 'value', sort: true}\">预约数量（个）</th>";
@@ -150,7 +150,7 @@ var insuranceEcharts = {
         tableHtml = "";
         if(!tableItemList || tableItemList.length <= 0){
             tableHtml += "<tr>";
-            for(var i in insuranceEcharts.chooseItem){
+            for(var i in insuranceEcharts.transformChooseItem){
                 tableHtml += "<td></td>";
             }
             tableHtml += "<td></td>";
@@ -159,14 +159,14 @@ var insuranceEcharts = {
         }
         for(var index in tableItemList){
             tableHtml += "<tr>";
-            for(var i in insuranceEcharts.chooseItem){
-                if(insuranceEcharts.chooseItem[i] == "browser"){
+            for(var i in insuranceEcharts.transformChooseItem){
+                if(insuranceEcharts.transformChooseItem[i] == "browser"){
                     tableHtml += "<td>" + tableItemList[index].browser + "</td>";
-                }else if(insuranceEcharts.chooseItem[i] == "os"){
+                }else if(insuranceEcharts.transformChooseItem[i] == "os"){
                     tableHtml += "<td>" + tableItemList[index].os + "</td>";
-                }else if(insuranceEcharts.chooseItem[i] == "resolutionRatio"){
+                }else if(insuranceEcharts.transformChooseItem[i] == "resolutionRatio"){
                     tableHtml += "<td>" + tableItemList[index].resolutionRatio + "</td>";
-                }else if(insuranceEcharts.chooseItem[i] == "deviceType"){
+                }else if(insuranceEcharts.transformChooseItem[i] == "deviceType"){
                     tableHtml += "<td>" + tableItemList[index].deviceType + "</td>";
                 }
             }

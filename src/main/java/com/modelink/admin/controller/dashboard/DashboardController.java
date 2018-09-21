@@ -308,7 +308,7 @@ public class DashboardController {
         int reserveCount;
         Map<String, Object> statCountMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "int");
         for (Abnormal abnormal : abnormalList) {
-            dateKey = DataUtils.getDateKeyByDateType(abnormal.getDate(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(abnormal.getReserveDate(), paramVo.getDateType());
             reserveCount = 0;
             if(statCountMap.get(dateKey) != null){
                 reserveCount = (Integer)statCountMap.get(dateKey);
@@ -466,7 +466,7 @@ public class DashboardController {
             if(clickCount == 0) {
                 resultStatMap.put(dateKey, "0.00");
             }else{
-                resultStatMap.put(dateKey, decimalFormat.format((count * 100.0d) / clickCount));
+                resultStatMap.put(dateKey, decimalFormat.format((count * 1000.0d) / clickCount));
             }
         }
 

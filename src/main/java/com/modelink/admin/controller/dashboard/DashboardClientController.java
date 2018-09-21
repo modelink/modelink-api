@@ -63,7 +63,7 @@ public class DashboardClientController {
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
 
-        String browser;
+        String browser, os, resolutionRatio, deviceType;
         int reserveCount, totalCount = 0;
         StringBuilder chooseItems;
         Map<String, Integer> reserveCountMap = new HashMap<>();
@@ -72,7 +72,7 @@ public class DashboardClientController {
             if(paramVo.getChooseItems().contains("browser")){
                 browser = flowReserve.getBrowser();
                 if(StringUtils.isEmpty(browser) || "-".equals(browser)){
-                    continue;
+                    browser = "-";
                 }
                 if(browser.indexOf(" ") > 0) {
                     browser = browser.substring(0, browser.indexOf(" "));
@@ -80,13 +80,25 @@ public class DashboardClientController {
                 chooseItems.append(browser).append("|");
             }
             if(paramVo.getChooseItems().contains("os")){
-                chooseItems.append(flowReserve.getOs()).append("|");
+                os = flowReserve.getOs();
+                if(StringUtils.isEmpty(os)){
+                    os = "-";
+                }
+                chooseItems.append(os).append("|");
             }
             if(paramVo.getChooseItems().contains("resolutionRatio")){
-                chooseItems.append(flowReserve.getResolutionRatio()).append("|");
+                resolutionRatio = flowReserve.getResolutionRatio();
+                if(StringUtils.isEmpty(resolutionRatio)){
+                    resolutionRatio = "-";
+                }
+                chooseItems.append(resolutionRatio).append("|");
             }
             if(paramVo.getChooseItems().contains("deviceType")){
-                chooseItems.append(flowReserve.getDeviceType()).append("|");
+                deviceType = flowReserve.getDeviceType();
+                if(StringUtils.isEmpty(deviceType)){
+                    deviceType = "-";
+                }
+                chooseItems.append(deviceType).append("|");
             }
             reserveCount = 0;
             if(reserveCountMap.get(chooseItems.toString()) != null){
