@@ -101,6 +101,9 @@ public class MediaItemServiceImpl implements MediaItemService {
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
             criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
         }
+        if(StringUtils.hasText(paramPagerVo.getFeeType())){
+            criteria.andEqualTo("feeType", paramPagerVo.getFeeType());
+        }
         List<MediaItem> mediaItemList = mediaItemMapper.selectByExample(example);
         return mediaItemList;
     }

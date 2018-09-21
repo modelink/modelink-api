@@ -2,6 +2,7 @@ package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
+import com.modelink.admin.vo.DashboardMediaParamVo;
 import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
@@ -49,7 +50,7 @@ public class DashboardMediaController {
 
     @ResponseBody
     @RequestMapping("/getMediaSummary")
-    public ResultVo getMediaSummary(DashboardParamVo paramVo){
+    public ResultVo getMediaSummary(DashboardMediaParamVo paramVo){
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -61,7 +62,7 @@ public class DashboardMediaController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,advertiseDesc");
-        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
+        paramPagerVo.setFeeType(paramVo.getFeeType());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
         int reserveCount = flowReserveList.size();
@@ -74,7 +75,13 @@ public class DashboardMediaController {
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
-        underwriteParamPagerVo.setSource("!产品测保");
+        if (StringUtils.hasText(paramVo.getFeeType())) {
+            if (FeeTypeEnum.FEE_TYPE_RESERVE.getText().equals(paramVo.getFeeType())) {
+                underwriteParamPagerVo.setSource("!产品测保");
+            } else {
+                underwriteParamPagerVo.setSource("产品测保");
+            }
+        }
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         String finishDate, reserveDate;
@@ -96,6 +103,7 @@ public class DashboardMediaController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(paramVo.getFeeType());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
@@ -151,7 +159,7 @@ public class DashboardMediaController {
 
     @ResponseBody
     @RequestMapping("/getMediaTactics")
-    public ResultVo getMediaTactics(DashboardParamVo paramVo){
+    public ResultVo getMediaTactics(DashboardMediaParamVo paramVo){
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -164,7 +172,13 @@ public class DashboardMediaController {
         underwriteParamPagerVo.setPlatformName(paramVo.getPlatformName());
         underwriteParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         underwriteParamPagerVo.setDateField("reserveDate");
-        underwriteParamPagerVo.setSource("!产品测保");
+        if (StringUtils.hasText(paramVo.getFeeType())) {
+            if (FeeTypeEnum.FEE_TYPE_RESERVE.getText().equals(paramVo.getFeeType())) {
+                underwriteParamPagerVo.setSource("!产品测保");
+            } else {
+                underwriteParamPagerVo.setSource("产品测保");
+            }
+        }
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
         if(underwriteList.size() <= 0){
             return resultVo;
@@ -185,7 +199,6 @@ public class DashboardMediaController {
             underwriteAmountMap.put(dateKey, underwriteAmount);
         }
 
-
         MediaTacticsParamPagerVo mediaTacticsParamPagerVo = new MediaTacticsParamPagerVo();
         mediaTacticsParamPagerVo.setChooseDate(paramVo.getChooseDate());
         mediaTacticsParamPagerVo.setMerchantId(paramVo.getMerchantId());
@@ -195,7 +208,6 @@ public class DashboardMediaController {
         mediaTacticsParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaTacticsParamPagerVo.setDateField("month");
         List<MediaTactics> mediaTacticsList = mediaTacticsService.findListByParam(mediaTacticsParamPagerVo);
-
 
         Integer[] tacticsCount;
         Map<String, Integer[]> tacticsCountMap = new HashMap<>();
