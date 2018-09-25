@@ -8,7 +8,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         range: true,
         elem: '#chooseDate',
         done: function(value, date, endDate){
-            insuranceEcharts.getDataJson2DrawRadar($, "media-summary", "/admin/dashboard/media/getMediaSummary");
+            insuranceEcharts.getDataJson2DrawRadar($, table, "media-summary", "/admin/dashboard/media/getMediaSummary");
         }
     });
     //年份选择器
@@ -25,7 +25,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.echartsMap["media-tactics-echart"] = echarts.init($("#media-tactics-echart")[0]);
     //搜索表单提交
     $("#search-btn").on("click", function () {
-        insuranceEcharts.getDataJson2DrawRadar($, "media-summary", "/admin/dashboard/media/getMediaSummary");
+        insuranceEcharts.getDataJson2DrawRadar($, table, "media-summary", "/admin/dashboard/media/getMediaSummary");
         insuranceEcharts.getDataJson2DrawLine($, table, "media-tactics", "/admin/dashboard/media/getMediaTactics");
     });
     $("#search-btn").trigger("click");
@@ -44,7 +44,7 @@ var insuranceEcharts = {
     echartsMap: {},
 
     // 获取后台JSON数据画图
-    getDataJson2DrawRadar: function ($, selectedPrefix, dataUrl) {
+    getDataJson2DrawRadar: function ($, table, selectedPrefix, dataUrl) {
         $.ajax({
             url: dataUrl,
             data: {
@@ -58,7 +58,8 @@ var insuranceEcharts = {
                     insuranceEcharts.drawRadarEchart(selectedPrefix + "-echart", [0, 0, 0, 0, 0, 0]);
                     return;
                 }
-                insuranceEcharts.drawRadarEchart(selectedPrefix + "-echart", response.rtnData);
+                insuranceEcharts.drawRadarEchart(selectedPrefix + "-echart", response.rtnData.contentList);
+                insuranceEcharts.drawRadarTable($, table, selectedPrefix, response.rtnData.tableItemList);
             }
         });
     },
@@ -85,8 +86,24 @@ var insuranceEcharts = {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
         selectedEchart.clear();
+        var labelList = [
+            { name: '点击率（点击量/曝光量）', max: 100},
+            { name: '预约率（预约数量/点击量）', max: 100},
+            { name: '承保率（承保件数/预约数量）', max: 100},
+            { name: '转化周期（转化时间/承保件数）', max: 100},
+            { name: '转化成本（总花费/承保件数）', max: 100},
+            { name: '总转化率（承保件数/总花费）', max: 100}
+        ];
         var echartOption = {
-            tooltip: {},
+            tooltip: {
+                formatter: function (param) {
+                    var html = param.name + "<br/>";
+                    for (var index in param.value) {
+                        html += (labelList[index].name + ":" + param.value[index] + "%<br/>");
+                    }
+                    return html;
+                }
+            },
             radar: {
                 name: {
                     textStyle: {
@@ -96,19 +113,13 @@ var insuranceEcharts = {
                         padding: [3, 5]
                     }
                 },
-                indicator: [
-                    { name: '点击率（曝光量/点击量）', max: 100},
-                    { name: '预约率（预约数量/点击量）', max: 100},
-                    { name: '承保率（承保件数/预约数量）', max: 100},
-                    { name: '转化周期', max: 100},
-                    { name: '转化成本', max: 100},
-                    { name: '总转化率', max: 100}
-                ]
+                indicator: labelList
             },
             series: [{
                 type: 'radar',
                 data : [
                     {
+                        name: '媒体渠道关键指标分析',
                         value : contentList,
                     }
                 ]
@@ -116,6 +127,32 @@ var insuranceEcharts = {
         };
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
+    },
+    drawRadarTable: function ($, table, selectedId, tableItemList) {
+        var tableItem;
+        var tableHtml = "";
+
+        // 月份
+        for(var index in tableItemList){
+            tableItem = tableItemList[index];
+
+            tableHtml += "<tr>";
+            tableHtml += "<td>" + tableItem.platformName + "</td>";
+            tableHtml += "<td>" + tableItem.advertiseActive + "</td>";
+            tableHtml += "<td>" + tableItem.clickRate + "</td>";
+            tableHtml += "<td>" + tableItem.reserveRate + "</td>";
+            tableHtml += "<td>" + tableItem.underwriteRate + "</td>";
+            tableHtml += "<td>" + tableItem.transformCycle + "</td>";
+            tableHtml += "<td>" + tableItem.transformCost + "</td>";
+            tableHtml += "<td>" + tableItem.transformRate + "</td>";
+            tableHtml += "</tr>";
+        }
+
+        $("#" + selectedId + "-table-body").html(tableHtml);
+
+        table.init(selectedId + "-table", {
+            height: 600
+        });
     },
     drawLineEchart: function (selectedId, response) {
 

@@ -6,6 +6,7 @@ import com.modelink.admin.vo.DashboardMediaParamVo;
 import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
+import com.modelink.common.enums.TransformCycleEnum;
 import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
@@ -51,6 +52,8 @@ public class DashboardMediaController {
     @ResponseBody
     @RequestMapping("/getMediaSummary")
     public ResultVo getMediaSummary(DashboardMediaParamVo paramVo){
+        String key;
+        Set<String> keySet = new HashSet<>();
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
@@ -65,7 +68,20 @@ public class DashboardMediaController {
         paramPagerVo.setFeeType(paramVo.getFeeType());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
-        int reserveCount = flowReserveList.size();
+        int reserveTotalCount = flowReserveList.size();
+        int reserveCount;
+        Map<String, Integer> reserveMap = new HashMap<>();
+        for (FlowReserve flowReserve : flowReserveList) {
+            reserveCount = 0;
+            key = (StringUtils.hasText(flowReserve.getPlatformName()) ? flowReserve.getPlatformName() : "-") + "|"
+                    + (StringUtils.hasText(flowReserve.getAdvertiseActive()) ? flowReserve.getAdvertiseActive() : "-");
+            keySet.add(key);
+            if (reserveMap.get(key) != null) {
+                reserveCount = reserveMap.get(key);
+            }
+            reserveCount ++;
+            reserveMap.put(key, reserveCount);
+        }
 
         /** 转化周期计算 **/
         UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
@@ -84,13 +100,31 @@ public class DashboardMediaController {
         }
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
+        int underwriteCount;
         String finishDate, reserveDate;
         int difference, totalDifference = 0;
+        Map<String, Integer> differenceMap = new HashMap<>();
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
         for(Underwrite underwrite : underwriteList){
             finishDate = underwrite.getFinishDate();
             reserveDate = underwrite.getReserveDate();
-            difference = DateUtils.getDateDifference(reserveDate, finishDate);
-            totalDifference += difference;
+            key = (StringUtils.hasText(underwrite.getPlatformName()) ? underwrite.getPlatformName() : "-") + "|"
+                    + (StringUtils.hasText(underwrite.getAdvertiseActive()) ? underwrite.getAdvertiseActive() : "-");
+
+            difference = 0;
+            if (differenceMap.get(key) != null) {
+                difference = differenceMap.get(key);
+            }
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            totalDifference += DateUtils.getDateDifference(reserveDate, finishDate);;
+            differenceMap.put(key, difference);
+
+            underwriteCount = 0;
+            if (underwriteCountMap.get(key) != null) {
+                underwriteCount = underwriteCountMap.get(key);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(key, underwriteCount);
         }
 
         /** 转化周期计算 **/
@@ -107,52 +141,170 @@ public class DashboardMediaController {
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
-        int clickCount = 0;
-        int showCount = 0;
-        double consumeAmount = 0.0d;
+        int clickCount, showCount;
+        double consumeAmount;
+        int clickTotalCount = 0;
+        int showTotalCount = 0;
+        double consumeTotalAmount = 0.0d;
+        Map<String, Integer> showCountMap = new HashMap<>();
+        Map<String, Integer> clickCountMap = new HashMap<>();
+        Map<String, Double> consumeAmountMap = new HashMap<>();
         for (MediaItem mediaItem : mediaItemList) {
-            if(mediaItem.getClickCount() != null) {
-                clickCount += mediaItem.getClickCount();
+            key = (StringUtils.hasText(mediaItem.getPlatformName()) ? mediaItem.getPlatformName() : "-") + "|"
+                    + (StringUtils.hasText(mediaItem.getAdvertiseActive()) ? mediaItem.getAdvertiseActive() : "-");
+            showCount = 0;
+            if (showCountMap.get(key) != null) {
+                showCount = showCountMap.get(key);
             }
-            if(mediaItem.getShowCount() != null) {
+            if (mediaItem.getShowCount() != null) {
                 showCount += mediaItem.getShowCount();
+                showTotalCount += mediaItem.getShowCount();
+            }
+            showCountMap.put(key, showCount);
+
+            clickCount = 0;
+            if (clickCountMap.get(key) != null) {
+                clickCount = clickCountMap.get(key);
+            }
+            if (mediaItem.getClickCount() != null) {
+                clickCount += mediaItem.getClickCount();
+                clickTotalCount += mediaItem.getClickCount();
+            }
+            clickCountMap.put(key, clickCount);
+
+            consumeAmount = 0.00d;
+            if (consumeAmountMap.get(key) != null) {
+                consumeAmount = consumeAmountMap.get(key);
             }
             if(StringUtils.hasText(mediaItem.getSpeedCost()) && !"-".equals(mediaItem.getSpeedCost())) {
                 consumeAmount += Double.valueOf(mediaItem.getSpeedCost());
+                consumeTotalAmount += Double.valueOf(mediaItem.getSpeedCost());
             }
+            consumeAmountMap.put(key, consumeAmount);
         }
 
-        int underwriteCount = underwriteList.size();
-        String transformCycle = "0";
-        String transformCost = "0";
-        String underwriteRate = "0";
-        String transformRate = "0";
-        String reserveRate = "0";
-        String clickRate = "0";
-        if(reserveCount > 0) {
-            transformCost = decimalFormat.format(consumeAmount / reserveCount);
-            underwriteRate = decimalFormat.format(underwriteCount * 100.0d / reserveCount);
+        int underwriteTotalCount = underwriteList.size();
+        double transformTotalCycle = 0.00d;
+        double transformTotalCost = 0.00d;
+        String underwriteTotalRate = "0";
+        String transformTotalRate = "0";
+        String reserveTotalRate = "0";
+        String clickTotalRate = "0";
+        if(reserveTotalCount > 0) {
+            transformTotalCost = consumeTotalAmount / reserveTotalCount;
+            underwriteTotalRate = decimalFormat.format(underwriteTotalCount * 100.0d / reserveTotalCount);
         }
-        if(clickCount > 0) {
-            transformRate = decimalFormat.format(underwriteCount * 100.00d / clickCount);
-            reserveRate = decimalFormat.format(reserveCount * 100.0d / clickCount);
-            clickRate = decimalFormat.format(showCount * 100.0d / clickCount);
+        if(clickTotalCount > 0) {
+            transformTotalRate = decimalFormat.format(underwriteTotalCount * 100.00d / clickTotalCount);
+            reserveTotalRate = decimalFormat.format(reserveTotalCount * 100.0d / clickTotalCount);
         }
-        if(underwriteCount > 0) {
-            transformCycle = decimalFormat.format(totalDifference / underwriteCount);
+        if(showTotalCount > 0) {
+            clickTotalRate = decimalFormat.format(clickTotalCount * 100.0d / showTotalCount);
+        }
+        if(underwriteTotalCount > 0) {
+            transformTotalCycle = totalDifference / underwriteTotalCount;
+        }
+        String[] keyArray;
+        JSONObject tableItem;
+        List<JSONObject> tableItemList = new ArrayList<>();
+        for (String keyword : keySet) {
+            tableItem = new JSONObject();
+            keyArray = keyword.split("\\|");
+            tableItem.put("platformName", keyArray[0]);
+            tableItem.put("advertiseActive", keyArray[1]);
+
+            reserveCount = reserveMap.get(keyword) == null ? 0 : reserveMap.get(keyword);
+            underwriteCount = underwriteCountMap.get(keyword) == null ? 0 : underwriteCountMap.get(keyword);
+            consumeAmount = consumeAmountMap.get(keyword) == null ? 0.00d : consumeAmountMap.get(keyword);
+            difference = differenceMap.get(keyword) == null ? 0 : differenceMap.get(keyword);
+            clickCount = clickCountMap.get(keyword) == null ? 0 : clickCountMap.get(keyword);
+            showCount = showCountMap.get(keyword) == null ? 0 : showCountMap.get(keyword);
+            if (reserveCount != 0) {
+                tableItem.put("transformCost", decimalFormat.format(consumeAmount / reserveCount));
+                tableItem.put("underwriteRate", decimalFormat.format(underwriteCount * 100.0d / reserveCount));
+            } else {
+                tableItem.put("transformCost", "0.00");
+                tableItem.put("underwriteRate", "0.00");
+            }
+            if (underwriteCount != 0) {
+                tableItem.put("transformCycle", decimalFormat.format(difference / underwriteCount));
+            } else {
+                tableItem.put("transformCycle", "0.00");
+            }
+            if (showCount != 0) {
+                tableItem.put("clickRate", decimalFormat.format(clickCount * 100.0d / showCount));
+            } else {
+                tableItem.put("clickRate", "0.00");
+            }
+            if (clickCount != 0) {
+                tableItem.put("reserveRate", decimalFormat.format(reserveCount * 100.0d / clickCount));
+                tableItem.put("transformRate", decimalFormat.format(underwriteCount * 100.0d / clickCount));
+            } else {
+                tableItem.put("reserveRate", "0.00");
+                tableItem.put("transformRate", "0.00");
+            }
+            tableItemList.add(tableItem);
         }
 
+        // 数据转化
+        if(transformTotalCycle > 90){
+            transformTotalCycle = 5;
+        }else if(transformTotalCycle > 60){
+            transformTotalCycle = 10;
+        }else if(transformTotalCycle > 30){
+            transformTotalCycle = 20;
+        }else if(transformTotalCycle > 14){
+            transformTotalCycle = 30;
+        }else if(transformTotalCycle > 6){
+            transformTotalCycle = 40;
+        }else if(transformTotalCycle > 5){
+            transformTotalCycle = 50;
+        }else if(transformTotalCycle > 4){
+            transformTotalCycle = 60;
+        }else if(transformTotalCycle > 3){
+            transformTotalCycle = 70;
+        }else if(transformTotalCycle > 2){
+            transformTotalCycle = 80;
+        }else if(transformTotalCycle > 1){
+            transformTotalCycle = 90;
+        }else if(transformTotalCycle > 0){
+            transformTotalCycle = 98;
+        }
+        if(transformTotalCost > 5000){
+            transformTotalCost = 10;
+        }else if(transformTotalCost > 2000){
+            transformTotalCost = 20;
+        }else if(transformTotalCost > 800){
+            transformTotalCost = 30;
+        }else if(transformTotalCost > 500){
+            transformTotalCost = 40;
+        }else if(transformTotalCost > 300){
+            transformTotalCost = 50;
+        }else if(transformTotalCost > 250){
+            transformTotalCost = 60;
+        }else if(transformTotalCost > 200){
+            transformTotalCost = 70;
+        }else if(transformTotalCost > 150){
+            transformTotalCost = 80;
+        }else if(transformTotalCost > 100){
+            transformTotalCost = 90;
+        }else if(transformTotalCost > 0){
+            transformTotalCost = 98;
+        }
 
         List<String> contentList = new ArrayList<>();
-        contentList.add(clickRate);
-        contentList.add(reserveRate);
-        contentList.add(underwriteRate);
-        contentList.add(transformCycle);
-        contentList.add(transformCost);
-        contentList.add(transformRate);
+        contentList.add(clickTotalRate);
+        contentList.add(reserveTotalRate);
+        contentList.add(underwriteTotalRate);
+        contentList.add(String.valueOf(transformTotalCycle));
+        contentList.add(String.valueOf(transformTotalCost));
+        contentList.add(transformTotalRate);
         /** 汇总结果 **/
+        JSONObject resultJson = new JSONObject();
+        resultJson.put("contentList", contentList);
+        resultJson.put("tableItemList", tableItemList);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
-        resultVo.setRtnData(contentList);
+        resultVo.setRtnData(resultJson);
         return resultVo;
     }
 

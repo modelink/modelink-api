@@ -868,7 +868,7 @@ public class DashboardEstimateController {
                 totalCount = transformCycleMap.get(TransformCycleEnum.from_15_30.getValue());
                 totalCount ++;
                 transformCycleMap.put(TransformCycleEnum.from_15_30.getValue(), totalCount);
-            }else if(difference > 7){
+            }else if(difference > 6){
                 totalCount = transformCycleMap.get(TransformCycleEnum.from_7_14.getValue());
                 totalCount ++;
                 transformCycleMap.put(TransformCycleEnum.from_7_14.getValue(), totalCount);
