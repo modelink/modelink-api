@@ -176,6 +176,12 @@ public class AdminServiceImpl implements AdminService {
             childPermission.setPermissionList(recursionMergeMenu(childPermission.getPermissionList()));
             resultList.add(childPermission);
         }
+        Collections.sort(resultList, new Comparator<Permission>() {
+            @Override
+            public int compare(Permission o1, Permission o2) {
+                return o1.getId().compareTo(o2.getId());
+            }
+        });
         return resultList;
     }
 

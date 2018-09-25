@@ -221,22 +221,35 @@
                         <i class="iconfont nav_right">&#xe697;</i>
                     </a>
                     <ul class="sub-menu">
-                        <li th:each="childMenu: ${permission.permissionList}">
-                            <a th:if="${#lists.size(childMenu.permissionList) <= 0}" th:_href="${childMenu.value}">
+                        <li th:each="secondMenu: ${permission.permissionList}">
+                            <a th:if="${#lists.size(secondMenu.permissionList) <= 0}" th:_href="${secondMenu.value}">
                                 <i class="iconfont">&#xe6a2;</i>
-                                <cite th:text="${childMenu.name}"></cite>
+                                <cite th:text="${secondMenu.name}"></cite>
                             </a>
-                            <a th:if="${#lists.size(childMenu.permissionList) > 0}">
+                            <a th:if="${#lists.size(secondMenu.permissionList) > 0}" th:_href="${secondMenu.value}">
                                 <i class="iconfont">&#xe83c;</i>
-                                <cite th:text="${childMenu.name}"></cite>
+                                <cite th:text="${secondMenu.name}"></cite>
                                 <i class="iconfont nav_right">&#xe697;</i>
                             </a>
-                            <ul th:if="${#lists.size(childMenu.permissionList) > 0}" class="sub-menu">
-                                <li th:each="nextMenu: ${childMenu.permissionList}">
-                                    <a th:_href="${nextMenu.value}">
+                            <ul th:if="${#lists.size(secondMenu.permissionList) > 0}" class="sub-menu">
+                                <li th:each="thirdMenu: ${secondMenu.permissionList}">
+                                    <a th:if="${#lists.size(thirdMenu.permissionList) <= 0}" th:_href="${thirdMenu.value}">
                                         <i class="iconfont">&#xe6a2;</i>
-                                        <cite th:text="${nextMenu.name}"></cite>
+                                        <cite th:text="${thirdMenu.name}"></cite>
                                     </a>
+                                    <a th:if="${#lists.size(thirdMenu.permissionList) > 0}" th:_href="${secondMenu.value}">
+                                        <i class="iconfont">&#xe83c;</i>
+                                        <cite th:text="${thirdMenu.name}"></cite>
+                                        <i class="iconfont nav_right">&#xe697;</i>
+                                    </a>
+                                    <ul th:if="${#lists.size(thirdMenu.permissionList) > 0}" class="sub-menu">
+                                        <li th:each="fourMenu: ${thirdMenu.permissionList}">
+                                            <a th:_href="${fourMenu.value}">
+                                                <i class="iconfont">&#xe6a2;</i>
+                                                <cite th:text="${fourMenu.name}"></cite>
+                                            </a>
+                                        </li>
+                                    </ul>
                                 </li>
                             </ul>
                         </li>
