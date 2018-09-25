@@ -215,7 +215,11 @@
         <div id="side-nav">
             <ul id="nav">
                 <li th:each="permission: ${session.admin_session_name.permissionList}">
-                    <a th:_href="${permission.value}">
+                    <a th:if="${#lists.size(permission.permissionList) <= 0}" th:_href="${permission.value}">
+                        <i class="iconfont">&#xe6a2;</i>
+                        <cite th:text="${permission.name}"></cite>
+                    </a>
+                    <a th:if="${#lists.size(permission.permissionList) > 0}" th:_href="${permission.value}">
                         <i class="iconfont">&#xe83c;</i>
                         <cite th:text="${permission.name}"></cite>
                         <i class="iconfont nav_right">&#xe697;</i>

@@ -44,6 +44,11 @@ public class DashboardController {
     @Resource
     private PermiumsService permiumsService;
 
+    @RequestMapping("/home")
+    public String home(){
+        return "/admin/dashboard/home";
+    }
+
     @ResponseBody
     @RequestMapping("/getReserveCount")
     public ResultVo getReserveCount(DashboardParamVo paramVo){

@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>保单预约汇总</title>
+    <title>首页</title>
     <meta name="renderer" content="webkit">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width,user-scalable=yes, minimum-scale=0.4, initial-scale=0.8,target-densitydpi=low-dpi" />
@@ -41,204 +41,27 @@
 </head>
 <body>
 <div class="x-body layui-anim layui-anim-up">
-    <form class="layui-form layui-form-pane">
-        <div class="layui-form-item">
-            <div class="layui-inline">
-                <label class="layui-form-label">项目选择</label>
-                <div class="layui-input-inline">
-                    <select id="merchant" name="merchant" lay-filter="merchant">
-                        <option value="2" selected="">华夏</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline">
-                <label class="layui-form-label">日期类型</label>
-                <div class="layui-input-inline">
-                    <select id="dateType" name="dateType" lay-filter="dateType">
-                        <option value="5" selected="">日</option>
-                        <option value="4">周</option>
-                        <option value="3">月</option>
-                        <option value="2">季度</option>
-                        <option value="1">年</option>
-                    </select>
-                </div>
-            </div>
-            <div class="layui-inline choose-date date">
-                <label class="layui-form-label">选择日期</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
-                </div>
-            </div>
-            <div class="layui-inline">
-                <a class="layui-btn" id="search-btn" lay-filter="search-btn">查询</a>
-                <a class="layui-btn layui-btn-primary reset-btn">重置</a>
-            </div>
-        </div>
-    </form>
 
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">总保费：单位（元）</div>
-                <div class="layui-card-body">
-                    <div id="underwrite-amount" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="underwrite-amount-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">预约数量：单位（个）</div>
-                <div class="layui-card-body">
-                    <div id="reserve-count" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="reserve-count-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">承保件数：单位（件）</div>
-                <div class="layui-card-body">
-                    <div id="underwrite-count" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="underwrite-count-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">退保保费：单位（元）</div>
-                <div class="layui-card-body">
-                    <div id="repellent-amount" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="repellent-amount-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
+                           _oo0oo_<br/>
+                          o8888888o<br/>
+                          88" . "88<br/>
+                          (| -_- |)<br/>
+                          0\  =  /0<br/>
+                        ___/`---'\___<br/>
+                      .' \\|     |// '.<br/>
+                     / \\|||  :  |||// \<br/>
+                    / _||||| -卍-|||||- \<br/>
+                   |   | \\\  -  /// |   |<br/>
+                   | \_|  ''\---/''  |_/ |<br/>
+                   \  .-\__  '-'  ___/-. /<br/>
+                 ___'. .'  /--.--\  `. .'___<br/>
+              ."" '<  `.___\_<|>_/___.' >' "".<br/>
+             | | :  `- \`.;`\ _ /`;.`/ - ` : | |<br/>
+             \  \ `_.   \_ __\ /__ _/   .-` /  /<br/>
+         =====`-.____`.___ \_____/___.-`___.-'=====<br/>
+                           `=---='<br/>
 
-    </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">转化成本：单位（元/个）</div>
-                <div class="layui-card-body">
-                    <div id="transform-cost" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="transform-cost-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">转化周期：单位（天/个）</div>
-                <div class="layui-card-body">
-                    <div id="transform-cycle" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="transform-cycle-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">总转化率：单位（‰）</div>
-                <div class="layui-card-body">
-                    <div id="transform-rate" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="transform-rate-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">产能：单位（元）</div>
-                <div class="layui-card-body">
-                    <div id="reserve-click" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="reserve-click-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">全国保费分布图：单位（%）</div>
-                <div class="layui-card-body">
-                    <div id="insurance-map-echart" style="height: 249px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">性别年龄保费分布图：单位（元）</div>
-                <div class="layui-card-body">
-                    <div id="gender-age" class="echart-header">
-                        <label></label>
-                    </div>
-                    <div id="gender-age-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">词云分析：单位（预约个数）</div>
-                <div class="layui-card-body">
-                    <div id="word-clouds-echart" style="height: 249px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">异常数量：单位（个）</div>
-                <div class="layui-card-body">
-                    <div id="abnormal-count" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="abnormal-count-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
 </div>
-
-
-<script th:src="@{/static/layui/layui.js}" type="text/javascript" charset="utf-8"></script>
-<script th:src="@{/static/js/common/echarts.min.js}" type="text/javascript" charset="utf-8"></script>
-<script th:src="@{/static/js/common/china.js}" type="text/javascript" charset="utf-8"></script>
-<script th:src="@{/static/js/common/echarts-wordcloud.min.js}" type="text/javascript" charset="utf-8"></script>
-<script th:inline="javascript">
-    layui.config({
-        base: '/static/js/admin/dashboard/' //你的模块目录
-    }).use('dashboard'); //加载入口
-</script>
 
 </body>
 </html>

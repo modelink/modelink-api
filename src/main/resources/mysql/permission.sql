@@ -22,7 +22,7 @@ INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`
 INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000008,'页面流向分析',1,'/admin/auth',10000001,'',1);
 INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000009,'专题页面分析',1,'/admin/auth',10000001,'',1);
 INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000010,'营销分析',1,'/admin/auth',0,'',1);
-INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000011,'营销驾驶仓',1,'/admin/dashboard',10000010,'',1);
+INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000011,'营销驾驶仓',1,'/admin/dashboard/home',10000010,'',1);
 INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000012,'营销模式分析',1,'/admin/auth',10000010,'',1);
 INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000013,'预约购买模式',1,'/admin/auth',10000012,'',1);
 INSERT INTO `permission` (`id`,`name`,`type`,`value`,`parent_id`,`description`,`available`) VALUES (10000014,'综合信息',1,'/admin/dashboard/summary',10000013,'',1);
