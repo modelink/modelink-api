@@ -163,7 +163,7 @@ public class MediaItemController {
                 mediaItem.setAdvertiseMedia(dataItem.get(5));
                 mediaItem.setAdvertiseSeries(dataItem.get(6));
                 mediaItem.setKeyWordGroup(dataItem.get(7));
-                mediaItem.setKeyWord(dataItem.get(8));
+                mediaItem.setKeyWord(dataItem.get(8).toUpperCase());
                 mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(9)));
                 mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(10)));
                 mediaItem.setSpeedCost(dataItem.get(11));
@@ -196,7 +196,7 @@ public class MediaItemController {
                 mediaItem.setAdvertiseMedia(dataItem.get(5));
                 mediaItem.setAdvertiseSeries(dataItem.get(6));
                 mediaItem.setKeyWordGroup(dataItem.get(7));
-                mediaItem.setKeyWord(dataItem.get(8));
+                mediaItem.setKeyWord(dataItem.get(8).toUpperCase());
                 mediaItem.setShowCount(DataUtils.tranform2Integer(dataItem.get(9)));
                 mediaItem.setClickCount(DataUtils.tranform2Integer(dataItem.get(10)));
                 mediaItem.setSpeedCost(dataItem.get(11));
