@@ -58,7 +58,25 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         window.href = "/admin/dashboard/keyword";
     });
 
-
+    $("#word-clouds-label").on("click", function (event) {
+        var url = "/admin/dashboard/keyword";
+        insuranceEcharts.openTab($, url, event);
+    });
+    $("#insurance-map-label").on("click", function (event) {
+        var url = "/admin/dashboard/area";
+        insuranceEcharts.openTab($, url, event);
+    });
+    $("#gender-age-label").on("click", function (event) {
+        var url = "/admin/dashboard/customer";
+        insuranceEcharts.openTab($, url, event);
+    });
+    $("#underwrite-amount-label,#reserve-count-label,#underwrite-count-label," +
+        "#repellent-amount-label,#transform-cost-label,#transform-cycle-label," +
+        "#transform-rate-label,#reserve-click-label,#abnormal-count-label"
+    ).on("click", function (event) {
+        var url = "/admin/dashboard/summary";
+        insuranceEcharts.openTab($, url, event);
+    });
 
     window.onresize = function () {
         for(var echartIdx in insuranceEcharts.echartsMap){
@@ -73,6 +91,20 @@ var insuranceEcharts = {
     elementMap: {},
     echartsMap: {},
 
+    openTab: function($, url, event) {
+        var allMenus = $('.left-nav #nav li a', window.top.document);
+        var selected = $('.left-nav #nav li a[_href="' + url + '"]', window.top.document);
+        var title = selected.children('cite').html();
+        var index = allMenus.index(selected);
+        var id = index + 1;
+        window.parent.layui.element.tabAdd('xbs_tab', {
+            title: title,
+            content: '<iframe tab-id="' + id + '" frameborder="0" src="' + url + '" scrolling="yes" class="x-iframe"></iframe>',
+            id: id
+        });
+        window.parent.layui.element.tabChange('xbs_tab', id);
+        event.stopPropagation();
+    },
     // 获取后台JSON数据画折线图
     getDataJson2DrawLine: function ($, selectedPrefix, dataUrl) {
         $.ajax({
@@ -200,6 +232,12 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
+            grid: {
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 10
+            },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
@@ -298,6 +336,14 @@ var insuranceEcharts = {
             tooltip : {
                 trigger: 'item',
                 formatter: '{a}<br />{b}: {c}%'
+            },
+            visualMap: {
+                min: 0,
+                max: 50,
+                left: 'left',
+                top: 'bottom',
+                text:['高','低'],           // 文本，默认为数值文本
+                calculable : true
             },
             //配置属性
             series: [{

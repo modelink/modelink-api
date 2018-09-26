@@ -17,7 +17,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         type: 'year',
         elem: '#chooseYear',
         done: function(value, date, endDate){
-            insuranceEcharts.getDataJson2DrawLine($, "media-tactics", "/admin/dashboard/media/getMediaTactics");
+            insuranceEcharts.getDataJson2DrawLine($, table, "media-tactics", "/admin/dashboard/media/getMediaTactics");
         }
     });
 
@@ -63,23 +63,25 @@ var insuranceEcharts = {
             }
         });
     },
-    getDataJson2DrawLine: function ($, table, selectedPrefix, dataUrl) {$.ajax({
-        url: dataUrl,
-        data: {
-            merchantId: $("#merchant").val(),
-            chooseDate: $("#chooseYear").val(),
-            platformName: $("#platformName").val(),
-            advertiseActive: $("#advertiseActive").val()
-        },
-        success: function (response) {
-            if(!response || response.rtnCode != 200 || !response.rtnData){
-                insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", [0, 0, 0, 0, 0, 0]);
-                return;
+    getDataJson2DrawLine: function ($, table, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseYear").val(),
+                platformName: $("#platformName").val(),
+                advertiseActive: $("#advertiseActive").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", [0, 0, 0, 0, 0, 0]);
+                    return;
+                }
+                insuranceEcharts.drawLineTable($, table, selectedPrefix, response.rtnData.tableItemList);
+                insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", response.rtnData);
             }
-            insuranceEcharts.drawLineTable($, table, selectedPrefix, response.rtnData.tableItemList);
-            insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", response.rtnData);
-        }
-    });},
+        });
+        },
 
     drawRadarEchart: function (selectedId, contentList) {
 

@@ -18,6 +18,8 @@ import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.AreaService;
 import com.modelink.usercenter.service.MerchantService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +33,8 @@ import java.util.*;
 @Controller
 @RequestMapping("/admin/dashboard/media")
 public class DashboardMediaController {
+
+    public static Logger logger = LoggerFactory.getLogger(DashboardMediaController.class);
 
     @Resource
     private MediaItemService mediaItemService;
@@ -53,12 +57,15 @@ public class DashboardMediaController {
     @RequestMapping("/getMediaSummary")
     public ResultVo getMediaSummary(DashboardMediaParamVo paramVo){
         String key;
+        long startTime, endTime;
         Set<String> keySet = new HashSet<>();
         ResultVo resultVo = new ResultVo();
 
         initDashboardParam(paramVo);
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
+
+        startTime = System.currentTimeMillis();
         FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
@@ -68,6 +75,9 @@ public class DashboardMediaController {
         paramPagerVo.setFeeType(paramVo.getFeeType());
         paramPagerVo.setDateField("date");
         List<FlowReserve> flowReserveList = flowReserveService.findListByParam(paramPagerVo);
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 flowReserveList runtime = {}", (endTime - startTime));
+        startTime = endTime;
         int reserveTotalCount = flowReserveList.size();
         int reserveCount;
         Map<String, Integer> reserveMap = new HashMap<>();
@@ -82,7 +92,9 @@ public class DashboardMediaController {
             reserveCount ++;
             reserveMap.put(key, reserveCount);
         }
-
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 reserveMap runtime = {}", (endTime - startTime));
+        startTime = endTime;
         /** 转化周期计算 **/
         UnderwriteParamPagerVo underwriteParamPagerVo = new UnderwriteParamPagerVo();
         underwriteParamPagerVo.setChooseDate(paramVo.getChooseDate());
@@ -99,7 +111,9 @@ public class DashboardMediaController {
             }
         }
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
-
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 underwriteList runtime = {}", (endTime - startTime));
+        startTime = endTime;
         int underwriteCount;
         String finishDate, reserveDate;
         int difference, totalDifference = 0;
@@ -126,9 +140,10 @@ public class DashboardMediaController {
             underwriteCount ++;
             underwriteCountMap.put(key, underwriteCount);
         }
-
         /** 转化周期计算 **/
-
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 underwriteCountMap runtime = {}", (endTime - startTime));
+        startTime = endTime;
 
         /** 计算转化成本与点击成本 **/
         MediaItemParamPagerVo mediaItemParamPagerVo = new MediaItemParamPagerVo();
@@ -140,7 +155,9 @@ public class DashboardMediaController {
         mediaItemParamPagerVo.setFeeType(paramVo.getFeeType());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
-
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 mediaItemList runtime = {}", (endTime - startTime));
+        startTime = endTime;
         int clickCount, showCount;
         double consumeAmount;
         int clickTotalCount = 0;
@@ -182,7 +199,9 @@ public class DashboardMediaController {
             }
             consumeAmountMap.put(key, consumeAmount);
         }
-
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 consumeAmountMap runtime = {}", (endTime - startTime));
+        startTime = endTime;
         int underwriteTotalCount = underwriteList.size();
         double transformTotalCycle = 0.00d;
         double transformTotalCost = 0.00d;
@@ -291,7 +310,8 @@ public class DashboardMediaController {
         }else if(transformTotalCost > 0){
             transformTotalCost = 98;
         }
-
+        endTime = System.currentTimeMillis();
+        logger.info("[dashboardMediaController|getMediaSummary]查询 resultJson runtime = {}", (endTime - startTime));
         List<String> contentList = new ArrayList<>();
         contentList.add(clickTotalRate);
         contentList.add(reserveTotalRate);
