@@ -44,8 +44,6 @@ public class DashboardAreaController {
     @Resource
     private MerchantService merchantService;
     @Resource
-    private MediaItemService mediaItemService;
-    @Resource
     private FlowReserveService flowReserveService;
     @Resource
     private UnderwriteService underwriteService;
@@ -828,50 +826,55 @@ public class DashboardAreaController {
         underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
-        List<Underwrite> tempUnderwriteList;
-        Map<Integer, List<Underwrite>> underwriteListMap = new HashMap<>();
-        for (Underwrite underwrite : underwriteList) {
-            if(StringUtils.isEmpty(underwrite.getCityId())) continue;
-            cityId = underwrite.getCityId();
-            merchantMap.put(cityId, underwrite.getMerchantId() + "|" + underwrite.getPlatformName() + "|" + underwrite.getAdvertiseActive());
-            tempUnderwriteList = new ArrayList<>();
-            if(underwriteListMap.get(cityId) != null){
-                tempUnderwriteList = underwriteListMap.get(cityId);
-            }
-            tempUnderwriteList.add(underwrite);
-            underwriteListMap.put(cityId, tempUnderwriteList);
-        }
-        String transformCycle;
-        double insuranceAmount;
-        int difference, totalDifference;
+        double underwriteAmount;
+        int difference, underwriteCount;
         String reserveDate, finishDate;
-        Map<Integer, String> underwriteAmountMap = new HashMap<>();
+        Map<Integer, Double> underwriteAmountMap = new HashMap<>();
         Map<Integer, Integer> underwriteCountMap = new HashMap<>();
+        Map<Integer, Integer> differenceMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            cityId = underwrite.getCityId();
+
+            difference = 0;
+            if (differenceMap.get(cityId) != null) {
+                difference = differenceMap.get(cityId);
+            }
+            finishDate = underwrite.getFinishDate();
+            reserveDate = underwrite.getReserveDate();
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            differenceMap.put(cityId, difference);
+
+            underwriteCount = 0;
+            if (underwriteCountMap.get(cityId) != null) {
+                underwriteCount = underwriteCountMap.get(cityId);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(cityId, underwriteCount);
+
+            underwriteAmount = 0.00d;
+            if(underwriteAmountMap.get(cityId) != null){
+                underwriteAmount = underwriteAmountMap.get(cityId);
+            }
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+            }
+            underwriteAmountMap.put(cityId, underwriteAmount);
+        }
+
         Map<Integer, String> transformCycleMap = new HashMap<>();
-        Iterator<Integer> iterator = underwriteListMap.keySet().iterator();
+        Iterator<Integer> iterator = underwriteCountMap.keySet().iterator();
         while(iterator.hasNext()){
             cityId = iterator.next();
-            tempUnderwriteList = underwriteListMap.get(cityId);
-            if(tempUnderwriteList == null || tempUnderwriteList.size() <= 0){
-                continue;
-            }
 
-            totalDifference = 0;
-            insuranceAmount = 0.0d;
-            for(Underwrite underwrite : tempUnderwriteList){
-                finishDate = underwrite.getFinishDate();
-                reserveDate = underwrite.getReserveDate();
-                difference = DateUtils.getDateDifference(reserveDate, finishDate);
-                totalDifference += difference;
-                if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
-                    insuranceAmount += Double.parseDouble(underwrite.getInsuranceFee());
-                }
+            difference = differenceMap.get(cityId);
+            underwriteCount = underwriteCountMap.get(cityId);
+            if (underwriteCount == 0) {
+                transformCycleMap.put(cityId, "0.00");
+            } else {
+                transformCycleMap.put(cityId, decimalFormat.format(difference / underwriteCount));
             }
-            transformCycle = decimalFormat.format(totalDifference / tempUnderwriteList.size());
-            transformCycleMap.put(cityId, transformCycle);
-            underwriteCountMap.put(cityId, tempUnderwriteList.size());
-            underwriteAmountMap.put(cityId, decimalFormat.format(insuranceAmount));
         }
+        /** 转化周期计算 **/
         /** 转化周期计算 **/
 
 
@@ -933,7 +936,7 @@ public class DashboardAreaController {
             resultBean.put("browseCount", browseCountMap.get(areaId) == null ? 0 : browseCountMap.get(areaId).toString());
             resultBean.put("reserveCount", reserveCountMap.get(areaId) == null ? 0 : reserveCountMap.get(areaId).toString());
             resultBean.put("underwriteCount", underwriteCountMap.get(areaId) == null ? 0 : underwriteCountMap.get(areaId).toString());
-            resultBean.put("underwriteAmount", underwriteAmountMap.get(areaId) == null ? 0.00d : Double.parseDouble(underwriteAmountMap.get(areaId)));
+            resultBean.put("underwriteAmount", underwriteAmountMap.get(areaId) == null ? 0.00d : decimalFormat.format(underwriteAmountMap.get(areaId)));
             resultBean.put("transformCycle", transformCycleMap.get(areaId) == null ? 0.00d : Double.parseDouble(transformCycleMap.get(areaId)));
             resultList.add(resultBean);
         }

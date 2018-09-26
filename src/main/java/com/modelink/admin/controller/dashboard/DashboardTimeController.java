@@ -155,49 +155,54 @@ public class DashboardTimeController {
         underwriteParamPagerVo.setDateField("reserveDate");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
-        List<Underwrite> tempUnderwriteList;
-        Map<String, List<Underwrite>> underwriteListMap = new HashMap<>();
-        for (Underwrite underwrite : underwriteList) {
-            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), paramVo.getDateType());
-            tempUnderwriteList = new ArrayList<>();
-            if(underwriteListMap.get(dateKey) != null){
-                tempUnderwriteList = underwriteListMap.get(dateKey);
-            }
-            tempUnderwriteList.add(underwrite);
-            underwriteListMap.put(dateKey, tempUnderwriteList);
-        }
-        String transformCycle;
-        double insuranceAmount;
-        int difference, totalDifference;
-        String reserveDate, finishDate;
-
-        Map<String, Double> underwriteAmountMap = new HashMap<>();
+        int difference, underwriteCount;
+        String finishDate, reserveDate;
+        double underwriteAmount;
+        Map<String, Integer> differenceMap = new HashMap<>();
         Map<String, Integer> underwriteCountMap = new HashMap<>();
-        Map<String, String> transformCycleMap = new HashMap<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
-        Iterator<String> iterator = underwriteListMap.keySet().iterator();
-        while(iterator.hasNext()){
-            dateKey = iterator.next();
-            tempUnderwriteList = underwriteListMap.get(dateKey);
-            if(tempUnderwriteList == null || tempUnderwriteList.size() <= 0){
-                continue;
-            }
+        Map<String, Double> underwriteAmountMap = new HashMap<>();
+        for(Underwrite underwrite : underwriteList) {
+            dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), paramVo.getDateType());
 
-            totalDifference = 0;
-            insuranceAmount = 0.0d;
-            for(Underwrite underwrite : tempUnderwriteList){
-                finishDate = underwrite.getFinishDate();
-                reserveDate = underwrite.getReserveDate();
-                difference = DateUtils.getDateDifference(reserveDate, finishDate);
-                totalDifference += difference;
-                if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
-                    insuranceAmount += Double.parseDouble(underwrite.getInsuranceFee());
-                }
+            difference = 0;
+            if (differenceMap.get(dateKey) != null) {
+                difference = differenceMap.get(dateKey);
             }
-            transformCycle = decimalFormat.format(totalDifference / tempUnderwriteList.size());
-            transformCycleMap.put(dateKey, transformCycle);
-            underwriteCountMap.put(dateKey, tempUnderwriteList.size());
-            underwriteAmountMap.put(dateKey, insuranceAmount);
+            finishDate = underwrite.getFinishDate();
+            reserveDate = underwrite.getReserveDate();
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            differenceMap.put(dateKey, difference);
+
+            underwriteCount = 0;
+            if (underwriteCountMap.get(dateKey) != null) {
+                underwriteCount = underwriteCountMap.get(dateKey);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(dateKey, underwriteCount);
+
+            underwriteAmount = 0.00d;
+            if (underwriteAmountMap.get(dateKey) != null) {
+                underwriteAmount = underwriteAmountMap.get(dateKey);
+            }
+            if (StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+            }
+            underwriteAmountMap.put(dateKey, underwriteAmount);
+        }
+
+
+        Iterator<String> iterator = underwriteCountMap.keySet().iterator();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        Map<String, String> transformCycleMap = new HashMap<>();
+        while (iterator.hasNext()) {
+            dateKey = iterator.next();
+            difference = differenceMap.get(dateKey);
+            underwriteCount = underwriteCountMap.get(dateKey);
+            if (underwriteCount == 0) {
+                transformCycleMap.put(dateKey, "0.00");
+            } else {
+                transformCycleMap.put(dateKey, decimalFormat.format(difference / underwriteCount));
+            }
         }
         /** 转化周期计算 **/
 
@@ -239,7 +244,6 @@ public class DashboardTimeController {
         }
 
 
-        int underwriteCount = 0;
         Map<String, String> transformRateMap = new HashMap<>();
         Map<String, String> clickCostResultMap = new HashMap<>();
         Map<String, String> transformCostMap = new HashMap<>();

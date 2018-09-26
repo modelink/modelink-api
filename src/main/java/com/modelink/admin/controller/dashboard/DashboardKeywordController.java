@@ -684,43 +684,45 @@ public class DashboardKeywordController {
         paramPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
-        List<Underwrite> tempUnderwriteList;
-        Map<String, List<Underwrite>> underwriteMap = new HashMap<>();
-        for (Underwrite underwrite : underwriteList) {
-            if(StringUtils.isEmpty(underwrite.getKeyword())) continue;
-            tempUnderwriteList = new ArrayList<>();
-            if(underwriteMap.get(underwrite.getKeyword()) != null){
-                tempUnderwriteList = underwriteMap.get(underwrite.getKeyword());
-            }
-            tempUnderwriteList.add(underwrite);
-            underwriteMap.put(underwrite.getKeyword(), tempUnderwriteList);
-        }
-
         String keyword;
         String transformCycle;
-        int difference, totalDifference;
+        int difference, underwriteCount;
         String reserveDate, finishDate;
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, Integer> differenceMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            keyword = StringUtils.isEmpty(underwrite.getKeyword()) ? "-" : underwrite.getKeyword();
+
+            difference = 0;
+            if (differenceMap.get(keyword) != null) {
+                difference = differenceMap.get(keyword);
+            }
+            finishDate = underwrite.getFinishDate();
+            reserveDate = underwrite.getReserveDate();
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            differenceMap.put(keyword, difference);
+
+            underwriteCount = 0;
+            if (underwriteCountMap.get(keyword) != null) {
+                underwriteCount = underwriteCountMap.get(keyword);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(keyword, underwriteCount);
+        }
+
         Map<String, String> transformCycleMap = new HashMap<>();
-        Iterator<String> iterator = underwriteMap.keySet().iterator();
+        Iterator<String> iterator = underwriteCountMap.keySet().iterator();
         while(iterator.hasNext()){
             keyword = iterator.next();
-            tempUnderwriteList = underwriteMap.get(keyword);
-            if(tempUnderwriteList == null || tempUnderwriteList.size() <= 0){
-                continue;
-            }
 
-            totalDifference = 0;
-            for(Underwrite underwrite : tempUnderwriteList){
-                finishDate = underwrite.getFinishDate();
-                reserveDate = underwrite.getReserveDate();
-                difference = DateUtils.getDateDifference(reserveDate, finishDate);
-                totalDifference += difference;
+            difference = differenceMap.get(keyword);
+            underwriteCount = underwriteCountMap.get(keyword);
+            if (underwriteCount == 0) {
+                transformCycleMap.put(keyword, "0.00");
+            } else {
+                transformCycleMap.put(keyword, decimalFormat.format(difference / underwriteCount));
             }
-            transformCycle = decimalFormat.format(totalDifference / tempUnderwriteList.size());
-            transformCycleMap.put(keyword, transformCycle);
-            underwriteCountMap.put(keyword, tempUnderwriteList.size());
         }
 
         // 查询符合条件的数据
@@ -733,8 +735,8 @@ public class DashboardKeywordController {
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
+        int clickCount;
         String transformRate;
-        int clickCount, underwriteCount;
         Map<String, Integer> clickCountMap = new HashMap<>();
         for (MediaItem mediaItem : mediaItemList) {
             if(mediaItem.getKeyWord() == null){
@@ -1090,6 +1092,11 @@ public class DashboardKeywordController {
         Map<String, Integer> reserveCountMap = new HashMap<>();
         for (FlowReserve flowReserve : flowReserveList) {
             keyword = flowReserve.getAdvertiseDesc();
+            if (StringUtils.isEmpty(keyword)) {
+                keyword = "-";
+            }
+            keywordSet.add(keyword);
+
             reserveCount = 0;
             if(reserveCountMap.get(keyword) != null){
                 reserveCount = reserveCountMap.get(keyword);
@@ -1112,51 +1119,60 @@ public class DashboardKeywordController {
         underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
-        List<Underwrite> tempUnderwriteList;
-        Map<String, List<Underwrite>> underwriteListMap = new HashMap<>();
-        for (Underwrite underwrite : underwriteList) {
-            if(StringUtils.isEmpty(underwrite.getKeyword())) continue;
-            keyword = underwrite.getKeyword();
-            keywordSet.add(keyword);
-            merchantMap.put(keyword, underwrite.getMerchantId() + "|" + underwrite.getPlatformName() + "|" + underwrite.getAdvertiseActive());
-            tempUnderwriteList = new ArrayList<>();
-            if(underwriteListMap.get(keyword) != null){
-                tempUnderwriteList = underwriteListMap.get(keyword);
-            }
-            tempUnderwriteList.add(underwrite);
-            underwriteListMap.put(keyword, tempUnderwriteList);
-        }
-        String transformCycle;
-        double insuranceAmount;
-        int difference, totalDifference;
+        double underwriteAmount;
+        int difference, underwriteCount;
         String reserveDate, finishDate;
-
         Map<String, Double> underwriteAmountMap = new HashMap<>();
         Map<String, Integer> underwriteCountMap = new HashMap<>();
+        Map<String, Integer> differenceMap = new HashMap<>();
+        for (Underwrite underwrite : underwriteList) {
+            if(StringUtils.isEmpty(underwrite.getKeyword())) {
+                keyword = "-";
+            }else{
+                keyword = underwrite.getKeyword();
+            }
+            keywordSet.add(keyword);
+
+            merchantMap.put(keyword, underwrite.getMerchantId() + "|" + underwrite.getPlatformName() + "|" + underwrite.getAdvertiseActive());
+
+            difference = 0;
+            if (differenceMap.get(keyword) != null) {
+                difference = differenceMap.get(keyword);
+            }
+            finishDate = underwrite.getFinishDate();
+            reserveDate = underwrite.getReserveDate();
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            differenceMap.put(keyword, difference);
+
+            underwriteCount = 0;
+            if (underwriteCountMap.get(keyword) != null) {
+                underwriteCount = underwriteCountMap.get(keyword);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(keyword, underwriteCount);
+
+            underwriteAmount = 0.00d;
+            if(underwriteAmountMap.get(keyword) != null){
+                underwriteAmount = underwriteAmountMap.get(keyword);
+            }
+            if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
+                underwriteAmount += Double.parseDouble(underwrite.getInsuranceFee());
+            }
+            underwriteAmountMap.put(keyword, underwriteAmount);
+        }
+
         Map<String, String> transformCycleMap = new HashMap<>();
-        Iterator<String> iterator = underwriteListMap.keySet().iterator();
+        Iterator<String> iterator = underwriteCountMap.keySet().iterator();
         while(iterator.hasNext()){
             keyword = iterator.next();
-            tempUnderwriteList = underwriteListMap.get(keyword);
-            if(tempUnderwriteList == null || tempUnderwriteList.size() <= 0){
-                continue;
-            }
 
-            totalDifference = 0;
-            insuranceAmount = 0.0d;
-            for(Underwrite underwrite : tempUnderwriteList){
-                finishDate = underwrite.getFinishDate();
-                reserveDate = underwrite.getReserveDate();
-                difference = DateUtils.getDateDifference(reserveDate, finishDate);
-                totalDifference += difference;
-                if(StringUtils.hasText(underwrite.getInsuranceFee()) && !"-".equals(underwrite.getInsuranceFee())) {
-                    insuranceAmount += Double.parseDouble(underwrite.getInsuranceFee());
-                }
+            difference = differenceMap.get(keyword);
+            underwriteCount = underwriteCountMap.get(keyword);
+            if (underwriteCount == 0) {
+                transformCycleMap.put(keyword, "0.00");
+            } else {
+                transformCycleMap.put(keyword, decimalFormat.format(difference / underwriteCount));
             }
-            transformCycle = decimalFormat.format(totalDifference / tempUnderwriteList.size());
-            transformCycleMap.put(keyword, transformCycle);
-            underwriteCountMap.put(keyword, tempUnderwriteList.size());
-            underwriteAmountMap.put(keyword, insuranceAmount);
         }
         /** 转化周期计算 **/
 
@@ -1199,8 +1215,6 @@ public class DashboardKeywordController {
             consumeAmountMap.put(keyword, consumeAmount);
         }
 
-
-        int underwriteCount = 0;
         Map<String, String> transformRateMap = new HashMap<>();
         Map<String, String> clickCostResultMap = new HashMap<>();
         Map<String, String> transformCostResultMap = new HashMap<>();

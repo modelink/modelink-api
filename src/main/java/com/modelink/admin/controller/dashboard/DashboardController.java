@@ -349,61 +349,44 @@ public class DashboardController {
         List<Underwrite> underwriteList = underwriteService.findListByParam(paramPagerVo);
 
         String dateKey;
-        List<Underwrite> tempList;
-        Map<String, List<Underwrite>> underwriteListMap = new HashMap<>();
+        int difference, underwriteCount;
+        String finishDate, reserveDate;
+        Map<String, Integer> differenceMap = new HashMap<>();
+        Map<String, Integer> underwriteCountMap = new HashMap<>();
         for(Underwrite underwrite : underwriteList) {
             dateKey = DataUtils.getDateKeyByDateType(underwrite.getReserveDate(), paramVo.getDateType());
-            tempList = underwriteListMap.get(dateKey);
-            if(tempList == null){
-                tempList = new ArrayList<>();
+
+            difference = 0;
+            if (differenceMap.get(dateKey) != null) {
+                difference = differenceMap.get(dateKey);
             }
-            tempList.add(underwrite);
-            underwriteListMap.put(dateKey, tempList);
+            finishDate = underwrite.getFinishDate();
+            reserveDate = underwrite.getReserveDate();
+            difference += DateUtils.getDateDifference(reserveDate, finishDate);
+            differenceMap.put(dateKey, difference);
+
+            underwriteCount = 0;
+            if (underwriteCountMap.get(dateKey) != null) {
+                underwriteCount = underwriteCountMap.get(dateKey);
+            }
+            underwriteCount ++;
+            underwriteCountMap.put(dateKey, underwriteCount);
         }
 
 
-        int difference;
-        int totalDifference;
-        int totalCount;
-        String finishDate;
-        String reserveDate;
-        Set<String> mobileSet;
-        Map<String, String> mobile2DateMap;
-        Iterator<String> iterator = underwriteListMap.keySet().iterator();
-
+        Iterator<String> iterator = underwriteCountMap.keySet().iterator();
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         Map<String, Object> statResultMap = DataUtils.initResultMap(paramVo.getChooseDate(), paramVo.getDateType(), "double");
         while (iterator.hasNext()) {
             dateKey = iterator.next();
-            tempList = underwriteListMap.get(dateKey);
-            mobileSet = new HashSet<>();
-            for (Underwrite underwrite : tempList) {
-                mobileSet.add(underwrite.getReserveMobile());
+            difference = differenceMap.get(dateKey);
+            underwriteCount = underwriteCountMap.get(dateKey);
+            if (underwriteCount == 0) {
+                statResultMap.put(dateKey, "0.00");
+            } else {
+                statResultMap.put(dateKey, decimalFormat.format(difference / underwriteCount));
             }
-
-            mobile2DateMap = new HashMap<>();
-            List<FlowReserve> flowReserveList = flowReserveService.findListByMobiles(mobileSet, "date asc");
-            if(flowReserveList.size() <= 0){
-                continue;
-            }
-            for(FlowReserve flowReserve : flowReserveList) {
-                mobile2DateMap.put(flowReserve.getReserveMobile(), flowReserve.getDate());
-            }
-
-            totalDifference = 0;
-            totalCount = flowReserveList.size();
-            for(Underwrite underwrite : tempList){
-                finishDate = underwrite.getFinishDate();
-                reserveDate = mobile2DateMap.get(underwrite.getReserveMobile());
-                difference = DateUtils.getDateDifference(reserveDate, finishDate);
-                if(difference == 0){
-                    continue;
-                }
-                totalDifference += difference;
-            }
-            statResultMap.put(dateKey, decimalFormat.format(totalDifference / totalCount));
         }
-
 
         JSONObject resultJson = formLineEchartResultJson(statResultMap);
         resultVo.setRtnCode(RetStatus.Ok.getValue());
