@@ -264,11 +264,24 @@ var insuranceEcharts = {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         selectedEchart.clear();
         var echartOption = {
+            grid: {
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 10
+            },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
-                }
+                },
+                formatter: function (params) {
+                    var html = '<div><p>年龄：' + params[0].name + '</p></div>'
+                    for (var i = 0; i < params.length; i++) {
+                        html += '<p>' + params[i].seriesName + '：' + Math.abs(params[i].data) + '</p>'
+                    }
+                    return html;
+                },
             },
             xAxis: [
                 {
@@ -332,7 +345,10 @@ var insuranceEcharts = {
         // 指定图表的配置项和数据
         selectedEchart.clear();
         var echartOption = {
-            backgroundColor: '#FFFFFF',
+            grid: {
+                left: 50
+            },
+            backgroundColor: '#b6deff',
             tooltip : {
                 trigger: 'item',
                 formatter: '{a}<br />{b}: {c}%'

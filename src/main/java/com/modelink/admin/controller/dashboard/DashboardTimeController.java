@@ -72,7 +72,7 @@ public class DashboardTimeController {
         int totalCount = 0;
         Map<Integer, Integer> statCountMap = new HashMap<>();
         for (FlowReserve flowReserve : flowReserveList) {
-            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate() + " " + flowReserve.getTime(), paramVo.getDateType());
+            dateKey = DataUtils.getDateKeyByDateType(flowReserve.getDate().trim() + " " + flowReserve.getTime().trim(), paramVo.getDateType());
             reserveCount = 0;
             if(statCountMap.get(Integer.parseInt(dateKey)) != null){
                 reserveCount = statCountMap.get(Integer.parseInt(dateKey));

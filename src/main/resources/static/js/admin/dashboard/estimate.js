@@ -16,11 +16,11 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     insuranceEcharts.echartsMap["estimate-keyword-echart"] = echarts.init($("#estimate-keyword-echart")[0]);
     insuranceEcharts.echartsMap["estimate-area-echart"] = echarts.init($("#estimate-area-echart")[0]);
     insuranceEcharts.echartsMap["estimate-area-echart"].on("click", function (param) {
-        var tableHtml = '<div id="estimate-city-echart" style="height: 500px;"></div>';
+        var tableHtml = '<div id="estimate-city-echart" style="height: 450px;"></div>';
         layer.open({
             type: 1,
             content: tableHtml,
-            area: ['600px', '600px']
+            area: ['600px', '500px']
         });
 
         $.ajax({
@@ -620,7 +620,14 @@ var insuranceEcharts = {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
-                }
+                },
+                formatter: function (params) {
+                    var html = '<div><p>年龄：' + params[0].name + '</p></div>'
+                    for (var i = 0; i < params.length; i++) {
+                        html += '<p>' + params[i].seriesName + '：' + Math.abs(params[i].data) + '</p>'
+                    }
+                    return html;
+                },
             },
             legend: {
                 data: ["男性", "女性"]

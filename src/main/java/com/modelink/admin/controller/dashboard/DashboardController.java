@@ -159,7 +159,7 @@ public class DashboardController {
             if(StringUtils.hasText(permiums.getInsuranceFee()) && !"-".equals(permiums.getInsuranceFee())) {
                 underwriteAmount += Double.valueOf(permiums.getInsuranceFee());
             }
-            underwriteAmountMap.put(dateKey, decimalFormat.format(underwriteAmount));
+            underwriteAmountMap.put(dateKey, underwriteAmount);
         }
 
         JSONObject resultJson = formLineEchartResultJson(underwriteAmountMap);
@@ -504,7 +504,6 @@ public class DashboardController {
         underwriteParamPagerVo.setMerchantId(paramVo.getMerchantId());
         underwriteParamPagerVo.setColumnFieldIds("reserveDate,insuranceNo");
         underwriteParamPagerVo.setDateField("reserveDate");
-        underwriteParamPagerVo.setSource("!产品测保");
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
 
         Set<String> insuranceSet = new HashSet<>();
@@ -902,11 +901,11 @@ public class DashboardController {
         if(size > 0){
             lastValue = contentArray.getDoubleValue(size - 1);
         }
-        resultJson.put("lastValue", lastValue);
+        resultJson.put("lastValue", decimalFormat.format(lastValue));
         if(size > 1){
             penultValue = contentArray.getDoubleValue(size - 2);
         }
-        resultJson.put("penultValue", penultValue);
+        resultJson.put("penultValue", decimalFormat.format(penultValue));
         if(penultValue != 0 && penultValue != 0){
             trendRate = (lastValue - penultValue) * 100 / penultValue;
         }
