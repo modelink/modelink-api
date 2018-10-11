@@ -34,7 +34,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
                         tableHtml += "<tr>";
                         tableHtml += "<th lay-data=\"{align: 'center', field: 'advertiseSeries'}\">广告系列</th>";
                         tableHtml += "<th lay-data=\"{align: 'center', field: 'stayTime'}\">关键词</th>";
-                        tableHtml += "<th lay-data=\"{align: 'center', field: 'againRate', sort: true}\">消费（元）</th>";
+                        tableHtml += "<th lay-data=\"{align: 'center', field: 'speedCost', sort: true}\">消费（元）</th>";
                         tableHtml += "</tr>";
                         tableHtml += '</thead>';
                         tableHtml += '<tbody id="' + selectedId + '-table-body">';
@@ -787,7 +787,7 @@ var insuranceEcharts = {
             tableHtml += "<tr>";
             tableHtml += "<td>" + tableItemList[index].advertiseSeries + "</td>";
             tableHtml += "<td>" + tableItemList[index].keyword + "</td>";
-            tableHtml += "<td>" + tableItemList[index].abnormalCount + "</td>";
+            tableHtml += "<td>" + tableItemList[index].speedCost + "</td>";
             tableHtml += "</tr>";
         }
         $("#" + selectedId + "-table-body").html(tableHtml);

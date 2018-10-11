@@ -162,6 +162,9 @@ $(function () {
     $('.left-nav #nav li a').click(function (event) {
 
         var url = $(this).attr('_href');
+        if (!url) {
+            return;
+        }
         var title = $(this).children('cite').html();
         var index = $('.left-nav #nav li a').index($(this));
         for (var i = 0; i < $('.x-iframe').length; i++) {
