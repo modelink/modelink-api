@@ -11,7 +11,6 @@ public class FlowAreaParamPagerVo extends PagerVo {
     private String dateField;
     private Long merchantId;
     private String platformName;
-    private String advertiseActive;
     private Integer provinceId;
     private String source;
 
@@ -53,14 +52,6 @@ public class FlowAreaParamPagerVo extends PagerVo {
 
     public void setPlatformName(String platformName) {
         this.platformName = platformName;
-    }
-
-    public String getAdvertiseActive() {
-        return advertiseActive;
-    }
-
-    public void setAdvertiseActive(String advertiseActive) {
-        this.advertiseActive = advertiseActive;
     }
 
     public Integer getProvinceId() {

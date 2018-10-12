@@ -61,4 +61,10 @@ public interface FlowReserveService {
      * @return
      */
     public PageInfo<FlowReserve> findPagerByParam(FlowReserveParamPagerVo paramPagerVo);
+
+    /**
+     * 查询广告活动列表
+     * @return
+     */
+    public List<String> findAdvertiseActiveList();
 }

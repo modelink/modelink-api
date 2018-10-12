@@ -358,7 +358,6 @@ public class DashboardAreaController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
-        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,provinceId,cityId,againClickRate");
         paramPagerVo.setDateField("date");
         if(StringUtils.hasText(paramVo.getProvinceName())) {
@@ -466,7 +465,6 @@ public class DashboardAreaController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
-        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,provinceId,cityId,userCount");
         paramPagerVo.setSource(paramVo.getSource());
         paramPagerVo.setDateField("date");
@@ -568,7 +566,6 @@ public class DashboardAreaController {
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
         paramPagerVo.setMerchantId(paramVo.getMerchantId());
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
-        paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,provinceId,averageStayTime");
         paramPagerVo.setSource(paramVo.getSource());
         paramPagerVo.setDateField("date");
@@ -883,22 +880,22 @@ public class DashboardAreaController {
         flowAreaParamPagerVo.setChooseDate(paramVo.getChooseDate());
         flowAreaParamPagerVo.setMerchantId(paramVo.getMerchantId());
         flowAreaParamPagerVo.setPlatformName(paramVo.getPlatformName());
-        flowAreaParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         flowAreaParamPagerVo.setColumnFieldIds("date,provinceId,cityId,browseCount");
         flowAreaParamPagerVo.setSource(paramVo.getSource());
         flowAreaParamPagerVo.setDateField("date");
-        List<FlowArea> flowAreaList = flowAreaService.findListByParam(flowAreaParamPagerVo);
-
         int browseCount;
         Map<Integer, Integer> browseCountMap = new HashMap<>();
-        for(FlowArea flowArea : flowAreaList){
-            cityId = flowArea.getCityId();
-            browseCount = 0;
-            if(browseCountMap.get(cityId) != null){
-                browseCount = browseCountMap.get(cityId);
+        if (StringUtils.isEmpty(paramVo.getAdvertiseActive())) {
+            List<FlowArea> flowAreaList = flowAreaService.findListByParam(flowAreaParamPagerVo);
+            for(FlowArea flowArea : flowAreaList){
+                cityId = flowArea.getCityId();
+                browseCount = 0;
+                if(browseCountMap.get(cityId) != null){
+                    browseCount = browseCountMap.get(cityId);
+                }
+                browseCount += flowArea.getBrowseCount();
+                browseCountMap.put(cityId, browseCount);
             }
-            browseCount += flowArea.getBrowseCount();
-            browseCountMap.put(cityId, browseCount);
         }
         /** 浏览量计算 **/
 

@@ -1,6 +1,8 @@
 package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.ExceptionLogger;
 import com.modelink.admin.service.ExceptionLoggerService;
@@ -15,6 +17,7 @@ import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.service.FlowReserveService;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 import com.modelink.reservation.vo.FlowReserveVo;
+import com.modelink.thirdparty.service.RedisService;
 import com.modelink.usercenter.bean.Area;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.AreaService;
@@ -41,9 +44,12 @@ import java.util.*;
 public class FlowReserveController {
 
     public static Logger logger = LoggerFactory.getLogger(FlowReserveController.class);
+    public static final String REDIS_KEY_ADVERTISE_ACTIVE_LIST = "flowReserve:advertise_active_list";
 
     @Resource
     private AreaService areaService;
+    @Resource
+    private RedisService redisService;
     @Resource
     private MerchantService merchantService;
     @Resource
@@ -71,6 +77,40 @@ public class FlowReserveController {
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(advertiseAnalyseVoList);
         return layuiResultPagerVo;
+    }
+
+    @ResponseBody
+    @RequestMapping("/advertiseActiveList")
+    public ResultVo advertiseActiveList(){
+        ResultVo resultVo = new ResultVo();
+        String advertiseListCache = "";
+        try {
+            advertiseListCache = redisService.getString(REDIS_KEY_ADVERTISE_ACTIVE_LIST);
+        } catch (Exception e) {
+            advertiseListCache = "";
+        }
+        if (StringUtils.isEmpty(advertiseListCache)) {
+            List<String> advertiseList = flowReserveService.findAdvertiseActiveList();
+            advertiseListCache = JSON.toJSONString(advertiseList);
+            redisService.setString(REDIS_KEY_ADVERTISE_ACTIVE_LIST, advertiseListCache);
+        }
+
+        String value;
+        JSONObject tableItem;
+        List<JSONObject> tableList = new ArrayList<>();
+        JSONArray jsonArray = JSON.parseArray(advertiseListCache);
+        for (int index = 0; index < jsonArray.size(); index ++) {
+            value = jsonArray.getString(index);
+            if (StringUtils.isEmpty(value)) {
+                continue;
+            }
+            tableItem = new JSONObject();
+            tableItem.put("name", value);
+            tableItem.put("value", value);
+            tableList.add(tableItem);
+        }
+        resultVo.setRtnData(tableList);
+        return resultVo;
     }
 
     @ResponseBody

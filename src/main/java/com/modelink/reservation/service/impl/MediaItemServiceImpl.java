@@ -12,6 +12,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -99,7 +100,7 @@ public class MediaItemServiceImpl implements MediaItemService {
             }
         }
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
-            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
+            criteria.andIn("advertiseActive", Arrays.asList(paramPagerVo.getAdvertiseActive().split(",")));
         }
         if(StringUtils.hasText(paramPagerVo.getFeeType())){
             criteria.andEqualTo("feeType", paramPagerVo.getFeeType());

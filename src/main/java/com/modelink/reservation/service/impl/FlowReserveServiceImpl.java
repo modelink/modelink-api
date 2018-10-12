@@ -13,6 +13,7 @@ import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
@@ -104,7 +105,7 @@ public class FlowReserveServiceImpl implements FlowReserveService {
             }
         }
         if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
-            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
+            criteria.andIn("advertiseActive", Arrays.asList(paramPagerVo.getAdvertiseActive().split(",")));
         }
         if(paramPagerVo.getProvinceId() != null){
             criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
@@ -163,5 +164,15 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         List<FlowReserve> flowReserveList = flowReserveMapper.selectByExample(example);
         PageInfo<FlowReserve> pageInfo = new PageInfo<>(flowReserveList);
         return pageInfo;
+    }
+
+    /**
+     * 查询广告活动列表
+     *
+     * @return
+     */
+    @Override
+    public List<String> findAdvertiseActiveList() {
+        return flowReserveMapper.findAdvertiseActiveList();
     }
 }

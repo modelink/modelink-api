@@ -12,17 +12,11 @@ import java.util.List;
 @Repository
 public interface FlowReserveMapper extends Mapper<FlowReserve>, MySqlMapper<FlowReserve> {
 
-
     /**
-     * 获取指定日期内的数据（只查日期与联系方式两列，节省内存）
-     * @param startDate
-     * @param endDate
-     * @param merchantId
+     * 查询广告活动列表
+     *
      * @return
      */
-    public List<FlowReserve> findListWithLimitColumnByDateRange(
-            @Param("startDate")String startDate,
-            @Param("endDate")String endDate,
-            @Param("merchantId")Long merchantId);
+    public List<String> findAdvertiseActiveList();
 
 }

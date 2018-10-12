@@ -9,6 +9,7 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" th:href="@{/static/css/admin/home/font.css}">
     <link rel="stylesheet" th:href="@{/static/css/admin/home/xadmin.css}">
+    <link rel="stylesheet" th:href="@{/static/layui/extends/form-selects-v4.css}">
     <link rel="stylesheet" th:href="@{//at.alicdn.com/t/font_604626_m0xm8ye4zbj.css}">
     <style>
         .layui-row.ml-row {
@@ -64,8 +65,10 @@
             </div>
             <div class="layui-inline">
                 <label class="layui-form-label">广告活动</label>
-                <div class="layui-input-inline">
-                    <input type="text" id="advertiseActive" name="advertiseActive" autocomplete="off" class="layui-input">
+                <div class="layui-input-inline" style="width: 300px;" >
+                    <input id="advertiseActive" type="hidden">
+                    <select xm-select="advertiseActive" xm-select-search="" xm-select-height="38px">
+                    </select>
                 </div>
             </div>
             <div class="layui-inline">
@@ -112,6 +115,8 @@
 <script th:inline="javascript">
     layui.config({
         base: '/static/js/admin/dashboard/' //你的模块目录
+    }).extend({
+        formSelects: '../../../../static/layui/extends/form-selects-v4'
     }).use('time'); //加载入口
 </script>
 

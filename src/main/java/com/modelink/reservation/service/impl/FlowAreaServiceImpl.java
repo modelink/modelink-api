@@ -101,9 +101,6 @@ public class FlowAreaServiceImpl implements FlowAreaService {
         if(paramPagerVo.getProvinceId() != null){
             criteria.andEqualTo("provinceId", paramPagerVo.getProvinceId());
         }
-        if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
-            criteria.andLike("advertiseActive", "%" + paramPagerVo.getAdvertiseActive() + "%");
-        }
         if(StringUtils.hasText(paramPagerVo.getSource())){
             criteria.andEqualTo("source", paramPagerVo.getSource());
         }

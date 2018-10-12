@@ -1,8 +1,25 @@
-layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], function (exports) {
+layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload', 'formSelects'], function (exports) {
     var $ = layui.jquery;
     var table = layui.table;
     var laydate = layui.laydate;
+    var formSelects = layui.formSelects;
 
+    //广告活动选择器
+    formSelects.config('advertiseActive', {
+        beforeSuccess: function(id, url, searchVal, result){
+            //我要把数据外层的code, msg, data去掉
+            result = result.rtnData;
+            return result;
+        }
+    }).data('advertiseActive', 'server', {
+        url: '/admin/flowReserve/advertiseActiveList'
+    }).on('advertiseActive', function(id, vals, val, isAdd, isDisabled){
+        var value = '';
+        for (var index in vals) {
+            value += (vals[index].name + ",")
+        }
+        $("#advertiseActive").val(value);
+    }, true);
     //时间选择器
     laydate.render({
         elem: '#chooseDate',
