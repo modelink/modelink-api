@@ -4,9 +4,12 @@ import com.alibaba.fastjson.JSONObject;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.vo.ResultVo;
+import com.modelink.reservation.bean.Estimation;
 import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.enums.ReservationStatusEnum;
+import com.modelink.reservation.service.EstimationService;
 import com.modelink.reservation.service.ReservationService;
+import com.modelink.reservation.vo.EstimateParamVo;
 import com.modelink.reservation.vo.ReserveDateVo;
 import com.modelink.reservation.vo.ReserveHeaderVo;
 import com.modelink.reservation.vo.ReserveParamVo;
@@ -32,7 +35,7 @@ public class ReservationController {
     public static Logger logger = LoggerFactory.getLogger(ReservationController.class);
 
     @Resource
-    private MerchantService merchantService;
+    private EstimationService estimationService;
     @Resource
     private ReservationService reservationService;
 
@@ -137,5 +140,37 @@ public class ReservationController {
         }
 
         return reserveDateVoList;
+    }
+
+    /**
+     * 保费测算
+     * @2018-10-15
+     * @return
+     */
+    @ResponseBody
+    @RequestMapping("/toEstimate")
+    public ResultVo toEstimate(HttpServletRequest request, EstimateParamVo estimateParamVo){
+        ResultVo resultVo = new ResultVo();
+        Estimation estimation = new Estimation();
+        try {
+            BeanUtils.copyProperties(estimateParamVo, estimation);
+            estimation.setStatus(ReservationStatusEnum.CREATED.getValue());
+            estimation.setMerchantId((Long)request.getAttribute("merchant"));
+            estimation.setCreateTime(new Date());
+            estimation.setUpdateTime(new Date());
+            int num = estimationService.insert(estimation);
+            if(num > 0){
+                resultVo.setRtnCode(RetStatus.Ok.getValue());
+                resultVo.setRtnMsg(RetStatus.Ok.getText());
+            }else{
+                resultVo.setRtnCode(RetStatus.Fail.getValue());
+                resultVo.setRtnMsg(RetStatus.Fail.getText());
+            }
+        } catch (Exception e) {
+            logger.error("[reservationController|toEstimate]测保登记发生异常。", e);
+            resultVo.setRtnCode(RetStatus.Exception.getValue());
+            resultVo.setRtnMsg(RetStatus.Exception.getText());
+        }
+        return resultVo;
     }
 }

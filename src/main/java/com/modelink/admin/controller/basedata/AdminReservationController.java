@@ -3,13 +3,12 @@ package com.modelink.admin.controller.basedata;
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.ReservationParamPagerVo;
 import com.modelink.admin.vo.ReservationVo;
-import com.modelink.common.enums.HXSourceTypeEnum;
+import com.modelink.common.enums.HXReserveGoodsEnum;
 import com.modelink.common.excel.ExcelExportConfigation;
 import com.modelink.common.excel.ExcelExportHelper;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.reservation.bean.Reservation;
-import com.modelink.reservation.enums.ResourceTypeEnum;
 import com.modelink.reservation.service.ReservationService;
 import com.modelink.usercenter.bean.Merchant;
 import com.modelink.usercenter.service.MerchantService;
@@ -56,7 +55,7 @@ public class AdminReservationController {
             if(merchant.getAppKey() == 10000L){
                 reservationVo.setSourceType("H5:塑料姐妹情");
             }else if(merchant.getAppKey() == 10001L){
-                reservationVo.setSourceType(HXSourceTypeEnum.getTextByValue(reservation.getSourceType()));
+                reservationVo.setSourceType(HXReserveGoodsEnum.getTextByValue(reservation.getSourceType()));
             }
             reservationVoList.add(reservationVo);
         }
@@ -92,7 +91,7 @@ public class AdminReservationController {
             if(merchant.getAppKey() == 10000L){
                 rowValueList.add("H5:塑料姐妹情");
             }else if(merchant.getAppKey() == 10001L){
-                rowValueList.add(HXSourceTypeEnum.getTextByValue(reservation.getSourceType()));
+                rowValueList.add(HXReserveGoodsEnum.getTextByValue(reservation.getSourceType()));
             }
             rowValueList.add(DateUtils.formatDate(reservation.getCreateTime(), "yyyy-MM-dd HH:mm:ss"));
             dataList.add(rowValueList);

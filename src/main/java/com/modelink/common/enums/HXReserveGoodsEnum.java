@@ -3,7 +3,7 @@ package com.modelink.common.enums;
 /**
  * 平台枚举
  */
-public enum HXSourceTypeEnum {
+public enum HXReserveGoodsEnum {
 
     其他产品(0, "其他产品"),
     专题首页(1, "专题首页"),
@@ -15,13 +15,13 @@ public enum HXSourceTypeEnum {
     private int value;
     private String text;
 
-    private HXSourceTypeEnum(int value, String text){
+    private HXReserveGoodsEnum(int value, String text){
         this.value = value;
         this.text = text;
     }
 
     public static String getTextByValue(int value) {
-        for(HXSourceTypeEnum enumItem : HXSourceTypeEnum.values()){
+        for(HXReserveGoodsEnum enumItem : HXReserveGoodsEnum.values()){
             if(enumItem.getValue() == value){
                 return enumItem.getText();
             }
@@ -30,7 +30,7 @@ public enum HXSourceTypeEnum {
     }
 
     public static int getValueByText(String text) {
-        for(HXSourceTypeEnum enumItem : HXSourceTypeEnum.values()){
+        for(HXReserveGoodsEnum enumItem : HXReserveGoodsEnum.values()){
             if(enumItem.getText().equals(text)){
                 return enumItem.getValue();
             }
