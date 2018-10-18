@@ -2,9 +2,8 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.EstimationParamPagerVo;
+import com.modelink.admin.vo.reserve.EstimationParamPagerVo;
 import com.modelink.reservation.bean.Estimation;
-import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.mapper.EstimationMapper;
 import com.modelink.reservation.service.EstimationService;
 import org.springframework.stereotype.Service;

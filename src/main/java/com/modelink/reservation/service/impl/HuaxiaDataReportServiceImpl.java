@@ -2,7 +2,6 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.DashboardParamVo;
 import com.modelink.reservation.bean.HuaxiaDataReport;
 import com.modelink.reservation.mapper.HuaxiaDataReportMapper;
 import com.modelink.reservation.service.HuaxiaDataReportService;
@@ -12,10 +11,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class HuaxiaDataReportServiceImpl implements HuaxiaDataReportService {
@@ -106,10 +102,13 @@ public class HuaxiaDataReportServiceImpl implements HuaxiaDataReportService {
         if(StringUtils.isEmpty(dateField)){
             dateField = "date";
         }
-        if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
+        if(StringUtils.hasText(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
             criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
+        }
+        if(StringUtils.hasText(paramPagerVo.getDataSource())){
+            criteria.andEqualTo("dataSource", paramPagerVo.getDataSource());
         }
         example.setOrderByClause("date desc");
         List<HuaxiaDataReport> huaxiaDataReportList = huaxiaDataReportMapper.selectByExample(example);

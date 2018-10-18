@@ -2,7 +2,6 @@ package com.modelink.reservation.vo;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -11,8 +10,8 @@ public class HuaxiaDataReportVo implements Serializable {
     private Long id;
     private String date;
     private String dataSource;
-    private Integer pcTransformCount;
-    private Integer wapTransformCount;
+    private Integer pcCount;
+    private Integer wapCount;
     /** 微信端（去重后） **/
     private Integer weixinCount;
     /** 小米 **/
@@ -50,20 +49,20 @@ public class HuaxiaDataReportVo implements Serializable {
         this.dataSource = dataSource;
     }
 
-    public Integer getPcTransformCount() {
-        return pcTransformCount;
+    public Integer getPcCount() {
+        return pcCount;
     }
 
-    public void setPcTransformCount(Integer pcTransformCount) {
-        this.pcTransformCount = pcTransformCount;
+    public void setPcCount(Integer pcCount) {
+        this.pcCount = pcCount;
     }
 
-    public Integer getWapTransformCount() {
-        return wapTransformCount;
+    public Integer getWapCount() {
+        return wapCount;
     }
 
-    public void setWapTransformCount(Integer wapTransformCount) {
-        this.wapTransformCount = wapTransformCount;
+    public void setWapCount(Integer wapCount) {
+        this.wapCount = wapCount;
     }
 
     public Integer getWeixinCount() {

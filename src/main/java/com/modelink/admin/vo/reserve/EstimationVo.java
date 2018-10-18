@@ -1,4 +1,4 @@
-package com.modelink.admin.vo;
+package com.modelink.admin.vo.reserve;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

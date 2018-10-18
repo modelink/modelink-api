@@ -1,11 +1,12 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.admin.vo.huaxiaReport.HuaxiaReportParamVo;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.vo.FlowReserveParamPagerVo;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -67,4 +68,11 @@ public interface FlowReserveService {
      * @return
      */
     public List<String> findAdvertiseActiveList();
+
+    /**
+     * 华夏日报专用接口，获取每日广告直接转化数
+     * @param paramVo
+     * @return
+     */
+    public Map<String, Map<String, Object>> findMapByParamGroup(HuaxiaReportParamVo paramVo);
 }

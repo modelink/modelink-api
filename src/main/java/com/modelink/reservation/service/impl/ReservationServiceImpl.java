@@ -2,7 +2,7 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.ReservationParamPagerVo;
+import com.modelink.admin.vo.reserve.ReservationParamPagerVo;
 import com.modelink.reservation.bean.Reservation;
 import com.modelink.reservation.mapper.ReservationMapper;
 import com.modelink.reservation.service.ReservationService;

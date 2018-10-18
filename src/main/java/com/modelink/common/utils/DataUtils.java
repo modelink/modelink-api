@@ -24,6 +24,23 @@ public class DataUtils {
         }
         return new BigDecimal("0.00");
     }
+    public static int timeTranform2Second(String averageStayTime){
+        int second = 0;
+        if (averageStayTime.indexOf(":") < 0) {
+            return second;
+        }
+        String[] timeArray = averageStayTime.split(":");
+        if (timeArray.length == 3) {
+            second += Integer.parseInt(timeArray[0]) * 3600;
+            second += Integer.parseInt(timeArray[1]) * 60;
+            second += Integer.parseInt(timeArray[2]);
+        } else if (timeArray.length == 2) {
+            second += Integer.parseInt(timeArray[0]) * 60;
+            second += Integer.parseInt(timeArray[1]);
+        }
+
+        return second;
+    }
 
     /**
      * 根据选择的日期初始化顺序日期列表

@@ -2,8 +2,8 @@ package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.InsuranceParamPagerVo;
-import com.modelink.admin.vo.InsuranceVo;
+import com.modelink.admin.vo.basedata.InsuranceParamPagerVo;
+import com.modelink.admin.vo.basedata.InsuranceVo;
 import com.modelink.common.annotation.ExportField;
 import com.modelink.common.enums.InsurancePayTypeEnum;
 import com.modelink.common.enums.RetStatus;

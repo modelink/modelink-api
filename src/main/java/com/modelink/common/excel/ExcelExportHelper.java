@@ -69,22 +69,22 @@ public class ExcelExportHelper {
         }
         // 创建Excel的工作sheet,对应到一个excel文档的tab
         Sheet sheet;
-        SheetItem sheetItem;
+        ExcelSheetItem excelSheetItem;
         Row headerRow, contentRow;
         XSSFFont headerFont, contentFont;
         XSSFCellStyle headerStyle, contentStyle;
         int columnIndex, rowIndex;
         for (String sheetName : excelConfigation.getSheetNameList()) {
 
-            sheetItem = excelConfigation.getSheetContentMap().get(sheetName);
-            if (sheetItem == null) {
+            excelSheetItem = excelConfigation.getSheetContentMap().get(sheetName);
+            if (excelSheetItem == null) {
                 continue;
             }
 
             sheet = workbook.createSheet(sheetName);
             // 设置excel每列宽度
             columnIndex = 0;
-            for (String columnName : sheetItem.getColumnNameList()) {
+            for (String columnName : excelSheetItem.getColumnNameList()) {
                 sheet.setColumnWidth(columnIndex, 6000);
                 columnIndex ++;
             }
@@ -93,7 +93,7 @@ public class ExcelExportHelper {
             headerFont = workbook.createFont();
             headerFont.setFontName("Verdana");
             headerFont.setBold(true);
-            headerFont.setFontHeight((short) 300);
+            headerFont.setFontHeight((short) 200);
             headerFont.setColor(IndexedColors.BLACK.index);
             // 创建单元格样式
             headerStyle = workbook.createCellStyle();
@@ -117,7 +117,7 @@ public class ExcelExportHelper {
 
             Cell cell;
             columnIndex = 0;
-            for (String columnName : sheetItem.getColumnNameList()) {
+            for (String columnName : excelSheetItem.getColumnNameList()) {
                 // 创建一个Excel的单元格
                 cell = headerRow.createCell(columnIndex);
                 // 给Excel的单元格设置样式和赋值
@@ -149,7 +149,7 @@ public class ExcelExportHelper {
             contentStyle.setBorderTop(BorderStyle.THIN);
             // 设置字体
             contentStyle.setFont(contentFont);
-            for (List<String> rowItem : sheetItem.getCellValueList()) {
+            for (List<String> rowItem : excelSheetItem.getCellValueList()) {
                 columnIndex = 0;
                 contentRow = sheet.createRow(rowIndex);
                 for (String cellValue : rowItem) {

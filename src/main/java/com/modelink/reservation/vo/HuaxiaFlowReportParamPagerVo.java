@@ -6,8 +6,6 @@ public class HuaxiaFlowReportParamPagerVo extends PagerVo {
 
     private String chooseDate;
     private String dateField;
-    private String mobile;
-    private Long merchantId;
     private String columnFieldIds;
     private String platformName;
     private String advertiseActive;
@@ -27,22 +25,6 @@ public class HuaxiaFlowReportParamPagerVo extends PagerVo {
 
     public void setDateField(String dateField) {
         this.dateField = dateField;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(String mobile) {
-        this.mobile = mobile;
-    }
-
-    public Long getMerchantId() {
-        return merchantId;
-    }
-
-    public void setMerchantId(Long merchantId) {
-        this.merchantId = merchantId;
     }
 
     public String getColumnFieldIds() {

@@ -1,6 +1,7 @@
 package com.modelink.reservation.bean;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -9,6 +10,9 @@ public class HuaxiaFlowReport implements Serializable {
     @Id
     private Long id;
     private String date;
+    @Transient
+    private String unionKey;
+
     private String dataSource;
     private String platformName;
     private String advertiseActive;
@@ -17,7 +21,7 @@ public class HuaxiaFlowReport implements Serializable {
     private Integer arriveCount;
     private Integer arriveUserCount;
     private Integer againCount;
-    private String averageStayTime;
+    private Integer averageStayTime;
 
     private Date createTime;
     private Date updateTime;
@@ -36,6 +40,14 @@ public class HuaxiaFlowReport implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getUnionKey() {
+        return unionKey;
+    }
+
+    public void setUnionKey(String unionKey) {
+        this.unionKey = unionKey;
     }
 
     public String getDataSource() {
@@ -102,11 +114,11 @@ public class HuaxiaFlowReport implements Serializable {
         this.againCount = againCount;
     }
 
-    public String getAverageStayTime() {
+    public Integer getAverageStayTime() {
         return averageStayTime;
     }
 
-    public void setAverageStayTime(String averageStayTime) {
+    public void setAverageStayTime(Integer averageStayTime) {
         this.averageStayTime = averageStayTime;
     }
 

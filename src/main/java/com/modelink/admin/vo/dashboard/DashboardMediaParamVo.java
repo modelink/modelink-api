@@ -1,6 +1,4 @@
-package com.modelink.admin.vo;
-
-import java.io.Serializable;
+package com.modelink.admin.vo.dashboard;
 
 public class DashboardMediaParamVo extends DashboardParamVo {
 

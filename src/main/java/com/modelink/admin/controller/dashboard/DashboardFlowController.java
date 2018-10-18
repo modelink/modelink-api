@@ -1,8 +1,8 @@
 package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONObject;
-import com.modelink.admin.vo.DashboardFlowParamVo;
-import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.admin.vo.dashboard.DashboardFlowParamVo;
+import com.modelink.admin.vo.dashboard.DashboardParamVo;
 import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.utils.DataUtils;

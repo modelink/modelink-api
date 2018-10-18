@@ -72,7 +72,7 @@ layui.define(['form', 'table', 'laydate', 'layer', 'jquery'], function (exports)
         switch(obj.event){
             case 'download':
                 var mobile = $("#mobile").val() ? $("#mobile").val() : "";
-                var chooseDate = $("chooseDate").val() ? $("#mobile").val() : "";
+                var chooseDate = $("#chooseDate").val() ? $("#chooseDate").val() : "";
                 window.location.href = ("/admin/estimation/download?chooseDate=" + chooseDate + "&mobile=" + mobile);
                 break;
         };

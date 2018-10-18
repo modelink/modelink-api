@@ -12,7 +12,7 @@ public class ExcelExportConfigation {
 
     private String fileName;
     private List<String> sheetNameList;
-    private Map<String, SheetItem> sheetContentMap;
+    private Map<String, ExcelSheetItem> sheetContentMap;
 
     public static ExcelExportConfigation newInstance(String fileName, List<String> columnNameList, List<List<String>> dataList){
         ExcelExportConfigation excelConfigation = new ExcelExportConfigation();
@@ -23,11 +23,11 @@ public class ExcelExportConfigation {
         excelConfigation.setSheetNameList(sheetNameList);
 
 
-        SheetItem sheetItem = new SheetItem();
-        sheetItem.setColumnNameList(columnNameList);
-        sheetItem.setCellValueList(dataList);
-        Map<String, SheetItem> dataMap = new HashMap<>();
-        dataMap.put("sheet_1", sheetItem);
+        ExcelSheetItem excelSheetItem = new ExcelSheetItem();
+        excelSheetItem.setColumnNameList(columnNameList);
+        excelSheetItem.setCellValueList(dataList);
+        Map<String, ExcelSheetItem> dataMap = new HashMap<>();
+        dataMap.put("sheet_1", excelSheetItem);
         excelConfigation.setSheetContentMap(dataMap);
 
         return excelConfigation;
@@ -49,34 +49,12 @@ public class ExcelExportConfigation {
         this.sheetNameList = sheetNameList;
     }
 
-    public Map<String, SheetItem> getSheetContentMap() {
+    public Map<String, ExcelSheetItem> getSheetContentMap() {
         return sheetContentMap;
     }
 
-    public void setSheetContentMap(Map<String, SheetItem> sheetContentMap) {
+    public void setSheetContentMap(Map<String, ExcelSheetItem> sheetContentMap) {
         this.sheetContentMap = sheetContentMap;
-    }
-}
-
-class SheetItem {
-
-    private List<String> columnNameList;
-    private List<List<String>> cellValueList;
-
-    public List<String> getColumnNameList() {
-        return columnNameList;
-    }
-
-    public void setColumnNameList(List<String> columnNameList) {
-        this.columnNameList = columnNameList;
-    }
-
-    public List<List<String>> getCellValueList() {
-        return cellValueList;
-    }
-
-    public void setCellValueList(List<List<String>> cellValueList) {
-        this.cellValueList = cellValueList;
     }
 }
 

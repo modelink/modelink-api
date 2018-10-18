@@ -1,7 +1,7 @@
 package com.modelink.usercenter.service;
 
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.AreaParamPagerVo;
+import com.modelink.admin.vo.common.AreaParamPagerVo;
 import com.modelink.usercenter.bean.Area;
 
 import java.util.List;

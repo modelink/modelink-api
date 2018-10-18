@@ -4,7 +4,7 @@
 <mapper namespace="com.modelink.reservation.mapper.UnderwriteMapper" >
 
     <select id="findListWithLimitColumnByDateRange"
-            parameterType="com.modelink.admin.vo.DashboardParamVo"
+            parameterType="com.modelink.admin.vo.dashboard.DashboardParamVo"
             resultType="com.modelink.reservation.bean.Underwrite">
         <![CDATA[
             select * from underwrite

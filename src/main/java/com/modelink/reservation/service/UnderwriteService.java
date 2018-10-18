@@ -1,8 +1,7 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.DashboardParamVo;
-import com.modelink.reservation.bean.FlowReserve;
+import com.modelink.admin.vo.dashboard.DashboardParamVo;
 import com.modelink.reservation.vo.UnderwriteParamPagerVo;
 import com.modelink.reservation.bean.Underwrite;
 

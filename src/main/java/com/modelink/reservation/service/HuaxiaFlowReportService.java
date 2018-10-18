@@ -1,10 +1,12 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.huaxiaReport.HuaxiaReportParamVo;
 import com.modelink.reservation.bean.HuaxiaFlowReport;
 import com.modelink.reservation.vo.HuaxiaFlowReportParamPagerVo;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * 华夏日报基础流量数据服务接口
@@ -45,4 +47,18 @@ public interface HuaxiaFlowReportService {
      * @return
      */
     public PageInfo<HuaxiaFlowReport> findPagerByParam(HuaxiaFlowReportParamPagerVo paramPagerVo);
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定属性分组）
+     * @param paramVo
+     * @return
+     */
+    public Map<String, HuaxiaFlowReport> findMapByParamGroup(HuaxiaReportParamVo paramVo);
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定属性分组）
+     * @param paramPagerVo
+     * @return
+     */
+    public List<HuaxiaFlowReport> findListByParamGroup(HuaxiaFlowReportParamPagerVo paramPagerVo);
 }

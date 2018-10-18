@@ -1,4 +1,4 @@
-package com.modelink.admin.vo;
+package com.modelink.admin.vo.dashboard;
 
 public class DashboardFlowParamVo extends DashboardParamVo {
 

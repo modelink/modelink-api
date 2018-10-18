@@ -1,4 +1,4 @@
-package com.modelink.admin.vo;
+package com.modelink.admin.vo.basedata;
 
 import com.modelink.common.annotation.ExportField;
 

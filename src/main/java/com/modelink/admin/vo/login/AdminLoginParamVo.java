@@ -1,4 +1,4 @@
-package com.modelink.admin.vo;
+package com.modelink.admin.vo.login;
 
 public class AdminLoginParamVo {
 

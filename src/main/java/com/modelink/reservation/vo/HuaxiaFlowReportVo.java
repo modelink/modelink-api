@@ -19,7 +19,7 @@ public class HuaxiaFlowReportVo implements Serializable {
     private Integer arriveCount;
     private Integer arriveUserCount;
     private Integer againCount;
-    private String averageStayTime;
+    private Integer averageStayTime;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
     @JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
@@ -105,11 +105,11 @@ public class HuaxiaFlowReportVo implements Serializable {
         this.againCount = againCount;
     }
 
-    public String getAverageStayTime() {
+    public Integer getAverageStayTime() {
         return averageStayTime;
     }
 
-    public void setAverageStayTime(String averageStayTime) {
+    public void setAverageStayTime(Integer averageStayTime) {
         this.averageStayTime = averageStayTime;
     }
 

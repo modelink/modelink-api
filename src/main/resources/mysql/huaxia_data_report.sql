@@ -4,8 +4,8 @@ CREATE TABLE `huaxia_data_report` (
 
   `date` varchar(10) NOT NULL DEFAULT '' COMMENT '日期',
   `data_source` varchar(10) NOT NULL DEFAULT '' COMMENT '数据来源',
-  `pc_transform_count` int(11) NOT NULL DEFAULT 0 COMMENT '总转化-PC',
-  `wap_transform_count` int(11) NOT NULL DEFAULT 0 COMMENT '总转化-WAP',
+  `pc_count` int(11) NOT NULL DEFAULT 0 COMMENT '总转化-PC',
+  `wap_count` int(11) NOT NULL DEFAULT 0 COMMENT '总转化-WAP',
   `weixin_count` int(11) NOT NULL DEFAULT 0 COMMENT '微信端',
   `xiaomi_count` int(11) NOT NULL DEFAULT 0 COMMENT '小米',
   `valid_count` int(11) NOT NULL DEFAULT 0 COMMENT '有效',

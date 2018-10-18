@@ -1,8 +1,8 @@
 package com.modelink.admin.controller.basedata;
 
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.ReservationParamPagerVo;
-import com.modelink.admin.vo.ReservationVo;
+import com.modelink.admin.vo.reserve.ReservationParamPagerVo;
+import com.modelink.admin.vo.reserve.ReservationVo;
 import com.modelink.common.enums.HXReserveGoodsEnum;
 import com.modelink.common.excel.ExcelExportConfigation;
 import com.modelink.common.excel.ExcelExportHelper;

@@ -2,8 +2,8 @@ package com.modelink.admin.controller.common;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.AreaParamPagerVo;
-import com.modelink.admin.vo.AreaVo;
+import com.modelink.admin.vo.common.AreaParamPagerVo;
+import com.modelink.admin.vo.common.AreaVo;
 import com.modelink.common.enums.AreaTypeEnum;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelExportConfigation;

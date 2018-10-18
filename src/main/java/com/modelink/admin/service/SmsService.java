@@ -2,7 +2,7 @@ package com.modelink.admin.service;
 
 import com.github.pagehelper.PageInfo;
 import com.modelink.admin.bean.Sms;
-import com.modelink.admin.vo.SmsParamPagerVo;
+import com.modelink.admin.vo.common.SmsParamPagerVo;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.thirdparty.bean.SmsParamVo;
 

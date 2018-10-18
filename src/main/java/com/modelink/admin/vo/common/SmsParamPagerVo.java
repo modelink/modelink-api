@@ -1,11 +1,12 @@
-package com.modelink.admin.vo;
+package com.modelink.admin.vo.common;
 
 import com.modelink.common.vo.PagerVo;
 
-public class InsuranceParamPagerVo extends PagerVo {
+public class SmsParamPagerVo extends PagerVo {
 
-    private String chooseDate;
     private String mobile;
+    private String chooseDate;
+    private String dateField;
     private String columnFieldIds;
 
     public String getChooseDate() {
@@ -22,6 +23,14 @@ public class InsuranceParamPagerVo extends PagerVo {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public String getDateField() {
+        return dateField;
+    }
+
+    public void setDateField(String dateField) {
+        this.dateField = dateField;
     }
 
     public String getColumnFieldIds() {

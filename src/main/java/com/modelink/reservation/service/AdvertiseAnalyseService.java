@@ -1,7 +1,7 @@
 package com.modelink.reservation.service;
 
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.AdvertiseParamPagerVo;
+import com.modelink.admin.vo.basedata.AdvertiseParamPagerVo;
 import com.modelink.reservation.bean.AdvertiseAnalyse;
 
 import java.util.List;

@@ -1,6 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
 <mapper namespace="com.modelink.reservation.mapper.MediaItemMapper" >
 
+    <select id="findMapByParamGroup" resultType="com.modelink.reservation.bean.MediaItem">
+        select
+            date,
+            platform_name,
+            advertise_active,
+            sum(show_count) as showCount,
+            sum(click_count) as clickCount,
+            sum(speed_cost) as speedCost,
+        <if test="advertiseActiveList == null">
+            concat(date, '|', platform_name) as unionKey
+        </if>
+        <if test="advertiseActiveList != null">
+            concat(date, '|', platform_name, '|', advertise_active) as unionKey
+        </if>
+        from `media_item`
+        where `fee_type` = #{dataSource}
+        <if test="platformName != null and platformName != ''">
+            and platform_name = #{platformName}
+        </if>
+        <if test="advertiseActiveList != null">
+            and advertise_active in
+            <foreach collection="advertiseActiveList" index="index" item="advertiseActive" open="(" separator="," close=")">
+                '${advertiseActive}'
+            </foreach>
+        </if>
+        group by `date`
+        <if test="platformName != null and platformName != ''">
+            ,`platform_name`
+        </if>
+        <if test="advertiseActiveList != null">
+            ,`advertise_active`
+        </if>
+        <![CDATA[
+            having `date` >= #{startDate}
+            and `date` <= #{endDate}
+        ]]>
+    </select>
 </mapper>

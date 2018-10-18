@@ -2,7 +2,7 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.InsuranceParamPagerVo;
+import com.modelink.admin.vo.basedata.InsuranceParamPagerVo;
 import com.modelink.reservation.bean.Insurance;
 import com.modelink.reservation.mapper.InsuranceMapper;
 import com.modelink.reservation.service.InsuranceService;

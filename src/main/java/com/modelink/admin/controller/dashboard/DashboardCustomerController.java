@@ -1,7 +1,7 @@
 package com.modelink.admin.controller.dashboard;
 
 import com.alibaba.fastjson.JSONObject;
-import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.admin.vo.dashboard.DashboardParamVo;
 import com.modelink.common.enums.AgePartEnum;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;

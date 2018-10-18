@@ -11,7 +11,7 @@ CREATE TABLE `huaxia_flow_report` (
   `arrive_count` int(11) NOT NULL DEFAULT 0 COMMENT '到达量',
   `arrive_user_count` int(11) NOT NULL DEFAULT 0 COMMENT '到达用户',
   `again_count` int(11) NOT NULL DEFAULT 0 COMMENT '二跳量',
-  `average_stay_time` varchar(8) NOT NULL DEFAULT '' COMMENT '平均停留时间',
+  `average_stay_time` int(11) NOT NULL DEFAULT 0 COMMENT '平均停留时间',
 
   `create_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `update_time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

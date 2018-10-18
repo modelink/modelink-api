@@ -77,6 +77,7 @@ public class HuaxiaFlowReportController {
             }
 
             Map<Integer, String> fieldFormatMap = new HashMap<>();
+            fieldFormatMap.put(10, "HH:mm:ss");
             configation = new ExcelImportConfigation();
             configation.setFieldFormatMap(fieldFormatMap);
             configation.setStartRowNum(1);
@@ -148,6 +149,12 @@ public class HuaxiaFlowReportController {
                 huaxiaFlowReport.setDataSource(dataItem.get(2));
                 huaxiaFlowReport.setPlatformName(dataItem.get(3).toUpperCase());
                 huaxiaFlowReport.setAdvertiseActive(dataItem.get(4).toUpperCase());
+                huaxiaFlowReport.setBrowseCount(DataUtils.tranform2Integer(dataItem.get(5)));
+                huaxiaFlowReport.setClickCount(DataUtils.tranform2Integer(dataItem.get(6)));
+                huaxiaFlowReport.setArriveCount(DataUtils.tranform2Integer(dataItem.get(7)));
+                huaxiaFlowReport.setArriveUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
+                huaxiaFlowReport.setAgainCount(DataUtils.tranform2Integer(dataItem.get(9)));
+                huaxiaFlowReport.setAverageStayTime(DataUtils.timeTranform2Second(dataItem.get(10)));
                 huaxiaFlowReport = huaxiaFlowReportService.findOneByParam(huaxiaFlowReport);
                 if(huaxiaFlowReport == null){
                     exist = false;
@@ -172,7 +179,7 @@ public class HuaxiaFlowReportController {
                 huaxiaFlowReport.setArriveCount(DataUtils.tranform2Integer(dataItem.get(7)));
                 huaxiaFlowReport.setArriveUserCount(DataUtils.tranform2Integer(dataItem.get(8)));
                 huaxiaFlowReport.setAgainCount(DataUtils.tranform2Integer(dataItem.get(9)));
-                huaxiaFlowReport.setAverageStayTime(dataItem.get(10));
+                huaxiaFlowReport.setAverageStayTime(DataUtils.timeTranform2Second(dataItem.get(10)));
 
                 if(exist) {
                     huaxiaFlowReportService.update(huaxiaFlowReport);

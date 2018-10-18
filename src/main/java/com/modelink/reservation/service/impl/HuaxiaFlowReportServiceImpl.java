@@ -2,6 +2,7 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.modelink.admin.vo.huaxiaReport.HuaxiaReportParamVo;
 import com.modelink.reservation.bean.HuaxiaFlowReport;
 import com.modelink.reservation.mapper.HuaxiaFlowReportMapper;
 import com.modelink.reservation.service.HuaxiaFlowReportService;
@@ -11,8 +12,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HuaxiaFlowReportServiceImpl implements HuaxiaFlowReportService {
@@ -109,15 +109,79 @@ public class HuaxiaFlowReportServiceImpl implements HuaxiaFlowReportService {
         if(StringUtils.isEmpty(dateField)){
             dateField = "date";
         }
-        if(!StringUtils.isEmpty(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
+        if(StringUtils.hasText(paramPagerVo.getChooseDate()) && paramPagerVo.getChooseDate().contains(" - ")){
             String[] chooseDates = paramPagerVo.getChooseDate().split(" - ");
             criteria.andLessThanOrEqualTo(dateField, chooseDates[1]);
             criteria.andGreaterThanOrEqualTo(dateField, chooseDates[0]);
+        }
+        if(StringUtils.hasText(paramPagerVo.getDataSource())){
+            criteria.andEqualTo("dataSource", paramPagerVo.getDataSource());
+        }
+        if(StringUtils.hasText(paramPagerVo.getPlatformName())){
+            criteria.andEqualTo("platformName", paramPagerVo.getPlatformName());
+        }
+        if(StringUtils.hasText(paramPagerVo.getAdvertiseActive())){
+            criteria.andIn("advertiseActive", Arrays.asList(paramPagerVo.getAdvertiseActive().split(",")));
         }
         example.setOrderByClause("date desc");
         List<HuaxiaFlowReport> huaxiaFlowReportList = huaxiaFlowReportMapper.selectByExample(example);
         PageInfo<HuaxiaFlowReport> pageInfo = new PageInfo<>(huaxiaFlowReportList);
         return pageInfo;
+    }
+
+    /**
+     * 根据查询条件查询相应的记录列表（按日期分组）
+     * @param paramVo
+     * @return
+     */
+    @Override
+    public Map<String, HuaxiaFlowReport> findMapByParamGroup(HuaxiaReportParamVo paramVo) {
+        if (StringUtils.isEmpty(paramVo.getChooseDate())) {
+            return new HashMap<>();
+        }
+        String[] dateArray = paramVo.getChooseDate().split(" - ");
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramVo.getDataSource());
+        paramMap.put("platformName", paramVo.getPlatformName());
+        if (StringUtils.hasText(paramVo.getAdvertiseActive())) {
+            paramMap.put("advertiseActiveList", Arrays.asList(paramVo.getAdvertiseActive().split(",")));
+        }
+
+        Map<String, HuaxiaFlowReport> huaxiaFlowReportMap = huaxiaFlowReportMapper.findMapByParamGroup(paramMap);
+        if (huaxiaFlowReportMap == null) {
+            huaxiaFlowReportMap = new HashMap<>();
+        }
+        return huaxiaFlowReportMap;
+    }
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定属性分组）
+     *
+     * @param paramPagerVo
+     * @return
+     */
+    @Override
+    public List<HuaxiaFlowReport> findListByParamGroup(HuaxiaFlowReportParamPagerVo paramPagerVo) {
+        if (StringUtils.isEmpty(paramPagerVo.getChooseDate())) {
+            return new ArrayList<>();
+        }
+        String[] dateArray = paramPagerVo.getChooseDate().split(" - ");
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramPagerVo.getDataSource());
+        paramMap.put("platformName", paramPagerVo.getPlatformName());
+        if (StringUtils.hasText(paramPagerVo.getAdvertiseActive())) {
+            paramMap.put("advertiseActiveList", Arrays.asList(paramPagerVo.getAdvertiseActive().split(",")));
+        }
+
+        List<HuaxiaFlowReport> flowReportList = huaxiaFlowReportMapper.findListByParamGroup(paramMap);
+        if (flowReportList == null) {
+            flowReportList = new ArrayList<>();
+        }
+        return flowReportList;
     }
 
 }

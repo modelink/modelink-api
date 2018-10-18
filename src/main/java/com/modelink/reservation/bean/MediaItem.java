@@ -1,6 +1,7 @@
 package com.modelink.reservation.bean;
 
 import javax.persistence.Id;
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -13,6 +14,8 @@ public class MediaItem implements Serializable {
     private Long id;
     /** 日期 **/
     private String date;
+    @Transient
+    private String unionKey;
     /** 合作商户 **/
     private Long merchantId;
     /** 渠道归属 **/
@@ -60,6 +63,14 @@ public class MediaItem implements Serializable {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public String getUnionKey() {
+        return unionKey;
+    }
+
+    public void setUnionKey(String unionKey) {
+        this.unionKey = unionKey;
     }
 
     public Long getMerchantId() {

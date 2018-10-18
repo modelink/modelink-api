@@ -163,8 +163,8 @@ public class HuaxiaDataReportController {
                 // 保存数据
                 huaxiaDataReport.setDate(dataItem.get(1));
                 huaxiaDataReport.setDataSource(dataItem.get(2));
-                huaxiaDataReport.setPcTransformCount(DataUtils.tranform2Integer(dataItem.get(3)));
-                huaxiaDataReport.setWapTransformCount(DataUtils.tranform2Integer(dataItem.get(4)));
+                huaxiaDataReport.setPcCount(DataUtils.tranform2Integer(dataItem.get(3)));
+                huaxiaDataReport.setWapCount(DataUtils.tranform2Integer(dataItem.get(4)));
                 huaxiaDataReport.setWeixinCount(DataUtils.tranform2Integer(dataItem.get(5)));
                 huaxiaDataReport.setXiaomiCount(DataUtils.tranform2Integer(dataItem.get(6)));
                 huaxiaDataReport.setValidCount(DataUtils.tranform2Integer(dataItem.get(7)));

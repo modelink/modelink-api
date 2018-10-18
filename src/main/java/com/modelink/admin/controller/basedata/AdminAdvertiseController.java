@@ -2,8 +2,8 @@ package com.modelink.admin.controller.basedata;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.AdvertiseAnalyseVo;
-import com.modelink.admin.vo.AdvertiseParamPagerVo;
+import com.modelink.admin.vo.basedata.AdvertiseAnalyseVo;
+import com.modelink.admin.vo.basedata.AdvertiseParamPagerVo;
 import com.modelink.common.annotation.ExportField;
 import com.modelink.common.enums.RetStatus;
 import com.modelink.common.excel.ExcelExportConfigation;

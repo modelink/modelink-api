@@ -2,7 +2,7 @@ package com.modelink.reservation.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
-import com.modelink.admin.vo.DashboardParamVo;
+import com.modelink.admin.vo.huaxiaReport.HuaxiaReportParamVo;
 import com.modelink.reservation.bean.FlowReserve;
 import com.modelink.reservation.mapper.FlowReserveMapper;
 import com.modelink.reservation.service.FlowReserveService;
@@ -12,10 +12,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class FlowReserveServiceImpl implements FlowReserveService {
@@ -174,5 +171,34 @@ public class FlowReserveServiceImpl implements FlowReserveService {
     @Override
     public List<String> findAdvertiseActiveList() {
         return flowReserveMapper.findAdvertiseActiveList();
+    }
+
+    /**
+     * 华夏日报专用接口，获取每日广告直接转化数
+     * @param paramVo
+     * @return
+     */
+    @Override
+    public Map<String, Map<String, Object>> findMapByParamGroup(HuaxiaReportParamVo paramVo) {
+        if (StringUtils.isEmpty(paramVo.getChooseDate())) {
+            return new HashMap<>();
+        }
+        String[] dateArray = paramVo.getChooseDate().split(" - ");
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramVo.getDataSource());
+        paramMap.put("platformName", paramVo.getPlatformName());
+        if (StringUtils.hasText(paramVo.getAdvertiseActive())) {
+            paramMap.put("advertiseActiveList", Arrays.asList(paramVo.getAdvertiseActive().split(",")));
+        }
+        Map<String, Map<String, Object>> flowReserveMap = flowReserveMapper.findMapByParamGroup(paramMap);
+
+
+        if (flowReserveMap == null) {
+            flowReserveMap = new HashMap<>();
+        }
+        return flowReserveMap;
     }
 }

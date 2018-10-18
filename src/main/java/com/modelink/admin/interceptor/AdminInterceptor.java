@@ -1,6 +1,6 @@
 package com.modelink.admin.interceptor;
 
-import com.modelink.admin.vo.AdminVo;
+import com.modelink.admin.vo.login.AdminVo;
 import com.modelink.usercenter.service.MerchantService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
