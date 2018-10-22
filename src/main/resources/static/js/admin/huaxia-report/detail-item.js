@@ -74,9 +74,7 @@ layui.define(['form', 'table', 'layer', 'laydate', 'formSelects', 'jquery'], fun
                 {field: 'cpm', title: 'CPM（元）', minWidth: 120, align: 'center'},
                 {field: 'consumeAmount', title: '总花费（元）', minWidth: 120, align: 'center'},
 
-                {field: 'directTransformCost', title: '直接转化成本', minWidth: 120, align: 'center'},
-                {field: 'totalTransformCost', title: '总转化成本（不含微信）', minWidth: 120, align: 'center'},
-                {field: 'insuranceAmount', title: '保费（元）', minWidth: 120, align: 'center'}
+                {field: 'directTransformCost', title: '直接转化成本', minWidth: 120, align: 'center'}
             ]
         ],
         id: 'detail-item-table-reload',
@@ -95,10 +93,124 @@ layui.define(['form', 'table', 'layer', 'laydate', 'formSelects', 'jquery'], fun
             dataName: 'rtnList' //数据列表的字段名称，默认：data
         }
     });
+
+    //设置广告活动
+    $(".btn").on('click', function () {
+        $.ajax({
+            url: "/admin/flowReserve/advertiseActiveList",
+            success: function (response) {
+                var activeList = response.rtnData;
+                if (!activeList) {
+                    return;
+                }
+
+                var trLength = activeList.length / 2 + activeList.length % 2;
+
+                var contentHtml = '';
+                contentHtml += '<fieldset class="layui-elem-field">';
+                contentHtml += '	<legend class="message-tip">选择广告活动</legend>';
+                contentHtml += '	<div class="layui-field-box">';
+                contentHtml += '	    <div class="layui-form">';
+                contentHtml += '	    <table class="layui-table" lay-skin="nob">';
+                for (var i = 0; i < trLength; i ++) {
+                contentHtml += '			<tr>';
+                contentHtml += '			    <td><input type="checkbox" name="advertiseActives" title="' + activeList[i*2].name + '" value="' + activeList[i*2].name + '"></td>';
+                if (i*2+1 < activeList.length) {
+                contentHtml += '			    <td><input type="checkbox" name="advertiseActives" title="' + activeList[i*2+1].name + '" value="' + activeList[i*2+1].name + '"></td>';
+                }
+                contentHtml += '			</tr>';
+                }
+                contentHtml += '	    </table>';
+                contentHtml += '	    </div>';
+                contentHtml += '	</div>';
+                contentHtml += '</fieldset>';
+            }
+        });
+    });
     //头工具栏事件
     table.on('toolbar(detail-item-table-grid)', function(element){
         switch(element.event){
             case 'download':
+                var contentHtml = '';
+                contentHtml += '<div style="margin: 0px 30px 0px 30px;">';
+                contentHtml += '<fieldset class="layui-elem-field">';
+                contentHtml += '	<legend class="message-tip">选择下载项目</legend>';
+                contentHtml += '	<div class="layui-field-box">';
+                contentHtml += '	    <div class="layui-form">';
+                contentHtml += '	    <table class="layui-table" lay-skin="nob">';
+                contentHtml += '			<tr>';
+                contentHtml += '			    <td>';
+                contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                contentHtml += '			        </button>';
+                contentHtml += '			        <input type="checkbox" name="reports" title="预约-PC汇总" value="预约-PC">';
+                contentHtml += '			    </td>';
+                contentHtml += '			    <td>';
+                contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                contentHtml += '			        </button>';
+                contentHtml += '			        <input type="checkbox" name="reports" title="预约-WAP汇总" value="预约-WAP">';
+                contentHtml += '			    </td>';
+                contentHtml += '			</tr>';
+                contentHtml += '			<tr>';
+                contentHtml += '			    <td>';
+                contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                contentHtml += '			        </button>';
+                contentHtml += '			        <input type="checkbox" name="reports" title="测保-PC汇总" value="测保-PC">';
+                contentHtml += '			    </td>';
+                contentHtml += '			    <td>';
+                contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                contentHtml += '			        </button>';
+                contentHtml += '			        <input type="checkbox" name="reports" title="测保-WAP汇总" value="测保-WAP">';
+                contentHtml += '			    </td>';
+                contentHtml += '			</tr>';
+                contentHtml += '	    </table>';
+                contentHtml += '	    </div>';
+                contentHtml += '	</div>';
+                contentHtml += '</fieldset>';
+
+                contentHtml += '</div>';
+
+
+                layer.open({
+                    title: ['导出报表', 'text-align: center; padding-left: 80px;'],
+                    content: contentHtml,
+                    area: ['750px', '600px'],
+                    btnAlign: 'c',
+                    yes: function(index, layero){
+                        var reports = [];
+                        var advertiseActives = [];
+                        $("input:checkbox[name=reports]:checked").each(function () {
+                            reports.push($(this).val());
+                        });
+                        $("input:checkbox[name=advertiseActives]:checked").each(function () {
+                            advertiseActives.push($(this).val());
+                        });
+                        if (reports.length <= 0) {
+                            layer.tips("请选择下载项目", ".message-tip");
+                            return false;
+                        }
+                        var chooseDate = $("#chooseDate").val() ? $("#chooseDate").val() : "";
+                        window.location.href = ("/admin/huaxiaReport/detailItemDownload" +
+                            "?chooseDate=" + chooseDate +
+                            "&reports=" + reports.join(",") +
+                            "&advertiseActive=" + advertiseActives.join(",")
+                        );
+                        layer.close(index);
+                    }
+                });
+                form.render();
+                form.on('submit(doDownload)', function(data){
+                    var reports = [];
+                    $("input:checkbox[name=reports]:checked").each(function () {
+                        reports.push($(this).val());
+                    });
+                    console.log(reports);
+                    layer.close(index);
+                    return false;
+                });
                 $.ajax({
                     url: "/admin/flowReserve/advertiseActiveList",
                     success: function (response) {
@@ -116,41 +228,61 @@ layui.define(['form', 'table', 'layer', 'laydate', 'formSelects', 'jquery'], fun
                         contentHtml += '	    <div class="layui-form">';
                         contentHtml += '	    <table class="layui-table" lay-skin="nob">';
                         contentHtml += '			<tr>';
-                        contentHtml += '			    <td><input type="checkbox" name="reports" title="预约-PC汇总" value="预约-PC"></td>';
-                        contentHtml += '			    <td><input type="checkbox" name="reports" title="预约-WAP汇总" value="预约-WAP"></td>';
+                        contentHtml += '			    <td>';
+                        contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                        contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                        contentHtml += '			        </button>';
+                        contentHtml += '			        <input type="checkbox" name="reports" title="预约-PC汇总" value="预约-PC">';
+                        contentHtml += '			    </td>';
+                        contentHtml += '			    <td>';
+                        contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                        contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                        contentHtml += '			        </button>';
+                        contentHtml += '			        <input type="checkbox" name="reports" title="预约-WAP汇总" value="预约-WAP">';
+                        contentHtml += '			    </td>';
                         contentHtml += '			</tr>';
                         contentHtml += '			<tr>';
-                        contentHtml += '			    <td><input type="checkbox" name="reports" title="测保-PC汇总" value="测保-PC"></td>';
-                        contentHtml += '			    <td><input type="checkbox" name="reports" title="测保-WAP汇总" value="测保-WAP"></td>';
+                        contentHtml += '			    <td>';
+                        contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                        contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                        contentHtml += '			        </button>';
+                        contentHtml += '			        <input type="checkbox" name="reports" title="测保-PC汇总" value="测保-PC">';
+                        contentHtml += '			    </td>';
+                        contentHtml += '			    <td>';
+                        contentHtml += '			        <button class="layui-btn layui-btn-sm layui-btn-primary">';
+                        contentHtml += '			            <i class="layui-icon">&#xe716;</i>设置';
+                        contentHtml += '			        </button>';
+                        contentHtml += '			        <input type="checkbox" name="reports" title="测保-WAP汇总" value="测保-WAP">';
+                        contentHtml += '			    </td>';
                         contentHtml += '			</tr>';
                         contentHtml += '	    </table>';
                         contentHtml += '	    </div>';
                         contentHtml += '	</div>';
                         contentHtml += '</fieldset>';
-                        contentHtml += '<fieldset class="layui-elem-field">';
-                        contentHtml += '	<legend class="message-tip">选择广告活动</legend>';
-                        contentHtml += '	<div class="layui-field-box">';
-                        contentHtml += '	    <div class="layui-form">';
-                        contentHtml += '	    <table class="layui-table" lay-skin="nob">';
-                        for (var i = 0; i < trLength; i ++) {
-                        contentHtml += '			<tr>';
-                        contentHtml += '			    <td><input type="checkbox" name="advertiseActives" title="' + activeList[i*2].name + '" value="' + activeList[i*2].name + '"></td>';
-                        if (i*2+1 < activeList.length) {
-                        contentHtml += '			    <td><input type="checkbox" name="advertiseActives" title="' + activeList[i*2+1].name + '" value="' + activeList[i*2+1].name + '"></td>';
-                        }
-                        contentHtml += '			</tr>';
-                        }
-                        contentHtml += '	    </table>';
-                        contentHtml += '	    </div>';
-                        contentHtml += '	</div>';
-                        contentHtml += '</fieldset>';
+                        // contentHtml += '<fieldset class="layui-elem-field">';
+                        // contentHtml += '	<legend class="message-tip">选择广告活动</legend>';
+                        // contentHtml += '	<div class="layui-field-box">';
+                        // contentHtml += '	    <div class="layui-form">';
+                        // contentHtml += '	    <table class="layui-table" lay-skin="nob">';
+                        // for (var i = 0; i < trLength; i ++) {
+                        // contentHtml += '			<tr>';
+                        // contentHtml += '			    <td><input type="checkbox" name="advertiseActives" title="' + activeList[i*2].name + '" value="' + activeList[i*2].name + '"></td>';
+                        // if (i*2+1 < activeList.length) {
+                        // contentHtml += '			    <td><input type="checkbox" name="advertiseActives" title="' + activeList[i*2+1].name + '" value="' + activeList[i*2+1].name + '"></td>';
+                        // }
+                        // contentHtml += '			</tr>';
+                        // }
+                        // contentHtml += '	    </table>';
+                        // contentHtml += '	    </div>';
+                        // contentHtml += '	</div>';
+                        // contentHtml += '</fieldset>';
                         contentHtml += '</div>';
 
 
                         layer.open({
                             title: ['导出报表', 'text-align: center; padding-left: 80px;'],
                             content: contentHtml,
-                            area: ['600px', '300px'],
+                            area: ['750px', '300px'],
                             btnAlign: 'c',
                             yes: function(index, layero){
                                 var reports = [];

@@ -12,12 +12,14 @@
         select
             date,
             count(0) as reserveCount,
-        <if test="advertiseActiveList == null">
-            concat(date, '|', platform_name) as unionKey
-        </if>
-        <if test="advertiseActiveList != null">
-            concat(date, '|', platform_name, '|', advertise_active) as unionKey
-        </if>
+            concat(date, '|', fee_type
+            <if test="platformName != null and platformName != ''">
+                , '|', platform_name
+            </if>
+            <if test="advertiseActiveList != null">
+                , '|', advertise_active
+            </if>
+            ) as unionKey
         from `flow_reserve`
         where `fee_type` = #{dataSource}
         and `advertise_active` not like '%微信%'

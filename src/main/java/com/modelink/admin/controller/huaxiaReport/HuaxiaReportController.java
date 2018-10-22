@@ -86,7 +86,7 @@ public class HuaxiaReportController {
         BeanUtils.copyProperties(paramVo, paramPagerVo);
         PageInfo<HuaxiaFlowReport> pageInfo = huaxiaFlowReportService.findPagerByParam(paramPagerVo);
         List<HuaxiaFlowReport> dataReportList = pageInfo.getList();
-        List<HuaxiaReportDetailItemVo> summaryVoList = transformDetailItem2VoList(paramVo, dataReportList);
+        List<HuaxiaReportDetailItemVo> summaryVoList = transformDetailItem2PageViewVoList(paramVo, dataReportList);
 
         layuiResultPagerVo.setTotalCount((int)pageInfo.getTotal());
         layuiResultPagerVo.setRtnList(summaryVoList);
@@ -177,8 +177,8 @@ public class HuaxiaReportController {
                 rowValueList.add(summaryVo.getAgainRate());
                 rowValueList.add(summaryVo.getAverageStayTime());
 
-                rowValueList.add(summaryVo.getMediaShowCount() + "");
-                rowValueList.add(summaryVo.getMediaClickCount() + "");
+                rowValueList.add(summaryVo.getMediaShowCount() == null ? "" : summaryVo.getMediaShowCount().toString());
+                rowValueList.add(summaryVo.getMediaClickCount() == null ? "" : summaryVo.getMediaClickCount().toString());
                 rowValueList.add(summaryVo.getMediaClickRate());
                 rowValueList.add(summaryVo.getCpc());
                 rowValueList.add(summaryVo.getCpm());
@@ -207,7 +207,7 @@ public class HuaxiaReportController {
     public void detailItemDownload(HttpServletResponse response, HuaxiaReportParamVo paramVo, String reports) throws Exception {
         initDashboardParam(paramVo);
         // 创建文件名称
-        String fileName = "华夏日报-明细表-" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+        String fileName = "华夏日报-" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         // 创建Excel表格列名称
         List<String> columnNameList = new ArrayList<>();
         columnNameList.add("日期");
@@ -248,6 +248,7 @@ public class HuaxiaReportController {
         ExcelSheetItem excelSheetItem;
         List<String> sheetNameList = new ArrayList<>();
         Map<String, ExcelSheetItem> sheetContentMap = new HashMap<>();
+        // 输出汇总的EXCEL数据
         for (String report : reportArray) {
             sheetNameList.add(report + "汇总");
 
@@ -257,11 +258,10 @@ public class HuaxiaReportController {
             arrays = report.split("-");
             paramPagerVo.setDataSource(arrays[0]);
             paramPagerVo.setPlatformName(arrays[1]);
-            paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
             flowReportList = huaxiaFlowReportService.findListByParamGroup(paramPagerVo);
             huaxiaReportParamVo = new HuaxiaReportParamVo();
             BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
-            detailItemVoList = transformDetailItem2VoList(huaxiaReportParamVo, flowReportList);
+            detailItemVoList = transformDetailItem2DownloadVoList(huaxiaReportParamVo, flowReportList);
 
             dataList = new ArrayList<>();
             for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
@@ -282,8 +282,8 @@ public class HuaxiaReportController {
                 rowValueList.add(detailItemVo.getAgainRate());
                 rowValueList.add(detailItemVo.getAverageStayTime() + "");
 
-                rowValueList.add(detailItemVo.getMediaShowCount() + "");
-                rowValueList.add(detailItemVo.getMediaClickCount() + "");
+                rowValueList.add(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString());
+                rowValueList.add(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString());
                 rowValueList.add(detailItemVo.getMediaClickRate());
                 rowValueList.add(detailItemVo.getCpc());
                 rowValueList.add(detailItemVo.getCpm());
@@ -297,6 +297,68 @@ public class HuaxiaReportController {
             excelSheetItem.setColumnNameList(columnNameList);
             excelSheetItem.setCellValueList(dataList);
             sheetContentMap.put(report + "汇总", excelSheetItem);
+        }
+        Map<String, String> advertiseActiveMap = new HashMap<>();
+        advertiseActiveMap.put("预约-PC", "360SEM,360导航,360品专,百度SEM,百度SEM-同台展现,垂直媒体,搜狗SEM,搜狗品专");
+        advertiseActiveMap.put("预约-WAP", "360SEM,360品专,99DSP,百度SEM,百度SEM-同台展现,百度原生,垂直媒体,广点通,今日头条APP,神马搜索,搜狗SEM,搜狗品专,一点资讯");
+        advertiseActiveMap.put("测保-PC", "百度SEM");
+        advertiseActiveMap.put("测保-WAP", "FY,ZH,百度原生,垂直媒体,广点通,今日头条APP,小米");
+        // 输出广告活动明细
+        String sheetName;
+        String[] advertiseActiveList;
+        for (String report : reportArray) {
+            advertiseActiveList = advertiseActiveMap.get(report).split(",");
+            for (String advertiseActive : advertiseActiveList) {
+                sheetName = report + "-" + advertiseActive;
+                sheetNameList.add(sheetName);
+
+                paramPagerVo = new HuaxiaFlowReportParamPagerVo();
+                paramPagerVo.setChooseDate(paramVo.getChooseDate());
+
+                arrays = report.split("-");
+                paramPagerVo.setDataSource(arrays[0]);
+                paramPagerVo.setPlatformName(arrays[1]);
+                paramPagerVo.setAdvertiseActive(advertiseActive);
+                flowReportList = huaxiaFlowReportService.findListByParamGroup(paramPagerVo);
+                huaxiaReportParamVo = new HuaxiaReportParamVo();
+                BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
+                detailItemVoList = transformDetailItem2DownloadVoList(huaxiaReportParamVo, flowReportList);
+
+                dataList = new ArrayList<>();
+                for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
+                    rowValueList = new ArrayList<>();
+                    // to-do
+                    rowValueList.add(detailItemVo.getDate());
+                    rowValueList.add(detailItemVo.getDataSource());
+                    rowValueList.add(detailItemVo.getPlatformName());
+                    rowValueList.add(detailItemVo.getAdvertiseActive());
+                    rowValueList.add(detailItemVo.getDirectTransformCount() + "");
+
+                    rowValueList.add(detailItemVo.getBrowseCount() + "");
+                    rowValueList.add(detailItemVo.getClickCount() + "");
+                    rowValueList.add(detailItemVo.getArriveCount() + "");
+                    rowValueList.add(detailItemVo.getArriveUserCount() + "");
+                    rowValueList.add(detailItemVo.getArriveRate());
+                    rowValueList.add(detailItemVo.getAgainCount() + "");
+                    rowValueList.add(detailItemVo.getAgainRate());
+                    rowValueList.add(detailItemVo.getAverageStayTime() + "");
+
+                    rowValueList.add(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString());
+                    rowValueList.add(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString());
+                    rowValueList.add(detailItemVo.getMediaClickRate());
+                    rowValueList.add(detailItemVo.getCpc());
+                    rowValueList.add(detailItemVo.getCpm());
+                    rowValueList.add(detailItemVo.getConsumeAmount());
+
+                    rowValueList.add(detailItemVo.getDirectTransformCost());
+                    dataList.add(rowValueList);
+                }
+
+                excelSheetItem = new ExcelSheetItem();
+                excelSheetItem.setColumnNameList(columnNameList);
+                excelSheetItem.setCellValueList(dataList);
+                sheetContentMap.put(sheetName, excelSheetItem);
+            }
         }
 
         ExcelExportConfigation excelConfigation = new ExcelExportConfigation();
@@ -337,7 +399,7 @@ public class HuaxiaReportController {
         // 获取广告直接转化数
         Map<String, Map<String, Object>> reserveMap = flowReserveService.findMapByParamGroup(paramVo);
 
-        int directTransformCount;
+        Long directTransformCount;
         // 组装结果数据
         for(HuaxiaDataReport dataReport : dataReportList){
             summaryVo = new HuaxiaReportSummaryVo();
@@ -351,16 +413,16 @@ public class HuaxiaReportController {
             }
 
             // 广告直接转化数
-            directTransformCount = 0;
-            reserve = reserveMap.get(dataReport.getDate());
+            directTransformCount = 0L;
+            reserve = reserveMap.get(dataReport.getDate() + "|" + paramVo.getDataSource());
             if (reserve != null) {
-                directTransformCount = (int)reserve.get("reserveCount");
+                directTransformCount = (Long)reserve.get("reserveCount");
             }
-            summaryVo.setDirectTransformCount(directTransformCount);
+            summaryVo.setDirectTransformCount(directTransformCount.intValue());
             // 广告直接转化数
 
             // 整合华夏日报-基础流量数据
-            flowReport = flowReportMap.get(dataReport.getDate());
+            flowReport = flowReportMap.get(dataReport.getDate() + "|" + paramVo.getDataSource());
             if (flowReport != null) {
                 summaryVo.setBrowseCount(flowReport.getBrowseCount());
                 summaryVo.setClickCount(flowReport.getClickCount());
@@ -382,7 +444,7 @@ public class HuaxiaReportController {
             // 整合华夏日报-基础流量数据
 
             // 整合媒体数据表中的数据
-            mediaItem = mediaItemMap.get(dataReport.getDate());
+            mediaItem = mediaItemMap.get(dataReport.getDate() + "|" + paramVo.getDataSource());
             if (mediaItem != null) {
                 summaryVo.setMediaShowCount(mediaItem.getShowCount());
                 summaryVo.setMediaClickCount(mediaItem.getClickCount());
@@ -412,7 +474,7 @@ public class HuaxiaReportController {
         }
         return dataReportVoList;
     }
-    private List<HuaxiaReportDetailItemVo> transformDetailItem2VoList(
+    private List<HuaxiaReportDetailItemVo> transformDetailItem2PageViewVoList(
             HuaxiaReportParamVo paramVo, List<HuaxiaFlowReport> dataReportList){
         MediaItem mediaItem;
         HuaxiaReportDetailItemVo detailItemVo;
@@ -421,23 +483,38 @@ public class HuaxiaReportController {
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
 
         // 获取媒体数据表中的数据汇总数据
-        Map<String, MediaItem> mediaItemMap = mediaItemService.findMapByParamGroup(paramVo);
+        Map<String, MediaItem> mediaItemMap;
         // 获取广告直接转化数
-        Map<String, Map<String, Object>> reserveMap = flowReserveService.findMapByParamGroup(paramVo);
+        Map<String, Map<String, Object>> reserveMap;
 
-        String unionKey;
+        StringBuilder unionKey;
         Long directTransformCount;
         // 组装结果数据
         for(HuaxiaFlowReport huaxiaFlowReport : dataReportList){
             detailItemVo = new HuaxiaReportDetailItemVo();
             BeanUtils.copyProperties(huaxiaFlowReport, detailItemVo);
 
-            unionKey = huaxiaFlowReport.getDate() + "|"
-                    + huaxiaFlowReport.getPlatformName()
-                    + "|" + huaxiaFlowReport.getAdvertiseActive();
+            paramVo = new HuaxiaReportParamVo();
+            paramVo.setChooseDate(huaxiaFlowReport.getDate() + " - " + huaxiaFlowReport.getDate());
+            paramVo.setDataSource(huaxiaFlowReport.getDataSource());
+            paramVo.setPlatformName(huaxiaFlowReport.getPlatformName());
+            paramVo.setAdvertiseActive(huaxiaFlowReport.getAdvertiseActive());
+            mediaItemMap = mediaItemService.findMapByParamGroup(paramVo);
+            reserveMap = flowReserveService.findMapByParamGroup(paramVo);
+
+            unionKey = new StringBuilder("");
+            unionKey.append(huaxiaFlowReport.getDate()).append("|");
+            unionKey.append(huaxiaFlowReport.getDataSource());
+            if (StringUtils.hasText(huaxiaFlowReport.getPlatformName())) {
+                unionKey.append("|").append(huaxiaFlowReport.getPlatformName());
+            }
+            if (StringUtils.hasText(huaxiaFlowReport.getAdvertiseActive())) {
+                unionKey.append("|").append(huaxiaFlowReport.getAdvertiseActive());
+            }
+
             // 广告直接转化数
             directTransformCount = 0L;
-            reserve = reserveMap.get(unionKey);
+            reserve = reserveMap.get(unionKey.toString());
             if (reserve != null) {
                 directTransformCount = (Long)reserve.get("reserveCount");
             }
@@ -458,7 +535,87 @@ public class HuaxiaReportController {
             // 整合华夏日报-基础流量数据
 
             // 整合媒体数据表中的数据
-            mediaItem = mediaItemMap.get(unionKey);
+            mediaItem = mediaItemMap.get(unionKey.toString());
+            if (mediaItem != null) {
+                detailItemVo.setMediaShowCount(mediaItem.getShowCount());
+                detailItemVo.setMediaClickCount(mediaItem.getClickCount());
+                detailItemVo.setConsumeAmount(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost())));
+                if (mediaItem.getClickCount() == null || mediaItem.getClickCount() == 0) {
+                    detailItemVo.setCpc(decimalFormat.format(0));
+                } else {
+                    detailItemVo.setCpc(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) / mediaItem.getClickCount()));
+                }
+                if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
+                    detailItemVo.setMediaClickRate(decimalFormat.format(0) + "%");
+                    detailItemVo.setCpm(decimalFormat.format(0));
+                } else {
+                    detailItemVo.setMediaClickRate(decimalFormat.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
+                    detailItemVo.setCpm(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) / mediaItem.getShowCount()));
+                }
+            }
+            // 整合媒体数据表中的数据
+            if (directTransformCount != 0 && StringUtils.hasText(detailItemVo.getConsumeAmount())) {
+                detailItemVo.setDirectTransformCost(decimalFormat.format(Double.parseDouble(detailItemVo.getConsumeAmount()) / directTransformCount));
+            }
+
+            dataReportVoList.add(detailItemVo);
+        }
+        return dataReportVoList;
+    }
+    private List<HuaxiaReportDetailItemVo> transformDetailItem2DownloadVoList(
+            HuaxiaReportParamVo paramVo, List<HuaxiaFlowReport> dataReportList){
+        MediaItem mediaItem;
+        HuaxiaReportDetailItemVo detailItemVo;
+        Map<String, Object> reserve;
+        List<HuaxiaReportDetailItemVo> dataReportVoList = new ArrayList<>();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
+        // 获取媒体数据表中的数据汇总数据
+        Map<String, MediaItem> mediaItemMap = mediaItemService.findMapByParamGroup(paramVo);
+        // 获取广告直接转化数
+        Map<String, Map<String, Object>> reserveMap = flowReserveService.findMapByParamGroup(paramVo);
+
+        StringBuilder unionKey;
+        Long directTransformCount;
+        // 组装结果数据
+        for(HuaxiaFlowReport huaxiaFlowReport : dataReportList){
+            detailItemVo = new HuaxiaReportDetailItemVo();
+            BeanUtils.copyProperties(huaxiaFlowReport, detailItemVo);
+
+            unionKey = new StringBuilder("");
+            unionKey.append(huaxiaFlowReport.getDate()).append("|");
+            unionKey.append(huaxiaFlowReport.getDataSource());
+            if (StringUtils.hasText(huaxiaFlowReport.getPlatformName())) {
+                unionKey.append("|").append(huaxiaFlowReport.getPlatformName());
+            }
+            if (StringUtils.hasText(huaxiaFlowReport.getAdvertiseActive())) {
+                unionKey.append("|").append(huaxiaFlowReport.getAdvertiseActive());
+            }
+
+            // 广告直接转化数
+            directTransformCount = 0L;
+            reserve = reserveMap.get(unionKey.toString());
+            if (reserve != null) {
+                directTransformCount = (Long)reserve.get("reserveCount");
+            }
+            detailItemVo.setDirectTransformCount(directTransformCount.intValue());
+            // 广告直接转化数
+
+            // 整合华夏日报-基础流量数据
+            if (detailItemVo.getClickCount() == null || detailItemVo.getClickCount() == 0) {
+                detailItemVo.setArriveRate(decimalFormat.format(0) + "%");
+            } else {
+                detailItemVo.setArriveRate(decimalFormat.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
+            }
+            if (detailItemVo.getArriveCount() == null || detailItemVo.getArriveCount() == 0) {
+                detailItemVo.setAgainRate(decimalFormat.format(0) + "%");
+            } else {
+                detailItemVo.setAgainRate(decimalFormat.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
+            }
+            // 整合华夏日报-基础流量数据
+
+            // 整合媒体数据表中的数据
+            mediaItem = mediaItemMap.get(unionKey.toString());
             if (mediaItem != null) {
                 detailItemVo.setMediaShowCount(mediaItem.getShowCount());
                 detailItemVo.setMediaClickCount(mediaItem.getClickCount());

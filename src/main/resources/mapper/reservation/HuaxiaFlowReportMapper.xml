@@ -5,7 +5,6 @@
 
     <select id="findMapByParamGroup" resultType="com.modelink.reservation.bean.HuaxiaFlowReport">
         select
-            date,
             data_source as dataSource,
             platform_name as platformName,
             advertise_active as advertiseActive,
@@ -15,12 +14,14 @@
             sum(arrive_user_count) as arriveUserCount,
             sum(again_count) as againCount,
             avg(average_stay_time) as averageStayTime,
-        <if test="advertiseActiveList == null">
-            concat(date, '|', platform_name) as unionKey
+            concat(date, '|', data_source
+        <if test="platformName != null and platformName != ''">
+            , '|', platform_name
         </if>
         <if test="advertiseActiveList != null">
-            concat(date, '|', platform_name, '|', advertise_active) as unionKey
+            , '|', advertise_active
         </if>
+            ) as unionKey
         from `huaxia_flow_report`
         where `data_source` = #{dataSource}
         <if test="platformName != null and platformName != ''">

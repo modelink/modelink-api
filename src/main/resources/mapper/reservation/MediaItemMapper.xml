@@ -7,17 +7,19 @@
     <select id="findMapByParamGroup" resultType="com.modelink.reservation.bean.MediaItem">
         select
             date,
-            platform_name,
-            advertise_active,
+            platform_name as platformName,
+            advertise_active as advertiseActive,
             sum(show_count) as showCount,
             sum(click_count) as clickCount,
             sum(speed_cost) as speedCost,
-        <if test="advertiseActiveList == null">
-            concat(date, '|', platform_name) as unionKey
-        </if>
-        <if test="advertiseActiveList != null">
-            concat(date, '|', platform_name, '|', advertise_active) as unionKey
-        </if>
+            concat(date, '|', fee_type
+            <if test="platformName != null and platformName != ''">
+                , '|', platform_name
+            </if>
+            <if test="advertiseActiveList != null">
+                , '|', advertise_active
+            </if>
+            ) as unionKey
         from `media_item`
         where `fee_type` = #{dataSource}
         <if test="platformName != null and platformName != ''">
