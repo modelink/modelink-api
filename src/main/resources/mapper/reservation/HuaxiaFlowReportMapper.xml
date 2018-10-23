@@ -14,36 +14,36 @@
             sum(arrive_user_count) as arriveUserCount,
             sum(again_count) as againCount,
             avg(average_stay_time) as averageStayTime,
-            concat(date, '|', data_source
-        <if test="platformName != null and platformName != ''">
-            , '|', platform_name
-        </if>
-        <if test="advertiseActiveList != null">
-            , '|', advertise_active
-        </if>
-            ) as unionKey
+            concat(date, '|', data_source) as unionKey
         from `huaxia_flow_report`
         where `data_source` = #{dataSource}
-        <if test="platformName != null and platformName != ''">
-            and platform_name = #{platformName}
-        </if>
-        <if test="advertiseActiveList != null">
-            and advertise_active in
-            <foreach collection="advertiseActiveList" index="index" item="advertiseActive" open="(" separator="," close=")">
-                '${advertiseActive}'
-            </foreach>
-        </if>
-        group by `date`
-        <if test="platformName != null and platformName != ''">
-            ,`platform_name`
-        </if>
-        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
-            ,`advertise_active`
-        </if>
         <![CDATA[
-            having `date` >= #{startDate}
+            and `date` >= #{startDate}
             and `date` <= #{endDate}
         ]]>
+        group by `date`
+    </select>
+
+    <select id="findMapByMonthGroup" resultType="java.util.Map">
+        select
+            DATE_FORMAT(date,'%Y-%m') as date,
+            DATE_FORMAT(date,'%Y-%m') as month,
+            data_source as dataSource,
+            sum(browse_count) as browseCount,
+            sum(click_count) as clickCount,
+            sum(arrive_count) as arriveCount,
+            sum(arrive_user_count) as arriveUserCount,
+            sum(again_count) as againCount,
+            avg(average_stay_time) as averageStayTime,
+            concat(DATE_FORMAT(date,'%Y-%m'), '|', data_source) as unionKey
+        from `huaxia_flow_report`
+        where `data_source` = #{dataSource}
+        <![CDATA[
+            and `date` >= #{startDate}
+            and `date` <= #{endDate}
+        ]]>
+        group by `month`
+        order by `month` desc
     </select>
 
     <select id="findListByParamGroup" resultType="com.modelink.reservation.bean.HuaxiaFlowReport">

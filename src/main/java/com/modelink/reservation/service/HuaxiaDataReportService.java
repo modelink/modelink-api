@@ -45,4 +45,11 @@ public interface HuaxiaDataReportService {
      * @return
      */
     public PageInfo<HuaxiaDataReport> findPagerByParam(HuaxiaDataReportParamPagerVo paramPagerVo);
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定月份分组）
+     * @param paramPagerVo
+     * @return
+     */
+    public List<HuaxiaDataReport> findListByMonthGroup(HuaxiaDataReportParamPagerVo paramPagerVo);
 }

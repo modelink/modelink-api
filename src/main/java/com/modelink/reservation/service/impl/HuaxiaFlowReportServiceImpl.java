@@ -144,10 +144,6 @@ public class HuaxiaFlowReportServiceImpl implements HuaxiaFlowReportService {
         paramMap.put("startDate", dateArray[0]);
         paramMap.put("endDate", dateArray[1]);
         paramMap.put("dataSource", paramVo.getDataSource());
-        paramMap.put("platformName", paramVo.getPlatformName());
-        if (StringUtils.hasText(paramVo.getAdvertiseActive())) {
-            paramMap.put("advertiseActiveList", Arrays.asList(paramVo.getAdvertiseActive().split(",")));
-        }
 
         Map<String, HuaxiaFlowReport> huaxiaFlowReportMap = huaxiaFlowReportMapper.findMapByParamGroup(paramMap);
         if (huaxiaFlowReportMap == null) {
@@ -207,5 +203,30 @@ public class HuaxiaFlowReportServiceImpl implements HuaxiaFlowReportService {
             flowReportList = new ArrayList<>();
         }
         return flowReportList;
+    }
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定月份分组）
+     *
+     * @param paramVo
+     * @return
+     */
+    @Override
+    public Map<String, Map<String, Object>> findMapByMonthGroup(HuaxiaReportParamVo paramVo) {
+
+        if (StringUtils.isEmpty(paramVo.getChooseDate())) {
+            return new HashMap<>();
+        }
+        String[] dateArray = paramVo.getChooseDate().split(" - ");
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramVo.getDataSource());
+        Map<String, Map<String, Object>> mediaItemMap = huaxiaFlowReportMapper.findMapByMonthGroup(paramMap);
+        if (mediaItemMap == null) {
+            mediaItemMap = new HashMap<>();
+        }
+        return mediaItemMap;
     }
 }

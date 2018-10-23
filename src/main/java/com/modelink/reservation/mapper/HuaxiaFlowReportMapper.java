@@ -13,10 +13,12 @@ import java.util.Map;
 public interface HuaxiaFlowReportMapper extends Mapper<HuaxiaFlowReport>, MySqlMapper<HuaxiaFlowReport> {
 
     @MapKey("unionKey")
+    Map<String, Map<String, Object>> findMapByMonthGroup(Map<String, Object> paramMap);
+
+    @MapKey("unionKey")
     public Map<String, HuaxiaFlowReport> findMapByParamGroup(Map<String, Object> paramMap);
 
     public List<HuaxiaFlowReport> findListByParamGroup(Map<String, Object> paramMap);
 
     public List<HuaxiaFlowReport> findListByMonthGroup(Map<String, Object> paramMap);
-
 }

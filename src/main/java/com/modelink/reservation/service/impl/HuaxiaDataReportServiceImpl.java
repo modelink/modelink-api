@@ -11,7 +11,7 @@ import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 import javax.annotation.Resource;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class HuaxiaDataReportServiceImpl implements HuaxiaDataReportService {
@@ -79,6 +79,7 @@ public class HuaxiaDataReportServiceImpl implements HuaxiaDataReportService {
         if(StringUtils.hasText(paramPagerVo.getDataSource())){
             criteria.andEqualTo("dataSource", paramPagerVo.getDataSource());
         }
+        example.setOrderByClause("date desc");
         List<HuaxiaDataReport> huaxiaDataReportList = huaxiaDataReportMapper.selectByExample(example);
         return huaxiaDataReportList;
     }
@@ -114,6 +115,29 @@ public class HuaxiaDataReportServiceImpl implements HuaxiaDataReportService {
         List<HuaxiaDataReport> huaxiaDataReportList = huaxiaDataReportMapper.selectByExample(example);
         PageInfo<HuaxiaDataReport> pageInfo = new PageInfo<>(huaxiaDataReportList);
         return pageInfo;
+    }
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定月份分组）
+     *
+     * @param paramPagerVo
+     * @return
+     */
+    @Override
+    public List<HuaxiaDataReport> findListByMonthGroup(HuaxiaDataReportParamPagerVo paramPagerVo) {
+        if (StringUtils.isEmpty(paramPagerVo.getChooseDate())) {
+            return new ArrayList<>();
+        }
+        String[] dateArray = paramPagerVo.getChooseDate().split(" - ");
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramPagerVo.getDataSource());
+        List<HuaxiaDataReport> flowReportList = huaxiaDataReportMapper.findListByMonthGroup(paramMap);
+        if (flowReportList == null) {
+            flowReportList = new ArrayList<>();
+        }
+        return flowReportList;
     }
 
 }

@@ -2,5 +2,24 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="com.modelink.reservation.mapper.HuaxiaDataReportMapper" >
-
+    <select id="findListByMonthGroup" resultType="com.modelink.reservation.bean.HuaxiaDataReport">
+        select
+            data_source as dataSource,
+            DATE_FORMAT(date, '%Y-%m') as `date`,
+            DATE_FORMAT(date, '%Y-%m') as `month`,
+            sum(pc_count) as pcCount,
+            sum(wap_count) as wapCount,
+            sum(weixin_count) as weixinCount,
+            sum(xiaomi_count) as xiaomiCount,
+            sum(valid_count) as validCount,
+            sum(flag_count) as flagCount
+        from `huaxia_data_report`
+        where `data_source` = #{dataSource}
+        <![CDATA[
+            and `date` >= #{startDate}
+            and `date` <= #{endDate}
+        ]]>
+        group by `month`
+        order by `date` desc
+    </select>
 </mapper>
