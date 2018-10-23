@@ -23,6 +23,7 @@
         from `flow_reserve`
         where `fee_type` = #{dataSource}
         and `advertise_active` not like '%微信%'
+        and `advertise_active` != 'MI-测保'
         and `advertise_active` != '-'
         and `advertise_active` != ''
         <if test="platformName != null and platformName != ''">
@@ -38,13 +39,54 @@
         <if test="platformName != null and platformName != ''">
             ,`platform_name`
         </if>
-        <if test="advertiseActiveList != null">
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
             ,`advertise_active`
         </if>
         <![CDATA[
             having `date` >= #{startDate}
             and `date` <= #{endDate}
         ]]>
+    </select>
+
+    <select id="findMapByMonthGroup" resultType="java.util.Map">
+        select
+        DATE_FORMAT(date, '%Y-%m') as `date`,
+        DATE_FORMAT(date, '%Y-%m') as `month`,
+        count(0) as reserveCount,
+        concat(DATE_FORMAT(date, '%Y-%m'), '|', fee_type
+        <if test="platformName != null and platformName != ''">
+            , '|', platform_name
+        </if>
+        <if test="advertiseActiveList != null">
+            , '|', advertise_active
+        </if>
+        ) as unionKey
+        from `flow_reserve`
+        where `fee_type` = #{dataSource}
+        and `advertise_active` not like '%微信%'
+        and `advertise_active` != 'MI-测保'
+        and `advertise_active` != '-'
+        and `advertise_active` != ''
+        <if test="platformName != null and platformName != ''">
+            and platform_name = #{platformName}
+        </if>
+        <if test="advertiseActiveList != null">
+            and advertise_active in
+            <foreach collection="advertiseActiveList" index="index" item="advertiseActive" open="(" separator="," close=")">
+                '${advertiseActive}'
+            </foreach>
+        </if>
+        <![CDATA[
+            and `date` >= #{startDate}
+            and `date` <= #{endDate}
+        ]]>
+        group by `month`
+        <if test="platformName != null and platformName != ''">
+            ,`platform_name`
+        </if>
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
+            ,`advertise_active`
+        </if>
     </select>
 
 </mapper>

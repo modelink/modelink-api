@@ -11,6 +11,8 @@ public class HuaxiaReportSummaryVo implements Serializable {
     private String dataSource;
     /** 取自“华夏日报-基础数量表”—字段“有效+营销标记电话”加和 **/
     private Integer validArrange;
+    private Integer validCount;
+    private Integer flagCount;
     /** 取自“华夏日报-基础数量表”—字段“总转化-pc（去重后）+总转化-移动（去重后）”加和 */
     private Integer totalCount;
     /** 注意：
@@ -251,5 +253,21 @@ public class HuaxiaReportSummaryVo implements Serializable {
 
     public void setInsuranceAmount(String insuranceAmount) {
         this.insuranceAmount = insuranceAmount;
+    }
+
+    public Integer getValidCount() {
+        return validCount;
+    }
+
+    public void setValidCount(Integer validCount) {
+        this.validCount = validCount;
+    }
+
+    public Integer getFlagCount() {
+        return flagCount;
+    }
+
+    public void setFlagCount(Integer flagCount) {
+        this.flagCount = flagCount;
     }
 }

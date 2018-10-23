@@ -17,4 +17,6 @@ public interface HuaxiaFlowReportMapper extends Mapper<HuaxiaFlowReport>, MySqlM
 
     public List<HuaxiaFlowReport> findListByParamGroup(Map<String, Object> paramMap);
 
+    public List<HuaxiaFlowReport> findListByMonthGroup(Map<String, Object> paramMap);
+
 }

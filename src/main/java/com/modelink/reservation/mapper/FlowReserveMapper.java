@@ -22,4 +22,7 @@ public interface FlowReserveMapper extends Mapper<FlowReserve>, MySqlMapper<Flow
 
     @MapKey("unionKey")
     public Map<String, Map<String, Object>> findMapByParamGroup(Map<String, Object> paramMap);
+
+    @MapKey("unionKey")
+    public Map<String, Map<String, Object>> findMapByMonthGroup(Map<String, Object> paramMap);
 }

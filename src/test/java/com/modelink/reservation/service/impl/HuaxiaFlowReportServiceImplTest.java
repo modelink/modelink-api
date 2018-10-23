@@ -59,4 +59,20 @@ public class HuaxiaFlowReportServiceImplTest {
             logger.info("[parameterName=dataSource] [value=" + flowReport.getDataSource() + "]");
         }
     }
+    @Test
+    public void findListByMonthGroup() {
+        HuaxiaFlowReportParamPagerVo paramVo = new HuaxiaFlowReportParamPagerVo();
+        paramVo.setChooseDate("2018-07-01 - 2018-10-30");
+        paramVo.setDataSource("预约");
+        paramVo.setPlatformName("PC");
+        paramVo.setAdvertiseActive("百度表单");
+        List<HuaxiaFlowReport> flowReportList = huaxiaFlowReportService.findListByMonthGroup(paramVo);
+
+        HuaxiaFlowReport flowReport;
+        Iterator<HuaxiaFlowReport> iterator = flowReportList.iterator();
+        while (iterator.hasNext()) {
+            flowReport = iterator.next();
+            logger.info("[parameterName=" + flowReport.getDataSource() + "] [value=" + flowReport.getAdvertiseActive() + "]");
+        }
+    }
 }

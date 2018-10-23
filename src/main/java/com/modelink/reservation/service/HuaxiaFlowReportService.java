@@ -61,4 +61,11 @@ public interface HuaxiaFlowReportService {
      * @return
      */
     public List<HuaxiaFlowReport> findListByParamGroup(HuaxiaFlowReportParamPagerVo paramPagerVo);
+
+    /**
+     * 根据查询条件查询相应的记录列表（按指定月份分组）
+     * @param paramPagerVo
+     * @return
+     */
+    public List<HuaxiaFlowReport> findListByMonthGroup(HuaxiaFlowReportParamPagerVo paramPagerVo);
 }

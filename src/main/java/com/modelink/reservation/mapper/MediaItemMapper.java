@@ -15,4 +15,9 @@ public interface MediaItemMapper extends Mapper<MediaItem>, MySqlMapper<MediaIte
 
     @MapKey("unionKey")
     public Map<String, MediaItem> findMapByParamGroup(Map<String, Object> paramMap);
+
+    @MapKey("unionKey")
+    public Map<String, Map<String, Object>> findMapByMonthGroup(Map<String, Object> paramMap);
+
+
 }

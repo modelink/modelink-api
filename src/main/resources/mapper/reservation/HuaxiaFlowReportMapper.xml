@@ -37,7 +37,7 @@
         <if test="platformName != null and platformName != ''">
             ,`platform_name`
         </if>
-        <if test="advertiseActiveList != null">
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
             ,`advertise_active`
         </if>
         <![CDATA[
@@ -73,14 +73,54 @@
                 '${advertiseActive}'
             </foreach>
         </if>
-        group by `date`
-        <if test="advertiseActiveList != null">
-            ,`advertise_active`
-        </if>
         <![CDATA[
-            having `date` >= #{startDate}
+            and `date` >= #{startDate}
             and `date` <= #{endDate}
         ]]>
+        group by `date`
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
+            ,`advertise_active`
+        </if>
+        order by `date` desc
+    </select>
+
+    <select id="findListByMonthGroup" resultType="com.modelink.reservation.bean.HuaxiaFlowReport">
+        select
+            data_source as dataSource,
+            DATE_FORMAT(date, '%Y-%m') as `date`,
+            DATE_FORMAT(date, '%Y-%m') as `month`,
+            <if test="platformName != null and platformName != ''">
+                platform_name as platformName,
+            </if>
+            <if test="advertiseActiveList != null">
+                advertise_active as advertiseActive,
+            </if>
+            sum(browse_count) as browseCount,
+            sum(click_count) as clickCount,
+            sum(arrive_count) as arriveCount,
+            sum(arrive_user_count) as arriveUserCount,
+            sum(again_count) as againCount,
+            avg(average_stay_time) as averageStayTime
+        from `huaxia_flow_report`
+        where `data_source` = #{dataSource}
+        <if test="platformName != null and platformName != ''">
+            and platform_name = #{platformName}
+        </if>
+        <if test="advertiseActiveList != null">
+            and advertise_active in
+            <foreach collection="advertiseActiveList" index="index" item="advertiseActive" open="(" separator="," close=")">
+                '${advertiseActive}'
+            </foreach>
+        </if>
+        <![CDATA[
+            and `date` >= #{startDate}
+            and `date` <= #{endDate}
+        ]]>
+        group by `month`
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
+            ,`advertise_active`
+        </if>
+
         order by `date` desc
     </select>
 

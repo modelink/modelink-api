@@ -184,4 +184,28 @@ public class HuaxiaFlowReportServiceImpl implements HuaxiaFlowReportService {
         return flowReportList;
     }
 
+    /**
+     * 根据查询条件查询相应的记录列表（按指定月份分组）
+     * @param paramPagerVo
+     * @return
+     */
+    public List<HuaxiaFlowReport> findListByMonthGroup(HuaxiaFlowReportParamPagerVo paramPagerVo) {
+        if (StringUtils.isEmpty(paramPagerVo.getChooseDate())) {
+            return new ArrayList<>();
+        }
+        String[] dateArray = paramPagerVo.getChooseDate().split(" - ");
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramPagerVo.getDataSource());
+        paramMap.put("platformName", paramPagerVo.getPlatformName());
+        if (StringUtils.hasText(paramPagerVo.getAdvertiseActive())) {
+            paramMap.put("advertiseActiveList", Arrays.asList(paramPagerVo.getAdvertiseActive().split(",")));
+        }
+        List<HuaxiaFlowReport> flowReportList = huaxiaFlowReportMapper.findListByMonthGroup(paramMap);
+        if (flowReportList == null) {
+            flowReportList = new ArrayList<>();
+        }
+        return flowReportList;
+    }
 }

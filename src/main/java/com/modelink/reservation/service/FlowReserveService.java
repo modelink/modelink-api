@@ -75,4 +75,11 @@ public interface FlowReserveService {
      * @return
      */
     public Map<String, Map<String, Object>> findMapByParamGroup(HuaxiaReportParamVo paramVo);
+
+    /**
+     * 华夏日报专用接口，获取每月广告直接转化数
+     * @param paramVo
+     * @return
+     */
+    public Map<String, Map<String, Object>> findMapByMonthGroup(HuaxiaReportParamVo paramVo);
 }

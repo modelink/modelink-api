@@ -61,4 +61,11 @@ public interface MediaItemService {
      * @return
      */
     public Map<String, MediaItem> findMapByParamGroup(HuaxiaReportParamVo paramVo);
+
+    /**
+     * 根据查询条件查询相应的记录列表（按月份分组）
+     * @param paramVo
+     * @return
+     */
+    public Map<String, Map<String, Object>> findMapByMonthGroup(HuaxiaReportParamVo paramVo);
 }

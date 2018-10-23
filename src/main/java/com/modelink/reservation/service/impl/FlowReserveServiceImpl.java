@@ -201,4 +201,32 @@ public class FlowReserveServiceImpl implements FlowReserveService {
         }
         return flowReserveMap;
     }
+
+    /**
+     * 华夏日报专用接口，获取每月广告直接转化数
+     * @param paramVo
+     * @return
+     */
+    public Map<String, Map<String, Object>> findMapByMonthGroup(HuaxiaReportParamVo paramVo) {
+        if (StringUtils.isEmpty(paramVo.getChooseDate())) {
+            return new HashMap<>();
+        }
+        String[] dateArray = paramVo.getChooseDate().split(" - ");
+
+        Map<String, Object> paramMap = new HashMap<>();
+        paramMap.put("startDate", dateArray[0]);
+        paramMap.put("endDate", dateArray[1]);
+        paramMap.put("dataSource", paramVo.getDataSource());
+        paramMap.put("platformName", paramVo.getPlatformName());
+        if (StringUtils.hasText(paramVo.getAdvertiseActive())) {
+            paramMap.put("advertiseActiveList", Arrays.asList(paramVo.getAdvertiseActive().split(",")));
+        }
+        Map<String, Map<String, Object>> flowReserveMap = flowReserveMapper.findMapByMonthGroup(paramMap);
+
+
+        if (flowReserveMap == null) {
+            flowReserveMap = new HashMap<>();
+        }
+        return flowReserveMap;
+    }
 }

@@ -46,4 +46,20 @@ public class FlowReserveServiceImplTest {
             logger.info("[parameterName=" + parameterName + "] [value=" + flowReportMap.get(parameterName) + "]");
         }
     }
+    @Test
+    public void findMapByParamGroup() {
+        HuaxiaReportParamVo paramVo = new HuaxiaReportParamVo();
+        paramVo.setChooseDate("2018-10-10 - 2018-10-10");
+        paramVo.setDataSource("预约");
+        paramVo.setPlatformName("PC");
+        paramVo.setAdvertiseActive("百度SEM,百度表单");
+        Map<String, Map<String, Object>> flowReportMap = flowReserveService.findMapByParamGroup(paramVo);
+
+        String parameterName;
+        Iterator<String> iterator = flowReportMap.keySet().iterator();
+        while (iterator.hasNext()) {
+            parameterName = iterator.next();
+            logger.info("[parameterName=" + parameterName + "] [value=" + flowReportMap.get(parameterName).get("reserveCount") + "]");
+        }
+    }
 }
