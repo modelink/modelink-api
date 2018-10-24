@@ -550,6 +550,6 @@ table th, table td {
     display: none;
     position: absolute;
     overflow-y: auto;
-    z-index: 9;
+    z-index: 999;
 }
 
