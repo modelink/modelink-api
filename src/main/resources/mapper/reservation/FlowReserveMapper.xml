@@ -22,6 +22,7 @@
             ) as unionKey
         from `flow_reserve`
         where `fee_type` = #{dataSource}
+        and is_make_up = 0
         and `advertise_active` not like '%微信%'
         and `advertise_active` != 'MI-测保'
         and `advertise_active` != '-'
@@ -64,6 +65,7 @@
         ) as unionKey
         from `flow_reserve`
         where `fee_type` = #{dataSource}
+        and is_make_up = 0
         and `advertise_active` not like '%微信%'
         and `advertise_active` != 'MI-测保'
         and `advertise_active` != '-'
