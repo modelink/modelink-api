@@ -402,7 +402,7 @@ public class HuaxiaReportController {
             sheetContentMap.put(sheetName, excelSheetItem);
         }
         Map<String, String> advertiseActiveMap = new HashMap<>();
-        advertiseActiveMap.put("预约-PC", "360SEM,360导航,360品专,百度SEM,百度SEM-同台展现,垂直媒体,搜狗SEM,搜狗品专");
+        advertiseActiveMap.put("预约-PC", "360SEM,360品专,百度SEM,百度SEM-同台展现,垂直媒体,搜狗SEM,搜狗品专");
         advertiseActiveMap.put("预约-WAP", "360SEM,360品专,99DSP,百度SEM,百度SEM-同台展现,百度原生,垂直媒体,广点通,今日头条APP,神马搜索,搜狗SEM,搜狗品专,一点资讯");
         advertiseActiveMap.put("测保-PC", "百度SEM");
         advertiseActiveMap.put("测保-WAP", "FY,ZH,百度原生,垂直媒体,广点通,今日头条APP,小米");
@@ -914,7 +914,7 @@ public class HuaxiaReportController {
             if (StringUtils.hasText(huaxiaFlowReport.getPlatformName())) {
                 unionKey.append("|").append(huaxiaFlowReport.getPlatformName());
             }
-            if (StringUtils.hasText(huaxiaFlowReport.getAdvertiseActive())) {
+            if (StringUtils.hasText(huaxiaFlowReport.getAdvertiseActive()) && !"百度SEM".equals(huaxiaFlowReport.getAdvertiseActive())) {
                 unionKey.append("|").append(huaxiaFlowReport.getAdvertiseActive());
             }
 

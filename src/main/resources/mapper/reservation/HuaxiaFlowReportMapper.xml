@@ -53,7 +53,7 @@
             <if test="platformName != null and platformName != ''">
                 platform_name as platformName,
             </if>
-            <if test="advertiseActiveList != null">
+            <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
                 advertise_active as advertiseActive,
             </if>
             sum(browse_count) as browseCount,
@@ -92,7 +92,7 @@
             <if test="platformName != null and platformName != ''">
                 platform_name as platformName,
             </if>
-            <if test="advertiseActiveList != null">
+            <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
                 advertise_active as advertiseActive,
             </if>
             sum(browse_count) as browseCount,

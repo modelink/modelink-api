@@ -16,7 +16,7 @@
             <if test="platformName != null and platformName != ''">
                 , '|', platform_name
             </if>
-            <if test="advertiseActiveList != null">
+            <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
                 , '|', advertise_active
             </if>
             ) as unionKey
@@ -57,7 +57,7 @@
         <if test="platformName != null and platformName != ''">
             , '|', platform_name
         </if>
-        <if test="advertiseActiveList != null">
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
             , '|', advertise_active
         </if>
         ) as unionKey

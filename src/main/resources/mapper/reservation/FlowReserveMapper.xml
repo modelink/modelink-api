@@ -16,7 +16,7 @@
             <if test="platformName != null and platformName != ''">
                 , '|', platform_name
             </if>
-            <if test="advertiseActiveList != null">
+            <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
                 , '|', advertise_active
             </if>
             ) as unionKey
@@ -35,6 +35,10 @@
                 '${advertiseActive}'
             </foreach>
         </if>
+        <![CDATA[
+            and `date` >= #{startDate}
+            and `date` <= #{endDate}
+        ]]>
         group by `date`
         <if test="platformName != null and platformName != ''">
             ,`platform_name`
@@ -42,10 +46,7 @@
         <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
             ,`advertise_active`
         </if>
-        <![CDATA[
-            having `date` >= #{startDate}
-            and `date` <= #{endDate}
-        ]]>
+
     </select>
 
     <select id="findMapByMonthGroup" resultType="java.util.Map">
@@ -57,7 +58,7 @@
         <if test="platformName != null and platformName != ''">
             , '|', platform_name
         </if>
-        <if test="advertiseActiveList != null">
+        <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
             , '|', advertise_active
         </if>
         ) as unionKey
