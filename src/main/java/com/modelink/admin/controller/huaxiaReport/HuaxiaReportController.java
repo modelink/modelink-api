@@ -819,6 +819,7 @@ public class HuaxiaReportController {
         for(HuaxiaFlowReport huaxiaFlowReport : dataReportList){
             detailItemVo = new HuaxiaReportDetailItemVo();
             BeanUtils.copyProperties(huaxiaFlowReport, detailItemVo);
+            detailItemVo.setAdvertiseActive(paramVo.getAdvertiseActive());
 
             paramVo = new HuaxiaReportParamVo();
             paramVo.setChooseDate(huaxiaFlowReport.getDate() + " - " + huaxiaFlowReport.getDate());
@@ -834,7 +835,7 @@ public class HuaxiaReportController {
             if (StringUtils.hasText(huaxiaFlowReport.getPlatformName())) {
                 unionKey.append("|").append(huaxiaFlowReport.getPlatformName());
             }
-            if (StringUtils.hasText(huaxiaFlowReport.getAdvertiseActive())) {
+            if (StringUtils.hasText(huaxiaFlowReport.getAdvertiseActive()) && !"百度SEM".equals(huaxiaFlowReport.getAdvertiseActive())) {
                 unionKey.append("|").append(huaxiaFlowReport.getAdvertiseActive());
             }
 
@@ -907,6 +908,7 @@ public class HuaxiaReportController {
         for(HuaxiaFlowReport huaxiaFlowReport : dataReportList){
             detailItemVo = new HuaxiaReportDetailItemVo();
             BeanUtils.copyProperties(huaxiaFlowReport, detailItemVo);
+            detailItemVo.setAdvertiseActive(paramVo.getAdvertiseActive());
 
             unionKey = new StringBuilder("");
             unionKey.append(huaxiaFlowReport.getDate()).append("|");
@@ -989,6 +991,7 @@ public class HuaxiaReportController {
         for(HuaxiaFlowReport huaxiaFlowReport : dataReportList){
             detailItemVo = new HuaxiaReportDetailItemVo();
             BeanUtils.copyProperties(huaxiaFlowReport, detailItemVo);
+            detailItemVo.setAdvertiseActive(paramVo.getAdvertiseActive());
 
             unionKey = new StringBuilder("");
             unionKey.append(huaxiaFlowReport.getDate());
