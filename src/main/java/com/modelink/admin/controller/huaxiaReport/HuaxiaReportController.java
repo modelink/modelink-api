@@ -819,7 +819,6 @@ public class HuaxiaReportController {
         for(HuaxiaFlowReport huaxiaFlowReport : dataReportList){
             detailItemVo = new HuaxiaReportDetailItemVo();
             BeanUtils.copyProperties(huaxiaFlowReport, detailItemVo);
-            detailItemVo.setAdvertiseActive(paramVo.getAdvertiseActive());
 
             paramVo = new HuaxiaReportParamVo();
             paramVo.setChooseDate(huaxiaFlowReport.getDate() + " - " + huaxiaFlowReport.getDate());
