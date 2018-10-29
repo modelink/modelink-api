@@ -47,10 +47,12 @@
         .layui-label input {
             text-align: center;
         }
-        .ml-echart {
-            margin: 15px;
-            border: 1px solid #E6E6E6;
-            height: 300px;
+        .content-fixed {
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: solid 1px #E6E6E6;
+            padding: 15px 15px 15px 15px;
         }
     </style>
 </head>
@@ -98,6 +100,7 @@
         </div>
     </form>
 
+    <div class="content-fixed">
     <div class="layui-row layui-col-space15 ml-table">
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-label layui-card">
@@ -242,7 +245,7 @@
             </div>
         </div>
     </div>
-
+    </div>
 </div>
 
 

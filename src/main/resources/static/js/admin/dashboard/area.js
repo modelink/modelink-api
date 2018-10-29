@@ -5,6 +5,10 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload', 'formSe
     var laydate = layui.laydate;
     var formSelects = layui.formSelects;
 
+    var windowHeight = $(window).height();
+    var formHeight = $(".layui-form").height();
+    $(".content-fixed").height(windowHeight - formHeight - 100);
+
     //广告活动选择器
     formSelects.config('advertiseActive', {
         beforeSuccess: function(id, url, searchVal, result){

@@ -37,6 +37,13 @@
         .layui-card-body {
             background-color: white;
         }
+        .content-fixed {
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: solid 1px #E6E6E6;
+            padding: 15px 15px 15px 15px;
+        }
     </style>
 </head>
 <body>
@@ -66,7 +73,7 @@
             <div class="layui-inline choose-date date">
                 <label class="layui-form-label">选择日期</label>
                 <div class="layui-input-inline">
-                    <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
+                    <input type="text" id="chooseDate" name="chooseDate" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-inline">
@@ -76,6 +83,7 @@
         </div>
     </form>
 
+    <div class="content-fixed">
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
@@ -250,6 +258,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 

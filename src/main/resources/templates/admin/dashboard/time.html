@@ -32,6 +32,13 @@
         .layui-label .layui-btn-group button {
             width: 60px;
         }
+        .content-fixed {
+            height: auto;
+            overflow-x: hidden;
+            overflow-y: scroll;
+            border: solid 1px #E6E6E6;
+            padding: 15px 15px 15px 15px;
+        }
     </style>
 </head>
 <body>
@@ -78,7 +85,7 @@
         </div>
     </form>
 
-
+    <div class="content-fixed">
     <div class="layui-row ml-row">
         <div class="layui-label">
             <div style="float:left;">时间段分析</div>
@@ -106,6 +113,7 @@
                 </table>
             </div>
         </div>
+    </div>
     </div>
 </div>
 

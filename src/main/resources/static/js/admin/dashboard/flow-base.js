@@ -5,6 +5,10 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'layer'], functio
     var table = layui.table;
     var laydate = layui.laydate;
 
+    var windowHeight = $(window).height();
+    var formHeight = $(".layui-form").height();
+    $(".content-fixed").height(windowHeight - formHeight - 100);
+
     //时间选择器
     laydate.render({
         range: true,

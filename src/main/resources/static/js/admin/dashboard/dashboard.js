@@ -3,6 +3,10 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
     var form = layui.form;
     var laydate = layui.laydate;
 
+    var windowHeight = $(window).height();
+    var formHeight = $(".layui-form").height();
+    $(".content-fixed").height(windowHeight - formHeight - 100);
+
     //时间选择器
     laydate.render({
         elem: '#chooseDate',
