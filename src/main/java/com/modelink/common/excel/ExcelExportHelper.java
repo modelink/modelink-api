@@ -1,6 +1,7 @@
 package com.modelink.common.excel;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -27,7 +28,7 @@ public class ExcelExportHelper {
      */
     public static void exportExcel2Response(ExcelExportConfigation excelConfigation, HttpServletResponse response) throws Exception {
 
-        XSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
+        SXSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
         // 将Excel放入响应头里面
         String fileName;
         ServletOutputStream outStream = null;
@@ -52,16 +53,16 @@ public class ExcelExportHelper {
      * @throws Exception
      */
     public static void exportExcel2File(ExcelExportConfigation excelConfigation, String fileName) throws Exception {
-        XSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
+        SXSSFWorkbook workbook = buildExcelWorkbook(excelConfigation);
         /*** 这里是问题的关键，将这个工作簿写入到一个流中就可以输出相应的名字，这里需要写路径就ok了。 **/
         FileOutputStream fileOutputStream = new FileOutputStream(fileName);
         workbook.write(fileOutputStream);
         fileOutputStream.close();
     }
 
-    private static XSSFWorkbook buildExcelWorkbook (ExcelExportConfigation excelConfigation) throws Exception {
+    private static SXSSFWorkbook buildExcelWorkbook (ExcelExportConfigation excelConfigation) throws Exception {
         // 创建Excel的工作书册 Workbook,对应到一个excel文档
-        XSSFWorkbook workbook = new XSSFWorkbook();
+        SXSSFWorkbook workbook = new SXSSFWorkbook();
 
         if(excelConfigation == null || excelConfigation.getSheetNameList() == null
                 || excelConfigation.getSheetNameList().size() <= 0){
@@ -71,8 +72,8 @@ public class ExcelExportHelper {
         Sheet sheet;
         ExcelSheetItem excelSheetItem;
         Row headerRow, contentRow;
-        XSSFFont headerFont, contentFont;
-        XSSFCellStyle headerStyle, contentStyle;
+        Font headerFont, contentFont;
+        CellStyle headerStyle, contentStyle;
         int columnIndex, rowIndex;
         for (String sheetName : excelConfigation.getSheetNameList()) {
 

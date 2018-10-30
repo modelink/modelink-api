@@ -541,7 +541,8 @@ public class HuaxiaReportController {
         HuaxiaReportSummaryVo summaryVo;
         Map<String, Object> reserve;
         List<HuaxiaReportSummaryVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
         // 获取华夏日报-基础流量数据汇总数据
         Map<String, HuaxiaFlowReport> flowReportMap = huaxiaFlowReportService.findMapByParamGroup(paramVo);
         // 获取媒体数据表中的数据汇总数据
@@ -597,14 +598,14 @@ public class HuaxiaReportController {
                 summaryVo.setAgainCount(flowReport.getAgainCount());
                 summaryVo.setAverageStayTime(String.valueOf(flowReport.getAverageStayTime()));
                 if (flowReport.getClickCount() == null || flowReport.getClickCount() == 0) {
-                    summaryVo.setArriveRate(decimalFormat.format(0) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(0) + "%");
                 } else {
-                    summaryVo.setArriveRate(decimalFormat.format(flowReport.getArriveCount() * 100d / flowReport.getClickCount()) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(flowReport.getArriveCount() * 100d / flowReport.getClickCount()) + "%");
                 }
                 if (flowReport.getArriveCount() == null || flowReport.getArriveCount() == 0) {
-                    summaryVo.setAgainRate(decimalFormat.format(0) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(0) + "%");
                 } else {
-                    summaryVo.setAgainRate(decimalFormat.format(flowReport.getAgainCount() * 100d / flowReport.getArriveCount()) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(flowReport.getAgainCount() * 100d / flowReport.getArriveCount()) + "%");
                 }
             }
             // 整合华夏日报-基础流量数据
@@ -627,10 +628,10 @@ public class HuaxiaReportController {
                     summaryVo.setCpc(decimalFormat.format(Double.parseDouble(speedCost) / mediaItem.getClickCount()));
                 }
                 if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
-                    summaryVo.setMediaClickRate(decimalFormat.format(0) + "%");
+                    summaryVo.setMediaClickRate(decimalFormatPercent.format(0) + "%");
                     summaryVo.setCpm(decimalFormat.format(0));
                 } else {
-                    summaryVo.setMediaClickRate(decimalFormat.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
+                    summaryVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
                     summaryVo.setCpm(decimalFormat.format(Double.parseDouble(speedCost) * 1000 / mediaItem.getShowCount()));
                 }
             }
@@ -656,7 +657,8 @@ public class HuaxiaReportController {
         HuaxiaReportSummaryVo summaryVo;
         Map<String, Object> reserve;
         List<HuaxiaReportSummaryVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
         // 获取华夏日报-基础流量数据汇总数据
         Map<String, Map<String, Object>> flowReportMap = huaxiaFlowReportService.findMapByMonthGroup(paramVo);
         // 获取媒体数据表中的数据汇总数据
@@ -736,14 +738,14 @@ public class HuaxiaReportController {
                 summaryVo.setArriveUserCount(((BigDecimal)flowReport.get("arriveUserCount")).intValue());
                 summaryVo.setAverageStayTime(((BigDecimal)flowReport.get("averageStayTime")).setScale(2,BigDecimal.ROUND_HALF_DOWN).toPlainString());
                 if (clickCount == 0) {
-                    summaryVo.setArriveRate(decimalFormat.format(0) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(0) + "%");
                 } else {
-                    summaryVo.setArriveRate(decimalFormat.format(arriveCount * 100d / clickCount) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(arriveCount * 100d / clickCount) + "%");
                 }
                 if (arriveCount == 0) {
-                    summaryVo.setAgainRate(decimalFormat.format(0) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(0) + "%");
                 } else {
-                    summaryVo.setAgainRate(decimalFormat.format(againCount * 100d / arriveCount) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(againCount * 100d / arriveCount) + "%");
                 }
             }
             // 整合华夏日报-基础流量数据
@@ -777,11 +779,11 @@ public class HuaxiaReportController {
                 }
                 if (mediaShowCount == 0) {
                     summaryVo.setMediaShowCount(0);
-                    summaryVo.setMediaClickRate(mediaClickCount + "%");
+                    summaryVo.setMediaClickRate("0.00%");
                     summaryVo.setCpm(decimalFormat.format(0));
                 } else {
                     summaryVo.setMediaShowCount(mediaShowCount);
-                    summaryVo.setMediaClickRate(decimalFormat.format(mediaClickCount * 100.00d / mediaShowCount) + "%");
+                    summaryVo.setMediaClickRate(decimalFormatPercent.format(mediaClickCount * 100.00d / mediaShowCount) + "%");
                     summaryVo.setCpm(decimalFormat.format(speedCost * 1000 / mediaShowCount));
                 }
             }
@@ -806,7 +808,8 @@ public class HuaxiaReportController {
         HuaxiaReportDetailItemVo detailItemVo;
         Map<String, Object> reserve;
         List<HuaxiaReportDetailItemVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
 
         // 获取媒体数据表中的数据汇总数据
         Map<String, MediaItem> mediaItemMap;
@@ -849,14 +852,14 @@ public class HuaxiaReportController {
 
             // 整合华夏日报-基础流量数据
             if (detailItemVo.getClickCount() == null || detailItemVo.getClickCount() == 0) {
-                detailItemVo.setArriveRate(decimalFormat.format(0) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(0) + "%");
             } else {
-                detailItemVo.setArriveRate(decimalFormat.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
             }
             if (detailItemVo.getArriveCount() == null || detailItemVo.getArriveCount() == 0) {
-                detailItemVo.setAgainRate(decimalFormat.format(0) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(0) + "%");
             } else {
-                detailItemVo.setAgainRate(decimalFormat.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
             }
             // 整合华夏日报-基础流量数据
 
@@ -872,10 +875,10 @@ public class HuaxiaReportController {
                     detailItemVo.setCpc(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) / mediaItem.getClickCount()));
                 }
                 if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
-                    detailItemVo.setMediaClickRate(decimalFormat.format(0) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(0) + "%");
                     detailItemVo.setCpm(decimalFormat.format(0));
                 } else {
-                    detailItemVo.setMediaClickRate(decimalFormat.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
                     detailItemVo.setCpm(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) * 1000 / mediaItem.getShowCount()));
                 }
             }
@@ -894,7 +897,8 @@ public class HuaxiaReportController {
         HuaxiaReportDetailItemVo detailItemVo;
         Map<String, Object> reserve;
         List<HuaxiaReportDetailItemVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
 
         // 获取媒体数据表中的数据汇总数据
         Map<String, MediaItem> mediaItemMap = mediaItemService.findMapByParamGroup(paramVo);
@@ -930,14 +934,14 @@ public class HuaxiaReportController {
 
             // 整合华夏日报-基础流量数据
             if (detailItemVo.getClickCount() == null || detailItemVo.getClickCount() == 0) {
-                detailItemVo.setArriveRate(decimalFormat.format(0) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(0) + "%");
             } else {
-                detailItemVo.setArriveRate(decimalFormat.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
             }
             if (detailItemVo.getArriveCount() == null || detailItemVo.getArriveCount() == 0) {
-                detailItemVo.setAgainRate(decimalFormat.format(0) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(0) + "%");
             } else {
-                detailItemVo.setAgainRate(decimalFormat.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
             }
             // 整合华夏日报-基础流量数据
 
@@ -953,10 +957,10 @@ public class HuaxiaReportController {
                     detailItemVo.setCpc(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) / mediaItem.getClickCount()));
                 }
                 if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
-                    detailItemVo.setMediaClickRate(decimalFormat.format(0) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(0) + "%");
                     detailItemVo.setCpm(decimalFormat.format(0));
                 } else {
-                    detailItemVo.setMediaClickRate(decimalFormat.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
                     detailItemVo.setCpm(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) * 1000 / mediaItem.getShowCount()));
                 }
             }

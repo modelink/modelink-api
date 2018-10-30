@@ -884,11 +884,16 @@ public class DashboardController {
         JSONArray titleArray = new JSONArray();
         JSONArray contentArray = new JSONArray();
         Set<String> keySet = statCountMap.keySet();
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
         String[] keyArray = keySet.toArray(new String[keySet.size()]);
         Arrays.sort(keyArray);
         for(String key : keyArray){
             titleArray.add(key);
-            contentArray.add(statCountMap.get(key));
+            if (statCountMap.get(key) instanceof Double) {
+                contentArray.add(decimalFormat.format((Double) statCountMap.get(key)));
+            } else {
+                contentArray.add(statCountMap.get(key));
+            }
         }
         resultJson.put("titleList", titleArray);
         resultJson.put("contentList", contentArray);
@@ -897,7 +902,7 @@ public class DashboardController {
         double lastValue = 0;
         double penultValue = 0;
         double trendRate = 0;
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+
         if(size > 0){
             lastValue = contentArray.getDoubleValue(size - 1);
         }

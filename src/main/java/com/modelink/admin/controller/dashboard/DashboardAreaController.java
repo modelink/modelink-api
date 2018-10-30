@@ -780,7 +780,7 @@ public class DashboardAreaController {
         Set<Integer> cityIdList = new HashSet<>();
         Map<Integer, Integer> city2ProvinceMap = new HashMap<>();
         Map<Integer, String> merchantMap = new HashMap<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0");
 
         FlowReserveParamPagerVo paramPagerVo = new FlowReserveParamPagerVo();
         paramPagerVo.setChooseDate(paramVo.getChooseDate());
@@ -863,7 +863,7 @@ public class DashboardAreaController {
             difference = differenceMap.get(cityId);
             underwriteCount = underwriteCountMap.get(cityId);
             if (underwriteCount == 0) {
-                transformCycleMap.put(cityId, "0.00");
+                transformCycleMap.put(cityId, "0");
             } else {
                 transformCycleMap.put(cityId, decimalFormat.format(difference / underwriteCount));
             }
@@ -930,8 +930,8 @@ public class DashboardAreaController {
             resultBean.put("browseCount", browseCountMap.get(areaId) == null ? 0 : browseCountMap.get(areaId).toString());
             resultBean.put("reserveCount", reserveCountMap.get(areaId) == null ? 0 : reserveCountMap.get(areaId).toString());
             resultBean.put("underwriteCount", underwriteCountMap.get(areaId) == null ? 0 : underwriteCountMap.get(areaId).toString());
-            resultBean.put("underwriteAmount", underwriteAmountMap.get(areaId) == null ? 0.00d : decimalFormat.format(underwriteAmountMap.get(areaId)));
-            resultBean.put("transformCycle", transformCycleMap.get(areaId) == null ? 0.00d : Double.parseDouble(transformCycleMap.get(areaId)));
+            resultBean.put("underwriteAmount", underwriteAmountMap.get(areaId) == null ? 0d : decimalFormat.format(underwriteAmountMap.get(areaId)));
+            resultBean.put("transformCycle", transformCycleMap.get(areaId) == null ? 0d : Double.parseDouble(transformCycleMap.get(areaId)));
             resultList.add(resultBean);
         }
         /** 汇总结果 **/
