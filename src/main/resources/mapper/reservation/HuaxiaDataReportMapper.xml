@@ -20,6 +20,6 @@
             and `date` <= #{endDate}
         ]]>
         group by `month`
-        order by `date` desc
+        order by `date` asc
     </select>
 </mapper>

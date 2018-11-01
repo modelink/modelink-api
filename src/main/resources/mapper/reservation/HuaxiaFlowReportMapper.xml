@@ -43,7 +43,6 @@
             and `date` <= #{endDate}
         ]]>
         group by `month`
-        order by `month` desc
     </select>
 
     <select id="findListByParamGroup" resultType="com.modelink.reservation.bean.HuaxiaFlowReport">
@@ -81,7 +80,7 @@
         <if test="advertiseActiveList != null and !advertiseActiveList.contains('百度SEM')">
             ,`advertise_active`
         </if>
-        order by `date` desc
+        order by `date` asc
     </select>
 
     <select id="findListByMonthGroup" resultType="com.modelink.reservation.bean.HuaxiaFlowReport">
@@ -121,7 +120,7 @@
             ,`advertise_active`
         </if>
 
-        order by `date` desc
+        order by `date` asc
     </select>
 
 </mapper>
