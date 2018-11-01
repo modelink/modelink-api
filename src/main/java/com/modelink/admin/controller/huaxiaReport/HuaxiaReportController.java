@@ -682,6 +682,17 @@ public class HuaxiaReportController {
             BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
             detailItemVoList = transformDetailItem2DownloadVoListByDate(huaxiaReportParamVo, flowReportList);
 
+            directTransformCount = 0;
+            browseCount = 0;
+            clickCount = 0;
+            arriveCount = 0;
+            arriveUserCount = 0;
+            againCount = 0;
+            averageStayTime = 0;
+            mediaShowCount = 0;
+            mediaClickCount = 0;
+            consumeAmount = 0d;
+
             dataList = new ArrayList<>();
             for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
 
