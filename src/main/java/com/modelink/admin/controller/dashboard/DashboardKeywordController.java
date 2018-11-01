@@ -68,6 +68,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,keyWord,clickCount");
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -245,6 +246,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,advertiseActive,clickCount,showCount,speedCost");
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -332,6 +334,7 @@ public class DashboardKeywordController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("date,keyWord,clickCount,showCount,speedCost");
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -574,6 +577,7 @@ public class DashboardKeywordController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Double> consumeAmountMap = new HashMap<>();
@@ -730,7 +734,8 @@ public class DashboardKeywordController {
         mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        paramPagerVo.setColumnFieldIds("id,keyWord,clickCount");
+        mediaItemParamPagerVo.setColumnFieldIds("id,keyWord,clickCount");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
@@ -860,8 +865,9 @@ public class DashboardKeywordController {
             mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
             mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
             mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-            paramPagerVo.setColumnFieldIds("id,platformName,advertiseActive,advertiseSeries,clickCount");
-            paramPagerVo.setDateField("date");
+            mediaItemParamPagerVo.setColumnFieldIds("id,platformName,advertiseActive,advertiseSeries,clickCount");
+            mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
+            mediaItemParamPagerVo.setDateField("date");
             List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
 
             String transformRate;
@@ -1186,6 +1192,7 @@ public class DashboardKeywordController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Double> consumeAmountMap = new HashMap<>();

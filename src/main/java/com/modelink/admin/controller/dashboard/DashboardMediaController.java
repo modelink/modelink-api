@@ -144,6 +144,7 @@ public class DashboardMediaController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,keyWord,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setFeeType(paramVo.getFeeType());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);

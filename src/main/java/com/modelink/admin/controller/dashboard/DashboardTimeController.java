@@ -211,6 +211,7 @@ public class DashboardTimeController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Double> consumeAmountMap = new HashMap<>();

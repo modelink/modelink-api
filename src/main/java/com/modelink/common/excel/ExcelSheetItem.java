@@ -4,22 +4,23 @@ import java.util.List;
 
 public class ExcelSheetItem {
 
-    private List<String> columnNameList;
-    private List<List<String>> cellValueList;
+    private List<ColumnDetail> columnDetailList;
+    private List<List<CellDetail>> cellValueList;
 
-    public List<String> getColumnNameList() {
-        return columnNameList;
+    public List<ColumnDetail> getColumnDetailList() {
+        return columnDetailList;
     }
 
-    public void setColumnNameList(List<String> columnNameList) {
-        this.columnNameList = columnNameList;
+    public void setColumnDetailList(List<ColumnDetail> columnDetailList) {
+        this.columnDetailList = columnDetailList;
     }
 
-    public List<List<String>> getCellValueList() {
+    public List<List<CellDetail>> getCellValueList() {
         return cellValueList;
     }
 
-    public void setCellValueList(List<List<String>> cellValueList) {
+    public void setCellValueList(List<List<CellDetail>> cellValueList) {
         this.cellValueList = cellValueList;
     }
 }
+

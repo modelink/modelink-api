@@ -61,6 +61,7 @@ public class DashboardSummaryController {
         paramPagerVo.setPlatformName(paramVo.getPlatformName());
         paramPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         paramPagerVo.setColumnFieldIds("id,date,speedCost");
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -98,6 +99,7 @@ public class DashboardSummaryController {
         paramPagerVo.setMerchantId(merchantId);
         paramPagerVo.setPlatformName(platformName);
         paramPagerVo.setColumnFieldIds("id,advertiseActive,speedCost");
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -150,6 +152,7 @@ public class DashboardSummaryController {
         paramPagerVo.setPlatformName(platformName);
         paramPagerVo.setAdvertiseActive(advertiseActive);
         paramPagerVo.setColumnFieldIds("id,advertiseSeries,keyWord,speedCost");
+        paramPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         paramPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(paramPagerVo);
 
@@ -719,6 +722,7 @@ public class DashboardSummaryController {
         mediaItemParamPagerVo.setChooseDate(paramVo.getChooseDate());
         mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
         mediaItemParamPagerVo.setColumnFieldIds("id,date,clickCount");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         int clickTotalCount = 0;
@@ -927,6 +931,7 @@ public class DashboardSummaryController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Object> statAmountMap = DataUtils.initResultMap(paramVo.getChooseDate(), DateTypeEnum.日.getValue(), "double");
@@ -1043,6 +1048,7 @@ public class DashboardSummaryController {
         mediaItemParamPagerVo.setPlatformName(platformName);
         mediaItemParamPagerVo.setAdvertiseActive(advertiseActive);
         mediaItemParamPagerVo.setColumnFieldIds("id,date,keyWord,advertiseActive,advertiseSeries,clickCount,speedCost");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Double> statAmountMap = new HashMap<>();
@@ -1161,6 +1167,7 @@ public class DashboardSummaryController {
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
         mediaItemParamPagerVo.setColumnFieldIds("date,speedCost,platformName,advertiseActive");
+        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
         Map<String, Double> channel2AmountMap = new HashMap<>();

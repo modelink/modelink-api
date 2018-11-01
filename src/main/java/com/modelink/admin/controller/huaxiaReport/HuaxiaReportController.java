@@ -4,9 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.modelink.admin.vo.huaxiaReport.HuaxiaReportDetailItemVo;
 import com.modelink.admin.vo.huaxiaReport.HuaxiaReportParamVo;
 import com.modelink.admin.vo.huaxiaReport.HuaxiaReportSummaryVo;
-import com.modelink.common.excel.ExcelExportConfigation;
-import com.modelink.common.excel.ExcelExportHelper;
-import com.modelink.common.excel.ExcelSheetItem;
+import com.modelink.common.excel.*;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.LayuiResultPagerVo;
 import com.modelink.reservation.bean.HuaxiaDataReport;
@@ -18,6 +16,7 @@ import com.modelink.reservation.service.*;
 import com.modelink.reservation.vo.HuaxiaDataReportParamPagerVo;
 import com.modelink.reservation.vo.HuaxiaFlowReportParamPagerVo;
 import com.modelink.reservation.vo.PermiumsParamPagerVo;
+import org.apache.poi.ss.usermodel.IndexedColors;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
@@ -101,41 +100,41 @@ public class HuaxiaReportController {
         // 创建文件名称
         String fileName = "华夏日报-汇总表-" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         // 创建Excel表格列名称
-        List<String> columnNameList = new ArrayList<>();
-        columnNameList.add("日期");
-        columnNameList.add("数据来源");
-        columnNameList.add("有效数据（下发）");
-        columnNameList.add("营销标记");
-        columnNameList.add("总转化/测保转化（包含小米）");
-        columnNameList.add("总转化（不含微信）/测保转化（不含小米）");
-        columnNameList.add("PC");
-        columnNameList.add("WAP");
-        columnNameList.add("微信转化");
-        columnNameList.add("广告直接转化数");
+        List<ColumnDetail> columnDetailList = new ArrayList<>();
+        columnDetailList.add(new ColumnDetail("日期", 0, "string"));
+        columnDetailList.add(new ColumnDetail("数据来源", 0, "string"));
+        columnDetailList.add(new ColumnDetail("有效数据（下发）", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("营销标记", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("总转化/测保转化（包含小米）", 3000, "integer"));
+        columnDetailList.add(new ColumnDetail("总转化（不含微信）/测保转化（不含小米）", 3000, "integer"));
+        columnDetailList.add(new ColumnDetail("PC", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("WAP", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("微信转化", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("直接转化数", 0, "integer"));
 
-        columnNameList.add("浏览量");
-        columnNameList.add("点击量");
-        columnNameList.add("到达量");
-        columnNameList.add("到达用户");
-        columnNameList.add("到达率（%）");
-        columnNameList.add("二跳量");
-        columnNameList.add("二跳率（%）");
-        columnNameList.add("平均停留时间（S）");
+        columnDetailList.add(new ColumnDetail("浏览量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("点击量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("到达量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("到达用户", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("到达率（%）", 0, "percent"));
+        columnDetailList.add(new ColumnDetail("二跳量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("二跳率（%）", 0, "percent"));
+        columnDetailList.add(new ColumnDetail("平均停留时间", 0, "double"));
 
-        columnNameList.add("展示数");
-        columnNameList.add("点击数");
-        columnNameList.add("点击率（%）");
-        columnNameList.add("CPC（元）");
-        columnNameList.add("CPM（元）");
-        columnNameList.add("总花费（元）");
+        columnDetailList.add(new ColumnDetail("展示数", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("点击数", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("点击率（%）", 0, "percent"));
+        columnDetailList.add(new ColumnDetail("CPC（元）", 0, "double"));
+        columnDetailList.add(new ColumnDetail("CPM（元）", 0, "double"));
+        columnDetailList.add(new ColumnDetail("总花费（元）", 0, "double"));
 
-        columnNameList.add("直接转化成本");
-        columnNameList.add("总转化成本（不含微信）");
-        columnNameList.add("保费（元）");
+        columnDetailList.add(new ColumnDetail("直接转化成本", 0, "double"));
+        columnDetailList.add(new ColumnDetail("总转化成本（不含微信）", 0, "double"));
+        columnDetailList.add(new ColumnDetail("保费（元）", 0, "double"));
 
         // 创建Excel 数据
-        List<String> rowValueList;
-        List<List<String>> dataList;
+        List<CellDetail> rowValueList;
+        List<List<CellDetail>> dataList;
 
         HuaxiaReportParamVo huaxiaReportParamVo;
         HuaxiaDataReportParamPagerVo paramPagerVo;
@@ -144,10 +143,20 @@ public class HuaxiaReportController {
         String[] reportArray = reports.split(",");
 
         String sheetName;
+        SheetDetail sheetDetail;
         ExcelSheetItem excelSheetItem;
-        List<String> sheetNameList = new ArrayList<>();
-        Map<String, ExcelSheetItem> sheetContentMap = new HashMap<>();
+        List<ExcelSheetItem> sheetItemList;
+        List<SheetDetail> sheetDetailList = new ArrayList<>();
+        Map<String, List<ExcelSheetItem>> sheetContentMap = new HashMap<>();
+
+        int validCount, flagCount, totalCount, miniTotalCount;
+        int pcCount, wapCount, weixinCount, directTransformCount;
+        int browseCount, clickCount, arriveCount, arriveUserCount, againCount;
+        double arriveRate, againRate, mediaClickRate, averageStayTime;
+        int mediaShowCount, mediaClickCount;
+        double cpc, cpm, consumeAmount, insuranceAmount;
         for (String report : reportArray) {
+            sheetItemList = new ArrayList<>();
 
 
             paramPagerVo = new HuaxiaDataReportParamPagerVo();
@@ -155,109 +164,340 @@ public class HuaxiaReportController {
             paramPagerVo.setDataSource(report);
 
             // 汇总月报
-            sheetName = "月汇总-" + report;
-            sheetNameList.add(sheetName);
+            sheetName = report;
+            sheetDetail = new SheetDetail();
+            sheetDetail.setName(sheetName);
+            sheetDetail.setFreezePane("3,1,3,1");
+            sheetDetailList.add(sheetDetail);
             dataReportList = huaxiaDataReportService.findListByMonthGroup(paramPagerVo);
             huaxiaReportParamVo = new HuaxiaReportParamVo();
             BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
             summaryVoList = transformSummary2VoListByMonth(huaxiaReportParamVo, dataReportList);
 
+            validCount = 0;
+            flagCount = 0;
+            totalCount = 0;
+            miniTotalCount = 0;
+            pcCount = 0;
+            wapCount = 0;
+            weixinCount = 0;
+            directTransformCount = 0;
+            browseCount = 0;
+            clickCount = 0;
+            arriveCount = 0;
+            arriveUserCount = 0;
+            againCount = 0;
+            averageStayTime = 0;
+            mediaShowCount = 0;
+            mediaClickCount = 0;
+            consumeAmount = 0d;
+            insuranceAmount = 0d;
+
             dataList = new ArrayList<>();
             for (HuaxiaReportSummaryVo summaryVo : summaryVoList) {
+
+
+                if (summaryVo.getValidCount() != null) {
+                    validCount += summaryVo.getValidCount();
+                }
+                if (summaryVo.getFlagCount() != null) {
+                    flagCount += summaryVo.getFlagCount();
+                }
+                if (summaryVo.getTotalCount() != null) {
+                    totalCount += summaryVo.getTotalCount();
+                }
+                if (summaryVo.getMiniTotalCount() != null) {
+                    miniTotalCount += summaryVo.getMiniTotalCount();
+                }
+                if (summaryVo.getPcCount() != null) {
+                    pcCount += summaryVo.getPcCount();
+                }
+                if (summaryVo.getWapCount() != null) {
+                    wapCount += summaryVo.getWapCount();
+                }
+                if (summaryVo.getWeixinCount() != null) {
+                    weixinCount += summaryVo.getWeixinCount();
+                }
+                if (summaryVo.getDirectTransformCount() != null) {
+                    directTransformCount += summaryVo.getDirectTransformCount();
+                }
+                if (summaryVo.getBrowseCount() != null) {
+                    browseCount += summaryVo.getBrowseCount();
+                }
+                if (summaryVo.getClickCount() != null) {
+                    clickCount += summaryVo.getClickCount();
+                }
+                if (summaryVo.getArriveCount() != null) {
+                    arriveCount += summaryVo.getArriveCount();
+                }
+                if (summaryVo.getArriveUserCount() != null) {
+                    arriveUserCount += summaryVo.getArriveUserCount();
+                }
+                if (summaryVo.getAgainCount() != null) {
+                    againCount += summaryVo.getAgainCount();
+                }
+                if (summaryVo.getAverageStayTime() != null) {
+                    averageStayTime += Double.parseDouble(summaryVo.getAverageStayTime());
+                }
+                if (summaryVo.getMediaShowCount() != null) {
+                    mediaShowCount += summaryVo.getMediaShowCount();
+                }
+                if (summaryVo.getMediaClickCount() != null) {
+                    mediaClickCount += summaryVo.getMediaClickCount();
+                }
+                if (summaryVo.getConsumeAmount() != null) {
+                    consumeAmount += Double.parseDouble(summaryVo.getConsumeAmount());
+                }
+                if (summaryVo.getInsuranceAmount() != null) {
+                    insuranceAmount += Double.parseDouble(summaryVo.getInsuranceAmount());
+                }
+
                 rowValueList = new ArrayList<>();
                 // to-do
-                rowValueList.add(summaryVo.getDate());
-                rowValueList.add(summaryVo.getDataSource());
-                rowValueList.add(summaryVo.getValidCount() + "");
-                rowValueList.add(summaryVo.getFlagCount() + "");
-                rowValueList.add(summaryVo.getTotalCount() + "");
-                rowValueList.add(summaryVo.getMiniTotalCount() + "");
-                rowValueList.add(summaryVo.getPcCount() + "");
-                rowValueList.add(summaryVo.getWapCount() + "");
-                rowValueList.add(summaryVo.getWeixinCount() + "");
-                rowValueList.add(summaryVo.getDirectTransformCount() + "");
+                rowValueList.add(new CellDetail(summaryVo.getDate()));
+                rowValueList.add(new CellDetail(summaryVo.getDataSource()));
+                rowValueList.add(new CellDetail(summaryVo.getValidCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getFlagCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getTotalCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getMiniTotalCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getPcCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getWapCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getWeixinCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getDirectTransformCount() + ""));
 
-                rowValueList.add(summaryVo.getBrowseCount() + "");
-                rowValueList.add(summaryVo.getClickCount() + "");
-                rowValueList.add(summaryVo.getArriveCount() + "");
-                rowValueList.add(summaryVo.getArriveUserCount() + "");
-                rowValueList.add(summaryVo.getArriveRate());
-                rowValueList.add(summaryVo.getAgainCount() + "");
-                rowValueList.add(summaryVo.getAgainRate());
-                rowValueList.add(summaryVo.getAverageStayTime());
+                rowValueList.add(new CellDetail(summaryVo.getBrowseCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getClickCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getArriveCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getArriveUserCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getArriveRate()));
+                rowValueList.add(new CellDetail(summaryVo.getAgainCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getAgainRate()));
+                rowValueList.add(new CellDetail(summaryVo.getAverageStayTime()));
 
-                rowValueList.add(summaryVo.getMediaShowCount() == null ? "" : summaryVo.getMediaShowCount().toString());
-                rowValueList.add(summaryVo.getMediaClickCount() == null ? "" : summaryVo.getMediaClickCount().toString());
-                rowValueList.add(summaryVo.getMediaClickRate());
-                rowValueList.add(summaryVo.getCpc());
-                rowValueList.add(summaryVo.getCpm());
-                rowValueList.add(summaryVo.getConsumeAmount());
+                rowValueList.add(new CellDetail(summaryVo.getMediaShowCount() == null ? "" : summaryVo.getMediaShowCount().toString()));
+                rowValueList.add(new CellDetail(summaryVo.getMediaClickCount() == null ? "" : summaryVo.getMediaClickCount().toString()));
+                rowValueList.add(new CellDetail(summaryVo.getMediaClickRate()));
+                rowValueList.add(new CellDetail(summaryVo.getCpc()));
+                rowValueList.add(new CellDetail(summaryVo.getCpm()));
+                rowValueList.add(new CellDetail(summaryVo.getConsumeAmount()));
 
-                rowValueList.add(summaryVo.getDirectTransformCost());
-                rowValueList.add(summaryVo.getTotalTransformCost());
-                rowValueList.add(summaryVo.getInsuranceAmount());
+                rowValueList.add(new CellDetail(summaryVo.getDirectTransformCost()));
+                rowValueList.add(new CellDetail(summaryVo.getTotalTransformCost()));
+                rowValueList.add(new CellDetail(summaryVo.getInsuranceAmount()));
                 dataList.add(rowValueList);
             }
+            // 增加合计行
+            rowValueList = new ArrayList<>();
+            // to-do
+            rowValueList.add(new CellDetail("合计"));
+            rowValueList.add(new CellDetail(report));
+            rowValueList.add(new CellDetail(validCount + ""));
+            rowValueList.add(new CellDetail(flagCount + ""));
+            rowValueList.add(new CellDetail(totalCount + ""));
+            rowValueList.add(new CellDetail(miniTotalCount + ""));
+            rowValueList.add(new CellDetail(pcCount + ""));
+            rowValueList.add(new CellDetail(wapCount + ""));
+            rowValueList.add(new CellDetail(weixinCount + ""));
+            rowValueList.add(new CellDetail(directTransformCount + ""));
+
+            rowValueList.add(new CellDetail(browseCount + ""));
+            rowValueList.add(new CellDetail(clickCount + ""));
+            rowValueList.add(new CellDetail(arriveCount + ""));
+            rowValueList.add(new CellDetail(arriveUserCount + ""));
+            rowValueList.add(new CellDetail(clickCount == 0 ? "0" : arriveCount * 1d / clickCount + ""));
+            rowValueList.add(new CellDetail(againCount + ""));
+            rowValueList.add(new CellDetail(arriveCount == 0 ? "0" : againCount * 1d / arriveCount + ""));
+            rowValueList.add(new CellDetail(averageStayTime / summaryVoList.size() + ""));
+
+
+            rowValueList.add(new CellDetail(mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : mediaClickCount * 1d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount == 0 ? "0" : consumeAmount * 1d / mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : consumeAmount * 1000d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(consumeAmount + ""));
+
+            rowValueList.add(new CellDetail(directTransformCount == 0 ? "0" : consumeAmount * 1d / directTransformCount + ""));
+            rowValueList.add(new CellDetail(miniTotalCount == 0 ? "0" : consumeAmount * 1d / miniTotalCount + ""));
+            rowValueList.add(new CellDetail(insuranceAmount + ""));
+            dataList.add(rowValueList);
 
             excelSheetItem = new ExcelSheetItem();
-            excelSheetItem.setColumnNameList(columnNameList);
+            excelSheetItem.setColumnDetailList(columnDetailList);
             excelSheetItem.setCellValueList(dataList);
-            sheetContentMap.put(sheetName, excelSheetItem);
+            sheetItemList.add(excelSheetItem);
 
             // 汇总日报
-            sheetName = "日汇总-" + report;
-            sheetNameList.add(sheetName);
             dataReportList = huaxiaDataReportService.findListByParam(paramPagerVo);
             huaxiaReportParamVo = new HuaxiaReportParamVo();
             BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
             summaryVoList = transformSummary2VoList(huaxiaReportParamVo, dataReportList);
 
+            validCount = 0;
+            flagCount = 0;
+            totalCount = 0;
+            miniTotalCount = 0;
+            pcCount = 0;
+            wapCount = 0;
+            weixinCount = 0;
+            directTransformCount = 0;
+            browseCount = 0;
+            clickCount = 0;
+            arriveCount = 0;
+            arriveUserCount = 0;
+            againCount = 0;
+            averageStayTime = 0;
+            mediaShowCount = 0;
+            mediaClickCount = 0;
+            cpc = 0d;
+            cpm = 0d;
+            consumeAmount = 0d;
+            insuranceAmount = 0d;
             dataList = new ArrayList<>();
             for (HuaxiaReportSummaryVo summaryVo : summaryVoList) {
+
+                if (summaryVo.getValidCount() != null) {
+                    validCount += summaryVo.getValidCount();
+                }
+                if (summaryVo.getFlagCount() != null) {
+                    flagCount += summaryVo.getFlagCount();
+                }
+                if (summaryVo.getTotalCount() != null) {
+                    totalCount += summaryVo.getTotalCount();
+                }
+                if (summaryVo.getMiniTotalCount() != null) {
+                    miniTotalCount += summaryVo.getMiniTotalCount();
+                }
+                if (summaryVo.getPcCount() != null) {
+                    pcCount += summaryVo.getPcCount();
+                }
+                if (summaryVo.getWapCount() != null) {
+                    wapCount += summaryVo.getWapCount();
+                }
+                if (summaryVo.getWeixinCount() != null) {
+                    weixinCount += summaryVo.getWeixinCount();
+                }
+                if (summaryVo.getDirectTransformCount() != null) {
+                    directTransformCount += summaryVo.getDirectTransformCount();
+                }
+                if (summaryVo.getBrowseCount() != null) {
+                    browseCount += summaryVo.getBrowseCount();
+                }
+                if (summaryVo.getClickCount() != null) {
+                    clickCount += summaryVo.getClickCount();
+                }
+                if (summaryVo.getArriveCount() != null) {
+                    arriveCount += summaryVo.getArriveCount();
+                }
+                if (summaryVo.getArriveUserCount() != null) {
+                    arriveUserCount += summaryVo.getArriveUserCount();
+                }
+                if (summaryVo.getAgainCount() != null) {
+                    againCount += summaryVo.getAgainCount();
+                }
+                if (summaryVo.getAverageStayTime() != null) {
+                    averageStayTime += Double.parseDouble(summaryVo.getAverageStayTime());
+                }
+                if (summaryVo.getMediaShowCount() != null) {
+                    mediaShowCount += summaryVo.getMediaShowCount();
+                }
+                if (summaryVo.getMediaClickCount() != null) {
+                    mediaClickCount += summaryVo.getMediaClickCount();
+                }
+                if (summaryVo.getConsumeAmount() != null) {
+                    consumeAmount += Double.parseDouble(summaryVo.getConsumeAmount());
+                }
+                if (summaryVo.getCpc() != null) {
+                    cpc += Double.parseDouble(summaryVo.getCpc());
+                }
+                if (summaryVo.getCpm() != null) {
+                    cpm += Double.parseDouble(summaryVo.getCpm());
+                }
+
                 rowValueList = new ArrayList<>();
                 // to-do
-                rowValueList.add(summaryVo.getDate());
-                rowValueList.add(summaryVo.getDataSource());
-                rowValueList.add(summaryVo.getValidCount() + "");
-                rowValueList.add(summaryVo.getFlagCount() + "");
-                rowValueList.add(summaryVo.getTotalCount() + "");
-                rowValueList.add(summaryVo.getMiniTotalCount() + "");
-                rowValueList.add(summaryVo.getPcCount() + "");
-                rowValueList.add(summaryVo.getWapCount() + "");
-                rowValueList.add(summaryVo.getWeixinCount() + "");
-                rowValueList.add(summaryVo.getDirectTransformCount() + "");
+                if ("星期六".equals(DateUtils.printWeekValue(summaryVo.getDate(), "yyyy-MM-dd"))
+                || "星期日".equals(DateUtils.printWeekValue(summaryVo.getDate(), "yyyy-MM-dd"))) {
+                    rowValueList.add(new CellDetail(IndexedColors.RED.index, summaryVo.getDate()));
+                }else {
+                    rowValueList.add(new CellDetail(summaryVo.getDate()));
+                }
+                rowValueList.add(new CellDetail(summaryVo.getDataSource()));
+                rowValueList.add(new CellDetail(summaryVo.getValidCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getFlagCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getTotalCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getMiniTotalCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getPcCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getWapCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getWeixinCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getDirectTransformCount() + ""));
 
-                rowValueList.add(summaryVo.getBrowseCount() + "");
-                rowValueList.add(summaryVo.getClickCount() + "");
-                rowValueList.add(summaryVo.getArriveCount() + "");
-                rowValueList.add(summaryVo.getArriveUserCount() + "");
-                rowValueList.add(summaryVo.getArriveRate());
-                rowValueList.add(summaryVo.getAgainCount() + "");
-                rowValueList.add(summaryVo.getAgainRate());
-                rowValueList.add(summaryVo.getAverageStayTime());
+                rowValueList.add(new CellDetail(summaryVo.getBrowseCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getClickCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getArriveCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getArriveUserCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getArriveRate()));
+                rowValueList.add(new CellDetail(summaryVo.getAgainCount() + ""));
+                rowValueList.add(new CellDetail(summaryVo.getAgainRate()));
+                rowValueList.add(new CellDetail(summaryVo.getAverageStayTime()));
 
-                rowValueList.add(summaryVo.getMediaShowCount() == null ? "" : summaryVo.getMediaShowCount().toString());
-                rowValueList.add(summaryVo.getMediaClickCount() == null ? "" : summaryVo.getMediaClickCount().toString());
-                rowValueList.add(summaryVo.getMediaClickRate());
-                rowValueList.add(summaryVo.getCpc());
-                rowValueList.add(summaryVo.getCpm());
-                rowValueList.add(summaryVo.getConsumeAmount());
+                rowValueList.add(new CellDetail(summaryVo.getMediaShowCount() == null ? "" : summaryVo.getMediaShowCount().toString()));
+                rowValueList.add(new CellDetail(summaryVo.getMediaClickCount() == null ? "" : summaryVo.getMediaClickCount().toString()));
+                rowValueList.add(new CellDetail(summaryVo.getMediaClickRate()));
+                rowValueList.add(new CellDetail(summaryVo.getCpc()));
+                rowValueList.add(new CellDetail(summaryVo.getCpm()));
+                rowValueList.add(new CellDetail(summaryVo.getConsumeAmount()));
 
-                rowValueList.add(summaryVo.getDirectTransformCost());
-                rowValueList.add(summaryVo.getTotalTransformCost());
-                rowValueList.add(summaryVo.getInsuranceAmount());
+                rowValueList.add(new CellDetail(summaryVo.getDirectTransformCost()));
+                rowValueList.add(new CellDetail(summaryVo.getTotalTransformCost()));
+                rowValueList.add(new CellDetail(summaryVo.getInsuranceAmount()));
                 dataList.add(rowValueList);
             }
+            // 增加合计行
+            rowValueList = new ArrayList<>();
+            // to-do
+            rowValueList.add(new CellDetail("合计"));
+            rowValueList.add(new CellDetail(report));
+            rowValueList.add(new CellDetail(validCount + ""));
+            rowValueList.add(new CellDetail(flagCount + ""));
+            rowValueList.add(new CellDetail(totalCount + ""));
+            rowValueList.add(new CellDetail(miniTotalCount + ""));
+            rowValueList.add(new CellDetail(pcCount + ""));
+            rowValueList.add(new CellDetail(wapCount + ""));
+            rowValueList.add(new CellDetail(weixinCount + ""));
+            rowValueList.add(new CellDetail(directTransformCount + ""));
+
+            rowValueList.add(new CellDetail(browseCount + ""));
+            rowValueList.add(new CellDetail(clickCount + ""));
+            rowValueList.add(new CellDetail(arriveCount + ""));
+            rowValueList.add(new CellDetail(arriveUserCount + ""));
+            rowValueList.add(new CellDetail(clickCount == 0 ? "0" : arriveCount * 1d / clickCount + ""));
+            rowValueList.add(new CellDetail(againCount + ""));
+            rowValueList.add(new CellDetail(arriveCount == 0 ? "0" : againCount * 1d / arriveCount + ""));
+            rowValueList.add(new CellDetail(averageStayTime / summaryVoList.size() + ""));
+
+            rowValueList.add(new CellDetail(mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : mediaClickCount * 1d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount == 0 ? "0" : consumeAmount * 1d / mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : consumeAmount * 1000d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(consumeAmount + ""));
+
+            rowValueList.add(new CellDetail(directTransformCount == 0 ? "0" : consumeAmount * 1d / directTransformCount + ""));
+            rowValueList.add(new CellDetail(miniTotalCount == 0 ? "0" : consumeAmount * 1d / miniTotalCount + ""));
+            rowValueList.add(new CellDetail(insuranceAmount + ""));
+            dataList.add(rowValueList);
 
             excelSheetItem = new ExcelSheetItem();
-            excelSheetItem.setColumnNameList(columnNameList);
+            excelSheetItem.setColumnDetailList(columnDetailList);
             excelSheetItem.setCellValueList(dataList);
-            sheetContentMap.put(sheetName, excelSheetItem);
+            sheetItemList.add(excelSheetItem);
+            sheetContentMap.put(sheetName, sheetItemList);
         }
 
         ExcelExportConfigation excelConfigation = new ExcelExportConfigation();
         excelConfigation.setFileName(fileName);
-        excelConfigation.setSheetNameList(sheetNameList);
+        excelConfigation.setSheetDetailList(sheetDetailList);
         excelConfigation.setSheetContentMap(sheetContentMap);
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
@@ -268,34 +508,34 @@ public class HuaxiaReportController {
         // 创建文件名称
         String fileName = "华夏日报-" + DateUtils.formatDate(new Date(), "yyyy-MM-dd");
         // 创建Excel表格列名称
-        List<String> columnNameList = new ArrayList<>();
-        columnNameList.add("日期");
-        columnNameList.add("数据来源");
-        columnNameList.add("渠道归属");
-        columnNameList.add("广告活动");
-        columnNameList.add("广告直接转化数");
+        List<ColumnDetail> columnDetailList = new ArrayList<>();
+        columnDetailList.add(new ColumnDetail("日期", 0, "string"));
+        columnDetailList.add(new ColumnDetail("数据来源", 0, "string"));
+        columnDetailList.add(new ColumnDetail("渠道归属", 0, "string"));
+        columnDetailList.add(new ColumnDetail("广告活动", 0, "string"));
+        columnDetailList.add(new ColumnDetail("直接转化数", 0, "integer"));
 
-        columnNameList.add("浏览量");
-        columnNameList.add("点击量");
-        columnNameList.add("到达量");
-        columnNameList.add("到达用户");
-        columnNameList.add("到达率（%）");
-        columnNameList.add("二跳量");
-        columnNameList.add("二跳率（%）");
-        columnNameList.add("平均停留时间（S）");
+        columnDetailList.add(new ColumnDetail("浏览量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("点击量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("到达量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("到达用户", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("到达率（%）", 0, "percent"));
+        columnDetailList.add(new ColumnDetail("二跳量", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("二跳率（%）", 0, "percent"));
+        columnDetailList.add(new ColumnDetail("平均停留时间", 0, "double"));
 
-        columnNameList.add("展示数");
-        columnNameList.add("点击数");
-        columnNameList.add("点击率（%）");
-        columnNameList.add("CPC（元）");
-        columnNameList.add("CPM（元）");
-        columnNameList.add("总花费（元）");
+        columnDetailList.add(new ColumnDetail("展示数", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("点击数", 0, "integer"));
+        columnDetailList.add(new ColumnDetail("点击率（%）", 0, "percent"));
+        columnDetailList.add(new ColumnDetail("CPC（元）", 0, "double"));
+        columnDetailList.add(new ColumnDetail("CPM（元）", 0, "double"));
+        columnDetailList.add(new ColumnDetail("总花费（元）", 0, "double"));
 
-        columnNameList.add("直接转化成本");
+        columnDetailList.add(new ColumnDetail("直接转化成本", 0, "double"));
 
         // 创建Excel 数据
-        List<String> rowValueList;
-        List<List<String>> dataList;
+        List<CellDetail> rowValueList;
+        List<List<CellDetail>> dataList;
 
         HuaxiaReportParamVo huaxiaReportParamVo;
         HuaxiaFlowReportParamPagerVo paramPagerVo;
@@ -305,11 +545,20 @@ public class HuaxiaReportController {
 
         String[] arrays;
         String sheetName;
+        SheetDetail sheetDetail;
         ExcelSheetItem excelSheetItem;
-        List<String> sheetNameList = new ArrayList<>();
-        Map<String, ExcelSheetItem> sheetContentMap = new HashMap<>();
+        List<ExcelSheetItem> sheetItemList;
+        List<SheetDetail> sheetDetailList = new ArrayList<>();
+        Map<String, List<ExcelSheetItem>> sheetContentMap = new HashMap<>();
+
+        int directTransformCount;
+        double averageStayTime, consumeAmount;
+        int browseCount, clickCount, arriveCount, arriveUserCount, againCount;
+        int mediaShowCount, mediaClickCount;
         // 输出汇总的EXCEL数据
         for (String report : reportArray) {
+            sheetItemList = new ArrayList<>();
+
             paramPagerVo = new HuaxiaFlowReportParamPagerVo();
             paramPagerVo.setChooseDate(paramVo.getChooseDate());
 
@@ -317,50 +566,117 @@ public class HuaxiaReportController {
             paramPagerVo.setDataSource(arrays[0]);
             paramPagerVo.setPlatformName(arrays[1]);
 
-            sheetName =  "月汇总-" + report;
-            sheetNameList.add(sheetName);
+            sheetName =  report;
+            sheetDetail = new SheetDetail();
+            sheetDetail.setName(sheetName);
+            sheetDetail.setFreezePane("5,1,5,1");
+            sheetDetailList.add(sheetDetail);
             flowReportList = huaxiaFlowReportService.findListByMonthGroup(paramPagerVo);
             huaxiaReportParamVo = new HuaxiaReportParamVo();
             BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
             detailItemVoList = transformDetailItem2DownloadVoListByMonth(huaxiaReportParamVo, flowReportList);
 
+            directTransformCount = 0;
+            browseCount = 0;
+            clickCount = 0;
+            arriveCount = 0;
+            arriveUserCount = 0;
+            againCount = 0;
+            averageStayTime = 0;
+            mediaShowCount = 0;
+            mediaClickCount = 0;
+            consumeAmount = 0d;
+
             dataList = new ArrayList<>();
             for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
+
+                if (detailItemVo.getDirectTransformCount() != null) {
+                    directTransformCount += detailItemVo.getDirectTransformCount();
+                }
+                if (detailItemVo.getBrowseCount() != null) {
+                    browseCount += detailItemVo.getBrowseCount();
+                }
+                if (detailItemVo.getClickCount() != null) {
+                    clickCount += detailItemVo.getClickCount();
+                }
+                if (detailItemVo.getArriveCount() != null) {
+                    arriveCount += detailItemVo.getArriveCount();
+                }
+                if (detailItemVo.getArriveUserCount() != null) {
+                    arriveUserCount += detailItemVo.getArriveUserCount();
+                }
+                if (detailItemVo.getAgainCount() != null) {
+                    againCount += detailItemVo.getAgainCount();
+                }
+                if (detailItemVo.getAverageStayTime() != null) {
+                    averageStayTime += detailItemVo.getAverageStayTime();
+                }
+                if (detailItemVo.getMediaShowCount() != null) {
+                    mediaShowCount += detailItemVo.getMediaShowCount();
+                }
+                if (detailItemVo.getMediaClickCount() != null) {
+                    mediaClickCount += detailItemVo.getMediaClickCount();
+                }
+                if (detailItemVo.getConsumeAmount() != null) {
+                    consumeAmount += Double.parseDouble(detailItemVo.getConsumeAmount());
+                }
+
                 rowValueList = new ArrayList<>();
                 // to-do
-                rowValueList.add(detailItemVo.getDate());
-                rowValueList.add(detailItemVo.getDataSource());
-                rowValueList.add(detailItemVo.getPlatformName());
-                rowValueList.add(detailItemVo.getAdvertiseActive());
-                rowValueList.add(detailItemVo.getDirectTransformCount() + "");
+                rowValueList.add(new CellDetail(detailItemVo.getDate()));
+                rowValueList.add(new CellDetail(detailItemVo.getDataSource()));
+                rowValueList.add(new CellDetail(detailItemVo.getPlatformName()));
+                rowValueList.add(new CellDetail(detailItemVo.getAdvertiseActive()));
+                rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCount() + ""));
 
-                rowValueList.add(detailItemVo.getBrowseCount() + "");
-                rowValueList.add(detailItemVo.getClickCount() + "");
-                rowValueList.add(detailItemVo.getArriveCount() + "");
-                rowValueList.add(detailItemVo.getArriveUserCount() + "");
-                rowValueList.add(detailItemVo.getArriveRate());
-                rowValueList.add(detailItemVo.getAgainCount() + "");
-                rowValueList.add(detailItemVo.getAgainRate());
-                rowValueList.add(detailItemVo.getAverageStayTime() + "");
+                rowValueList.add(new CellDetail(detailItemVo.getBrowseCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getClickCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getArriveCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getArriveUserCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getArriveRate()));
+                rowValueList.add(new CellDetail(detailItemVo.getAgainCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getAgainRate()));
+                rowValueList.add(new CellDetail(detailItemVo.getAverageStayTime() + ""));
 
-                rowValueList.add(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString());
-                rowValueList.add(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString());
-                rowValueList.add(detailItemVo.getMediaClickRate());
-                rowValueList.add(detailItemVo.getCpc());
-                rowValueList.add(detailItemVo.getCpm());
-                rowValueList.add(detailItemVo.getConsumeAmount());
+                rowValueList.add(new CellDetail(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString()));
+                rowValueList.add(new CellDetail(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString()));
+                rowValueList.add(new CellDetail(detailItemVo.getMediaClickRate()));
+                rowValueList.add(new CellDetail(detailItemVo.getCpc()));
+                rowValueList.add(new CellDetail(detailItemVo.getCpm()));
+                rowValueList.add(new CellDetail(detailItemVo.getConsumeAmount()));
 
-                rowValueList.add(detailItemVo.getDirectTransformCost());
+                rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCost()));
                 dataList.add(rowValueList);
             }
+            rowValueList = new ArrayList<>();
+            // to-do
+            rowValueList.add(new CellDetail("合计"));
+            rowValueList.add(new CellDetail(arrays[0]));
+            rowValueList.add(new CellDetail(arrays[1]));
+            rowValueList.add(new CellDetail(""));
+            rowValueList.add(new CellDetail(directTransformCount + ""));
+            rowValueList.add(new CellDetail(browseCount + ""));
+            rowValueList.add(new CellDetail(clickCount + ""));
+            rowValueList.add(new CellDetail(arriveCount + ""));
+            rowValueList.add(new CellDetail(arriveUserCount + ""));
+            rowValueList.add(new CellDetail(clickCount == 0 ? "0" : arriveCount * 1d / clickCount + ""));
+            rowValueList.add(new CellDetail(againCount + ""));
+            rowValueList.add(new CellDetail(arriveCount == 0 ? "0" : againCount * 1d / arriveCount + ""));
+            rowValueList.add(new CellDetail(averageStayTime * 1d / detailItemVoList.size() + ""));
+            rowValueList.add(new CellDetail(mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : mediaClickCount * 1d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount == 0 ? "0" : consumeAmount * 1d / mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : consumeAmount * 1000d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(consumeAmount + ""));
+            rowValueList.add(new CellDetail(directTransformCount == 0 ? "0" : consumeAmount * 1d / directTransformCount + ""));
+            dataList.add(rowValueList);
 
             excelSheetItem = new ExcelSheetItem();
-            excelSheetItem.setColumnNameList(columnNameList);
+            excelSheetItem.setColumnDetailList(columnDetailList);
             excelSheetItem.setCellValueList(dataList);
-            sheetContentMap.put(sheetName, excelSheetItem);
+            sheetItemList.add(excelSheetItem);
 
-            sheetName = "日汇总-" + report;
-            sheetNameList.add(sheetName);
             flowReportList = huaxiaFlowReportService.findListByParamGroup(paramPagerVo);
             huaxiaReportParamVo = new HuaxiaReportParamVo();
             BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
@@ -368,42 +684,104 @@ public class HuaxiaReportController {
 
             dataList = new ArrayList<>();
             for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
+
+                if (detailItemVo.getDirectTransformCount() != null) {
+                    directTransformCount += detailItemVo.getDirectTransformCount();
+                }
+                if (detailItemVo.getBrowseCount() != null) {
+                    browseCount += detailItemVo.getBrowseCount();
+                }
+                if (detailItemVo.getClickCount() != null) {
+                    clickCount += detailItemVo.getClickCount();
+                }
+                if (detailItemVo.getArriveCount() != null) {
+                    arriveCount += detailItemVo.getArriveCount();
+                }
+                if (detailItemVo.getArriveUserCount() != null) {
+                    arriveUserCount += detailItemVo.getArriveUserCount();
+                }
+                if (detailItemVo.getAgainCount() != null) {
+                    againCount += detailItemVo.getAgainCount();
+                }
+                if (detailItemVo.getAverageStayTime() != null) {
+                    averageStayTime += detailItemVo.getAverageStayTime();
+                }
+                if (detailItemVo.getMediaShowCount() != null) {
+                    mediaShowCount += detailItemVo.getMediaShowCount();
+                }
+                if (detailItemVo.getMediaClickCount() != null) {
+                    mediaClickCount += detailItemVo.getMediaClickCount();
+                }
+                if (detailItemVo.getConsumeAmount() != null) {
+                    consumeAmount += Double.parseDouble(detailItemVo.getConsumeAmount());
+                }
+
                 rowValueList = new ArrayList<>();
+                if ("星期六".equals(DateUtils.printWeekValue(detailItemVo.getDate(), "yyyy-MM-dd"))
+                        || "星期日".equals(DateUtils.printWeekValue(detailItemVo.getDate(), "yyyy-MM-dd"))) {
+                    rowValueList.add(new CellDetail(IndexedColors.RED.index, detailItemVo.getDate()));
+                }else {
+                    rowValueList.add(new CellDetail(detailItemVo.getDate()));
+                }
                 // to-do
-                rowValueList.add(detailItemVo.getDate());
-                rowValueList.add(detailItemVo.getDataSource());
-                rowValueList.add(detailItemVo.getPlatformName());
-                rowValueList.add(detailItemVo.getAdvertiseActive());
-                rowValueList.add(detailItemVo.getDirectTransformCount() + "");
+                rowValueList.add(new CellDetail(detailItemVo.getDataSource()));
+                rowValueList.add(new CellDetail(detailItemVo.getPlatformName()));
+                rowValueList.add(new CellDetail(detailItemVo.getAdvertiseActive()));
+                rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCount() + ""));
 
-                rowValueList.add(detailItemVo.getBrowseCount() + "");
-                rowValueList.add(detailItemVo.getClickCount() + "");
-                rowValueList.add(detailItemVo.getArriveCount() + "");
-                rowValueList.add(detailItemVo.getArriveUserCount() + "");
-                rowValueList.add(detailItemVo.getArriveRate());
-                rowValueList.add(detailItemVo.getAgainCount() + "");
-                rowValueList.add(detailItemVo.getAgainRate());
-                rowValueList.add(detailItemVo.getAverageStayTime() + "");
+                rowValueList.add(new CellDetail(detailItemVo.getBrowseCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getClickCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getArriveCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getArriveUserCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getArriveRate()));
+                rowValueList.add(new CellDetail(detailItemVo.getAgainCount() + ""));
+                rowValueList.add(new CellDetail(detailItemVo.getAgainRate()));
+                rowValueList.add(new CellDetail(detailItemVo.getAverageStayTime() + ""));
 
-                rowValueList.add(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString());
-                rowValueList.add(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString());
-                rowValueList.add(detailItemVo.getMediaClickRate());
-                rowValueList.add(detailItemVo.getCpc());
-                rowValueList.add(detailItemVo.getCpm());
-                rowValueList.add(detailItemVo.getConsumeAmount());
+                rowValueList.add(new CellDetail(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString()));
+                rowValueList.add(new CellDetail(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString()));
+                rowValueList.add(new CellDetail(detailItemVo.getMediaClickRate()));
+                rowValueList.add(new CellDetail(detailItemVo.getCpc()));
+                rowValueList.add(new CellDetail(detailItemVo.getCpm()));
+                rowValueList.add(new CellDetail(detailItemVo.getConsumeAmount()));
 
-                rowValueList.add(detailItemVo.getDirectTransformCost());
+                rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCost()));
                 dataList.add(rowValueList);
             }
+            rowValueList = new ArrayList<>();
+            // to-do
+            rowValueList.add(new CellDetail("合计"));
+            rowValueList.add(new CellDetail(arrays[0]));
+            rowValueList.add(new CellDetail(arrays[1]));
+            rowValueList.add(new CellDetail(""));
+            rowValueList.add(new CellDetail(directTransformCount + ""));
+            rowValueList.add(new CellDetail(browseCount + ""));
+            rowValueList.add(new CellDetail(clickCount + ""));
+            rowValueList.add(new CellDetail(arriveCount + ""));
+            rowValueList.add(new CellDetail(arriveUserCount + ""));
+            rowValueList.add(new CellDetail(clickCount == 0 ? "0" : arriveCount * 1d / clickCount + ""));
+            rowValueList.add(new CellDetail(againCount + ""));
+            rowValueList.add(new CellDetail(arriveCount == 0 ? "0" : againCount * 1d / arriveCount + ""));
+            rowValueList.add(new CellDetail(averageStayTime * 1d / detailItemVoList.size() + ""));
+            rowValueList.add(new CellDetail(mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : mediaClickCount * 1d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(mediaClickCount == 0 ? "0" : consumeAmount * 1d / mediaClickCount + ""));
+            rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : consumeAmount * 1000d / mediaShowCount + ""));
+            rowValueList.add(new CellDetail(consumeAmount + ""));
+            rowValueList.add(new CellDetail(directTransformCount == 0 ? "0" : consumeAmount * 1d / directTransformCount + ""));
+            dataList.add(rowValueList);
 
             excelSheetItem = new ExcelSheetItem();
-            excelSheetItem.setColumnNameList(columnNameList);
+            excelSheetItem.setColumnDetailList(columnDetailList);
             excelSheetItem.setCellValueList(dataList);
-            sheetContentMap.put(sheetName, excelSheetItem);
+            sheetItemList.add(excelSheetItem);
+
+            sheetContentMap.put(sheetName, sheetItemList);
         }
         Map<String, String> advertiseActiveMap = new HashMap<>();
         advertiseActiveMap.put("预约-PC", "360SEM,360品专,百度SEM,百度SEM-同台展现,垂直媒体,搜狗SEM,搜狗品专");
-        advertiseActiveMap.put("预约-WAP", "360SEM,360品专,99DSP,百度SEM,百度SEM-同台展现,百度原生,垂直媒体,广点通,今日头条APP,神马搜索,搜狗SEM,搜狗品专,一点资讯");
+        advertiseActiveMap.put("预约-WAP", "360SEM,360品专,99DSP,百度SEM,百度SEM-同台展现,百度原生,垂直媒体,广点通,今日头条APP,头条建站,神马搜索,搜狗SEM,搜狗品专,一点资讯");
         advertiseActiveMap.put("测保-PC", "百度SEM");
         advertiseActiveMap.put("测保-WAP", "FY,ZH,百度原生,垂直媒体,广点通,今日头条APP,小米");
         // 输出广告活动明细
@@ -411,7 +789,7 @@ public class HuaxiaReportController {
         for (String report : reportArray) {
             advertiseActiveList = advertiseActiveMap.get(report).split(",");
             for (String advertiseActive : advertiseActiveList) {
-
+                sheetItemList = new ArrayList<>();
 
                 paramPagerVo = new HuaxiaFlowReportParamPagerVo();
                 paramPagerVo.setChooseDate(paramVo.getChooseDate());
@@ -424,8 +802,11 @@ public class HuaxiaReportController {
                     paramPagerVo.setAdvertiseActive("百度SEM,百度表单");
                 }
 
-                sheetName = "月汇总-" + report + "-" + advertiseActive;
-                sheetNameList.add(sheetName);
+                sheetName = report + "-" + advertiseActive;
+                sheetDetail = new SheetDetail();
+                sheetDetail.setName(sheetName);
+                sheetDetail.setFreezePane("5,1,5,1");
+                sheetDetailList.add(sheetDetail);
                 flowReportList = huaxiaFlowReportService.findListByMonthGroup(paramPagerVo);
                 huaxiaReportParamVo = new HuaxiaReportParamVo();
                 BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
@@ -435,40 +816,37 @@ public class HuaxiaReportController {
                 for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
                     rowValueList = new ArrayList<>();
                     // to-do
-                    rowValueList.add(detailItemVo.getDate());
-                    rowValueList.add(detailItemVo.getDataSource());
-                    rowValueList.add(detailItemVo.getPlatformName());
-                    rowValueList.add(detailItemVo.getAdvertiseActive());
-                    rowValueList.add(detailItemVo.getDirectTransformCount() + "");
+                    rowValueList.add(new CellDetail(detailItemVo.getDate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getDataSource()));
+                    rowValueList.add(new CellDetail(detailItemVo.getPlatformName()));
+                    rowValueList.add(new CellDetail(detailItemVo.getAdvertiseActive()));
+                    rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCount() + ""));
 
-                    rowValueList.add(detailItemVo.getBrowseCount() + "");
-                    rowValueList.add(detailItemVo.getClickCount() + "");
-                    rowValueList.add(detailItemVo.getArriveCount() + "");
-                    rowValueList.add(detailItemVo.getArriveUserCount() + "");
-                    rowValueList.add(detailItemVo.getArriveRate());
-                    rowValueList.add(detailItemVo.getAgainCount() + "");
-                    rowValueList.add(detailItemVo.getAgainRate());
-                    rowValueList.add(detailItemVo.getAverageStayTime() + "");
+                    rowValueList.add(new CellDetail(detailItemVo.getBrowseCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getClickCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getArriveCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getArriveUserCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getArriveRate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getAgainCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getAgainRate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getAverageStayTime() + ""));
 
-                    rowValueList.add(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString());
-                    rowValueList.add(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString());
-                    rowValueList.add(detailItemVo.getMediaClickRate());
-                    rowValueList.add(detailItemVo.getCpc());
-                    rowValueList.add(detailItemVo.getCpm());
-                    rowValueList.add(detailItemVo.getConsumeAmount());
+                    rowValueList.add(new CellDetail(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString()));
+                    rowValueList.add(new CellDetail(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString()));
+                    rowValueList.add(new CellDetail(detailItemVo.getMediaClickRate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getCpc()));
+                    rowValueList.add(new CellDetail(detailItemVo.getCpm()));
+                    rowValueList.add(new CellDetail(detailItemVo.getConsumeAmount()));
 
-                    rowValueList.add(detailItemVo.getDirectTransformCost());
+                    rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCost()));
                     dataList.add(rowValueList);
                 }
 
                 excelSheetItem = new ExcelSheetItem();
-                excelSheetItem.setColumnNameList(columnNameList);
+                excelSheetItem.setColumnDetailList(columnDetailList);
                 excelSheetItem.setCellValueList(dataList);
-                sheetContentMap.put(sheetName, excelSheetItem);
+                sheetItemList.add(excelSheetItem);
 
-
-                sheetName = "日汇总-" + report + "-" + advertiseActive;
-                sheetNameList.add(sheetName);
                 flowReportList = huaxiaFlowReportService.findListByParamGroup(paramPagerVo);
                 huaxiaReportParamVo = new HuaxiaReportParamVo();
                 BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
@@ -478,42 +856,48 @@ public class HuaxiaReportController {
                 for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
                     rowValueList = new ArrayList<>();
                     // to-do
-                    rowValueList.add(detailItemVo.getDate());
-                    rowValueList.add(detailItemVo.getDataSource());
-                    rowValueList.add(detailItemVo.getPlatformName());
-                    rowValueList.add(detailItemVo.getAdvertiseActive());
-                    rowValueList.add(detailItemVo.getDirectTransformCount() + "");
+                    if ("星期六".equals(DateUtils.printWeekValue(detailItemVo.getDate(), "yyyy-MM-dd"))
+                            || "星期日".equals(DateUtils.printWeekValue(detailItemVo.getDate(), "yyyy-MM-dd"))) {
+                        rowValueList.add(new CellDetail(IndexedColors.RED.index, detailItemVo.getDate()));
+                    }else {
+                        rowValueList.add(new CellDetail(detailItemVo.getDate()));
+                    }
+                    rowValueList.add(new CellDetail(detailItemVo.getDataSource()));
+                    rowValueList.add(new CellDetail(detailItemVo.getPlatformName()));
+                    rowValueList.add(new CellDetail(detailItemVo.getAdvertiseActive()));
+                    rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCount() + ""));
 
-                    rowValueList.add(detailItemVo.getBrowseCount() + "");
-                    rowValueList.add(detailItemVo.getClickCount() + "");
-                    rowValueList.add(detailItemVo.getArriveCount() + "");
-                    rowValueList.add(detailItemVo.getArriveUserCount() + "");
-                    rowValueList.add(detailItemVo.getArriveRate());
-                    rowValueList.add(detailItemVo.getAgainCount() + "");
-                    rowValueList.add(detailItemVo.getAgainRate());
-                    rowValueList.add(detailItemVo.getAverageStayTime() + "");
+                    rowValueList.add(new CellDetail(detailItemVo.getBrowseCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getClickCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getArriveCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getArriveUserCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getArriveRate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getAgainCount() + ""));
+                    rowValueList.add(new CellDetail(detailItemVo.getAgainRate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getAverageStayTime() + ""));
 
-                    rowValueList.add(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString());
-                    rowValueList.add(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString());
-                    rowValueList.add(detailItemVo.getMediaClickRate());
-                    rowValueList.add(detailItemVo.getCpc());
-                    rowValueList.add(detailItemVo.getCpm());
-                    rowValueList.add(detailItemVo.getConsumeAmount());
+                    rowValueList.add(new CellDetail(detailItemVo.getMediaShowCount() == null ? "" : detailItemVo.getMediaShowCount().toString()));
+                    rowValueList.add(new CellDetail(detailItemVo.getMediaClickCount() == null ? "" : detailItemVo.getMediaClickCount().toString()));
+                    rowValueList.add(new CellDetail(detailItemVo.getMediaClickRate()));
+                    rowValueList.add(new CellDetail(detailItemVo.getCpc()));
+                    rowValueList.add(new CellDetail(detailItemVo.getCpm()));
+                    rowValueList.add(new CellDetail(detailItemVo.getConsumeAmount()));
 
-                    rowValueList.add(detailItemVo.getDirectTransformCost());
+                    rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCost()));
                     dataList.add(rowValueList);
                 }
 
                 excelSheetItem = new ExcelSheetItem();
-                excelSheetItem.setColumnNameList(columnNameList);
+                excelSheetItem.setColumnDetailList(columnDetailList);
                 excelSheetItem.setCellValueList(dataList);
-                sheetContentMap.put(sheetName, excelSheetItem);
+                sheetItemList.add(excelSheetItem);
+                sheetContentMap.put(sheetName, sheetItemList);
             }
         }
 
         ExcelExportConfigation excelConfigation = new ExcelExportConfigation();
         excelConfigation.setFileName(fileName);
-        excelConfigation.setSheetNameList(sheetNameList);
+        excelConfigation.setSheetDetailList(sheetDetailList);
         excelConfigation.setSheetContentMap(sheetContentMap);
         ExcelExportHelper.exportExcel2Response(excelConfigation, response);
     }
@@ -541,8 +925,8 @@ public class HuaxiaReportController {
         HuaxiaReportSummaryVo summaryVo;
         Map<String, Object> reserve;
         List<HuaxiaReportSummaryVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0");
-        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.0000");
         // 获取华夏日报-基础流量数据汇总数据
         Map<String, HuaxiaFlowReport> flowReportMap = huaxiaFlowReportService.findMapByParamGroup(paramVo);
         // 获取媒体数据表中的数据汇总数据
@@ -598,14 +982,14 @@ public class HuaxiaReportController {
                 summaryVo.setAgainCount(flowReport.getAgainCount());
                 summaryVo.setAverageStayTime(String.valueOf(flowReport.getAverageStayTime()));
                 if (flowReport.getClickCount() == null || flowReport.getClickCount() == 0) {
-                    summaryVo.setArriveRate(decimalFormatPercent.format(0) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(0));
                 } else {
-                    summaryVo.setArriveRate(decimalFormatPercent.format(flowReport.getArriveCount() * 100d / flowReport.getClickCount()) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(flowReport.getArriveCount() * 1d / flowReport.getClickCount()));
                 }
                 if (flowReport.getArriveCount() == null || flowReport.getArriveCount() == 0) {
-                    summaryVo.setAgainRate(decimalFormatPercent.format(0) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(0));
                 } else {
-                    summaryVo.setAgainRate(decimalFormatPercent.format(flowReport.getAgainCount() * 100d / flowReport.getArriveCount()) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(flowReport.getAgainCount() * 1d / flowReport.getArriveCount()));
                 }
             }
             // 整合华夏日报-基础流量数据
@@ -628,11 +1012,11 @@ public class HuaxiaReportController {
                     summaryVo.setCpc(decimalFormat.format(Double.parseDouble(speedCost) / mediaItem.getClickCount()));
                 }
                 if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
-                    summaryVo.setMediaClickRate(decimalFormatPercent.format(0) + "%");
+                    summaryVo.setMediaClickRate(decimalFormatPercent.format(0));
                     summaryVo.setCpm(decimalFormat.format(0));
                 } else {
-                    summaryVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
-                    summaryVo.setCpm(decimalFormat.format(Double.parseDouble(speedCost) * 1000 / mediaItem.getShowCount()));
+                    summaryVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 1d / mediaItem.getShowCount()));
+                    summaryVo.setCpm(decimalFormat.format(Double.parseDouble(speedCost) * 1000d / mediaItem.getShowCount()));
                 }
             }
             // 整合媒体数据表中的数据
@@ -657,8 +1041,8 @@ public class HuaxiaReportController {
         HuaxiaReportSummaryVo summaryVo;
         Map<String, Object> reserve;
         List<HuaxiaReportSummaryVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0");
-        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.0000");
         // 获取华夏日报-基础流量数据汇总数据
         Map<String, Map<String, Object>> flowReportMap = huaxiaFlowReportService.findMapByMonthGroup(paramVo);
         // 获取媒体数据表中的数据汇总数据
@@ -673,7 +1057,7 @@ public class HuaxiaReportController {
         paramPagerVo.setDateField("date");
         List<Permiums> permiumsList = permiumsService.findListByParam(paramPagerVo);
         String dateKey;
-        Double insuranceFee = 0.00d;
+        Double insuranceFee;
         for (Permiums permiums : permiumsList) {
             dateKey = DateUtils.dateFormatTransform(permiums.getDate(), "yyyy-MM-dd", "yyyy-MM");
 
@@ -738,14 +1122,14 @@ public class HuaxiaReportController {
                 summaryVo.setArriveUserCount(((BigDecimal)flowReport.get("arriveUserCount")).intValue());
                 summaryVo.setAverageStayTime(((BigDecimal)flowReport.get("averageStayTime")).setScale(2,BigDecimal.ROUND_HALF_DOWN).toPlainString());
                 if (clickCount == 0) {
-                    summaryVo.setArriveRate(decimalFormatPercent.format(0) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(0));
                 } else {
-                    summaryVo.setArriveRate(decimalFormatPercent.format(arriveCount * 100d / clickCount) + "%");
+                    summaryVo.setArriveRate(decimalFormatPercent.format(arriveCount * 1d / clickCount));
                 }
                 if (arriveCount == 0) {
-                    summaryVo.setAgainRate(decimalFormatPercent.format(0) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(0));
                 } else {
-                    summaryVo.setAgainRate(decimalFormatPercent.format(againCount * 100d / arriveCount) + "%");
+                    summaryVo.setAgainRate(decimalFormatPercent.format(againCount * 1d / arriveCount));
                 }
             }
             // 整合华夏日报-基础流量数据
@@ -775,16 +1159,16 @@ public class HuaxiaReportController {
                     summaryVo.setCpc(decimalFormat.format(0));
                 } else {
                     summaryVo.setMediaClickCount(mediaClickCount);
-                    summaryVo.setCpc(decimalFormat.format(speedCost / mediaClickCount));
+                    summaryVo.setCpc(decimalFormat.format(speedCost * 1d / mediaClickCount));
                 }
                 if (mediaShowCount == 0) {
                     summaryVo.setMediaShowCount(0);
-                    summaryVo.setMediaClickRate("0.00%");
+                    summaryVo.setMediaClickRate("0");
                     summaryVo.setCpm(decimalFormat.format(0));
                 } else {
                     summaryVo.setMediaShowCount(mediaShowCount);
-                    summaryVo.setMediaClickRate(decimalFormatPercent.format(mediaClickCount * 100.00d / mediaShowCount) + "%");
-                    summaryVo.setCpm(decimalFormat.format(speedCost * 1000 / mediaShowCount));
+                    summaryVo.setMediaClickRate(decimalFormatPercent.format(mediaClickCount * 1.00d / mediaShowCount));
+                    summaryVo.setCpm(decimalFormat.format(speedCost * 1000d / mediaShowCount));
                 }
             }
             // 整合媒体数据表中的数据
@@ -808,8 +1192,8 @@ public class HuaxiaReportController {
         HuaxiaReportDetailItemVo detailItemVo;
         Map<String, Object> reserve;
         List<HuaxiaReportDetailItemVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0");
-        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.0000");
 
         // 获取媒体数据表中的数据汇总数据
         Map<String, MediaItem> mediaItemMap;
@@ -852,14 +1236,14 @@ public class HuaxiaReportController {
 
             // 整合华夏日报-基础流量数据
             if (detailItemVo.getClickCount() == null || detailItemVo.getClickCount() == 0) {
-                detailItemVo.setArriveRate(decimalFormatPercent.format(0) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(0));
             } else {
-                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 1d / detailItemVo.getClickCount()));
             }
             if (detailItemVo.getArriveCount() == null || detailItemVo.getArriveCount() == 0) {
-                detailItemVo.setAgainRate(decimalFormatPercent.format(0) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(0));
             } else {
-                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 1d / detailItemVo.getArriveCount()));
             }
             // 整合华夏日报-基础流量数据
 
@@ -875,10 +1259,10 @@ public class HuaxiaReportController {
                     detailItemVo.setCpc(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) / mediaItem.getClickCount()));
                 }
                 if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
-                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(0) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(0));
                     detailItemVo.setCpm(decimalFormat.format(0));
                 } else {
-                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()));
                     detailItemVo.setCpm(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) * 1000 / mediaItem.getShowCount()));
                 }
             }
@@ -897,8 +1281,8 @@ public class HuaxiaReportController {
         HuaxiaReportDetailItemVo detailItemVo;
         Map<String, Object> reserve;
         List<HuaxiaReportDetailItemVo> dataReportVoList = new ArrayList<>();
-        DecimalFormat decimalFormat = new DecimalFormat("#0");
-        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.0000");
 
         // 获取媒体数据表中的数据汇总数据
         Map<String, MediaItem> mediaItemMap = mediaItemService.findMapByParamGroup(paramVo);
@@ -934,14 +1318,14 @@ public class HuaxiaReportController {
 
             // 整合华夏日报-基础流量数据
             if (detailItemVo.getClickCount() == null || detailItemVo.getClickCount() == 0) {
-                detailItemVo.setArriveRate(decimalFormatPercent.format(0) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(0));
             } else {
-                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 1d / detailItemVo.getClickCount()));
             }
             if (detailItemVo.getArriveCount() == null || detailItemVo.getArriveCount() == 0) {
-                detailItemVo.setAgainRate(decimalFormatPercent.format(0) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(0));
             } else {
-                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 1d / detailItemVo.getArriveCount()));
             }
             // 整合华夏日报-基础流量数据
 
@@ -957,10 +1341,10 @@ public class HuaxiaReportController {
                     detailItemVo.setCpc(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) / mediaItem.getClickCount()));
                 }
                 if (mediaItem.getShowCount() == null || mediaItem.getShowCount() == 0) {
-                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(0) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(0));
                     detailItemVo.setCpm(decimalFormat.format(0));
                 } else {
-                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 100.00d / mediaItem.getShowCount()) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(mediaItem.getClickCount() * 1d / mediaItem.getShowCount()));
                     detailItemVo.setCpm(decimalFormat.format(Double.parseDouble(mediaItem.getSpeedCost()) * 1000 / mediaItem.getShowCount()));
                 }
             }
@@ -980,6 +1364,7 @@ public class HuaxiaReportController {
         Map<String, Object> reserve;
         List<HuaxiaReportDetailItemVo> dataReportVoList = new ArrayList<>();
         DecimalFormat decimalFormat = new DecimalFormat("#0.00");
+        DecimalFormat decimalFormatPercent = new DecimalFormat("#0.0000");
 
         // 获取媒体数据表中的数据汇总数据
         Map<String, Map<String, Object>> mediaItemMap = mediaItemService.findMapByMonthGroup(paramVo);
@@ -1018,14 +1403,14 @@ public class HuaxiaReportController {
 
             // 整合华夏日报-基础流量数据
             if (detailItemVo.getClickCount() == null || detailItemVo.getClickCount() == 0) {
-                detailItemVo.setArriveRate(decimalFormat.format(0) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(0));
             } else {
-                detailItemVo.setArriveRate(decimalFormat.format(detailItemVo.getArriveCount() * 100d / detailItemVo.getClickCount()) + "%");
+                detailItemVo.setArriveRate(decimalFormatPercent.format(detailItemVo.getArriveCount() * 1d / detailItemVo.getClickCount()));
             }
             if (detailItemVo.getArriveCount() == null || detailItemVo.getArriveCount() == 0) {
-                detailItemVo.setAgainRate(decimalFormat.format(0) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(0));
             } else {
-                detailItemVo.setAgainRate(decimalFormat.format(detailItemVo.getAgainCount() * 100d / detailItemVo.getArriveCount()) + "%");
+                detailItemVo.setAgainRate(decimalFormatPercent.format(detailItemVo.getAgainCount() * 1d / detailItemVo.getArriveCount()));
             }
             // 整合华夏日报-基础流量数据
 
@@ -1058,11 +1443,11 @@ public class HuaxiaReportController {
                 }
                 if (showCount == 0) {
                     detailItemVo.setMediaShowCount(0);
-                    detailItemVo.setMediaClickRate(clickCount + "%");
+                    detailItemVo.setMediaClickRate("0.00");
                     detailItemVo.setCpm(decimalFormat.format(0));
                 } else {
                     detailItemVo.setMediaShowCount(showCount);
-                    detailItemVo.setMediaClickRate(decimalFormat.format(clickCount * 100.00d / showCount) + "%");
+                    detailItemVo.setMediaClickRate(decimalFormatPercent.format(clickCount * 1d / showCount));
                     detailItemVo.setCpm(decimalFormat.format(speedCost * 1000 / showCount));
                 }
             }

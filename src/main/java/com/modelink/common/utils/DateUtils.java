@@ -144,6 +144,22 @@ public class DateUtils {
         }
         return weekDays[week];
     }
+    /**
+     * 获取指定日期是星期几
+     * @param dateString
+     * @return
+     */
+    public static String printWeekValue(String dateString, String format) {
+        String[] weekDays = {"星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"};
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(DateUtils.formatDate(dateString, format));
+
+        int week = calendar.get(Calendar.DAY_OF_WEEK) - 1;
+        if (week < 0){
+            week = 0;
+        }
+        return weekDays[week];
+    }
 
     /**
      * 获取当前第几季度

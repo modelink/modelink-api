@@ -1,17 +1,18 @@
 package com.modelink.common.excel;
 
 import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFFont;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.StringUtils;
 
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletResponse;
 import java.io.FileOutputStream;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Excel 导出文件助手
@@ -36,7 +37,7 @@ public class ExcelExportHelper {
             fileName = new String(excelConfigation.getFileName().getBytes("UTF-8"), "ISO-8859-1");
             response.reset();
             response.setContentType("application/x-msdownload");
-            response.setHeader("Content-Disposition", "attachment; filename=" + fileName + ".xlsx");
+            response.setHeader("content-disposition", "attachment; filename=" + fileName + ".xlsx");
             outStream = response.getOutputStream();
             workbook.write(outStream);
         } catch (Exception e) {
@@ -62,45 +63,45 @@ public class ExcelExportHelper {
 
     private static SXSSFWorkbook buildExcelWorkbook (ExcelExportConfigation excelConfigation) throws Exception {
         // 创建Excel的工作书册 Workbook,对应到一个excel文档
-        SXSSFWorkbook workbook = new SXSSFWorkbook();
+        SXSSFWorkbook workbook = new SXSSFWorkbook(10000);
 
-        if(excelConfigation == null || excelConfigation.getSheetNameList() == null
-                || excelConfigation.getSheetNameList().size() <= 0){
+        if(excelConfigation == null || excelConfigation.getSheetDetailList() == null
+                || excelConfigation.getSheetDetailList().size() <= 0){
             throw new Exception("Excel数据不全");
         }
         // 创建Excel的工作sheet,对应到一个excel文档的tab
-        Sheet sheet;
-        ExcelSheetItem excelSheetItem;
+        SXSSFSheet sheet;
+        ColumnDetail columnInfo;
         Row headerRow, contentRow;
-        Font headerFont, contentFont;
-        CellStyle headerStyle, contentStyle;
+        Font headerFont;
+        CellStyle headerStyle;
         int columnIndex, rowIndex;
-        for (String sheetName : excelConfigation.getSheetNameList()) {
+        List<ColumnDetail> columnDetailList;
+        List<ExcelSheetItem> sheetItemList;
 
-            excelSheetItem = excelConfigation.getSheetContentMap().get(sheetName);
-            if (excelSheetItem == null) {
+
+        CellStyle contentCellStyle;
+        String[] freezePaneArray;
+        Map<String, CellStyle> cellStyleMap = new HashMap<>();
+        for (SheetDetail sheetDetail : excelConfigation.getSheetDetailList()) {
+            sheetItemList = excelConfigation.getSheetContentMap().get(sheetDetail.getName());
+            if (sheetItemList == null || sheetItemList.size() <= 0) {
                 continue;
             }
 
-            sheet = workbook.createSheet(sheetName);
-            // 设置excel每列宽度
-            columnIndex = 0;
-            for (String columnName : excelSheetItem.getColumnNameList()) {
-                sheet.setColumnWidth(columnIndex, 6000);
-                columnIndex ++;
-            }
+            sheet = workbook.createSheet(sheetDetail.getName());
 
             // 创建字体样式
             headerFont = workbook.createFont();
-            headerFont.setFontName("Verdana");
+            headerFont.setFontName("微软雅黑");
             headerFont.setBold(true);
-            headerFont.setFontHeight((short) 200);
+            headerFont.setFontHeightInPoints((short) 10);
             headerFont.setColor(IndexedColors.BLACK.index);
             // 创建单元格样式
             headerStyle = workbook.createCellStyle();
             headerStyle.setAlignment(HorizontalAlignment.CENTER);
             headerStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            headerStyle.setFillForegroundColor(IndexedColors.WHITE.index);
+            headerStyle.setFillForegroundColor(IndexedColors.LIGHT_ORANGE.index);
             headerStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
             // 设置边框
             headerStyle.setBottomBorderColor(IndexedColors.BLACK.index);
@@ -112,60 +113,208 @@ public class ExcelExportHelper {
             headerStyle.setFont(headerFont);
 
             // 创建Excel的sheet的一行
-            rowIndex = 0;
-            headerRow = sheet.createRow(rowIndex);
-            headerRow.setHeight((short) 500);// 设定行的高度
-
             Cell cell;
-            columnIndex = 0;
-            for (String columnName : excelSheetItem.getColumnNameList()) {
-                // 创建一个Excel的单元格
-                cell = headerRow.createCell(columnIndex);
-                // 给Excel的单元格设置样式和赋值
-                cell.setCellStyle(headerStyle);
-                cell.setCellValue(columnName);
-
-                columnIndex ++;
-            }
-            rowIndex ++;
-
-
-            // 创建字体样式
-            contentFont = workbook.createFont();
-            contentFont.setFontName("Verdana");
-            contentFont.setBold(false);
-            contentFont.setFontHeight((short) 200);
-            contentFont.setColor(IndexedColors.BLACK.index);
-            // 创建单元格样式
-            contentStyle = workbook.createCellStyle();
-            contentStyle.setAlignment(HorizontalAlignment.CENTER);
-            contentStyle.setVerticalAlignment(VerticalAlignment.CENTER);
-            contentStyle.setFillForegroundColor(IndexedColors.WHITE.index);
-            contentStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
-            // 设置边框
-            contentStyle.setBottomBorderColor(IndexedColors.BLACK.index);
-            contentStyle.setBorderBottom(BorderStyle.THIN);
-            contentStyle.setBorderLeft(BorderStyle.THIN);
-            contentStyle.setBorderRight(BorderStyle.THIN);
-            contentStyle.setBorderTop(BorderStyle.THIN);
-            // 设置字体
-            contentStyle.setFont(contentFont);
-            for (List<String> rowItem : excelSheetItem.getCellValueList()) {
+            rowIndex = 0;
+            for (ExcelSheetItem excelSheetItem : sheetItemList) {
                 columnIndex = 0;
-                contentRow = sheet.createRow(rowIndex);
-                for (String cellValue : rowItem) {
+                headerRow = sheet.createRow(rowIndex);
+                headerRow.setHeight((short) 500);// 设定行的高度
+                for (ColumnDetail columnDetail : excelSheetItem.getColumnDetailList()) {
                     // 创建一个Excel的单元格
-                    cell = contentRow.createCell(columnIndex);
+                    cell = headerRow.createCell(columnIndex);
                     // 给Excel的单元格设置样式和赋值
-                    cell.setCellStyle(contentStyle);
-                    cell.setCellValue(cellValue);
+                    cell.setCellStyle(headerStyle);
+                    cell.setCellValue(columnDetail.getName());
 
-                    columnIndex++;
+                    columnIndex ++;
                 }
-                rowIndex++;
+                rowIndex ++;
+
+                columnDetailList = excelSheetItem.getColumnDetailList();
+                for (List<CellDetail> rowItem : excelSheetItem.getCellValueList()) {
+                    columnIndex = 0;
+                    contentRow = sheet.createRow(rowIndex);
+                    for (CellDetail cellValue : rowItem) {
+                        try {
+                            // 创建一个Excel的单元格
+                            cell = contentRow.createCell(columnIndex);
+                            // 给Excel的单元格设置样式和赋值
+                            columnInfo = columnDetailList.get(columnIndex);
+
+                            cellValue.setDataType(columnInfo.getDataType());
+                            contentCellStyle = getCellStyleByParam(cellStyleMap, workbook, cellValue);
+                            if ("string".equals(columnInfo.getDataType())) {
+                                cell.setCellStyle(contentCellStyle);
+                                cell.setCellValue(cellValue.getValue());
+                            } else if ("integer".equals(columnInfo.getDataType()) && StringUtils.hasText(cellValue.getValue())) {
+                                cell.setCellStyle(contentCellStyle);
+                                cell.setCellValue(Integer.parseInt(cellValue.getValue()));
+                            } else if ("double".equals(columnInfo.getDataType()) && StringUtils.hasText(cellValue.getValue())) {
+                                cell.setCellStyle(contentCellStyle);
+                                cell.setCellValue(Double.parseDouble(cellValue.getValue()));
+                            } else if ("percent".equals(columnInfo.getDataType()) && StringUtils.hasText(cellValue.getValue())) {
+                                cell.setCellStyle(contentCellStyle);
+                                cell.setCellValue(Double.parseDouble(cellValue.getValue()));
+                            } else {
+                                cell.setCellStyle(contentCellStyle);
+                                cell.setCellValue(cellValue.getValue());
+                            }
+
+                            columnIndex++;
+                        } catch (Exception e) {
+                            logger.error("sheetName={}, columnIndex={}, rowIndex={}", sheetDetail.getName(), columnIndex, rowIndex, e);
+                        }
+                    }
+                    rowIndex++;
+                }
+
+                // 设置excel每列宽度
+                columnIndex = 0;
+                sheet.trackAllColumnsForAutoSizing();
+                for (ColumnDetail columnDetail : excelSheetItem.getColumnDetailList()) {
+                    if (columnDetail.isAutoColumnSize()) {
+                        sheet.autoSizeColumn(columnIndex);
+                    } else {
+                        sheet.setColumnWidth(columnIndex, columnDetail.getWidth());
+                    }
+                    columnIndex ++;
+                }
+
+                rowIndex = rowIndex + 4;
+            }
+
+            // 设置冻结单元格
+            if (StringUtils.hasText(sheetDetail.getFreezePane())) {
+                freezePaneArray = sheetDetail.getFreezePane().split(",");
+                sheet.createFreezePane(Integer.parseInt(freezePaneArray[0]),
+                        Integer.parseInt(freezePaneArray[1]),
+                        Integer.parseInt(freezePaneArray[2]),
+                        Integer.parseInt(freezePaneArray[3]));
             }
         }
         return workbook;
     }
 
+    private static CellStyle getCellStyleByParam(Map<String, CellStyle> cellStyleMap, SXSSFWorkbook workbook, CellDetail cellDetail){
+        StringBuilder cellKey = new StringBuilder();
+        cellKey.append(cellDetail.getDataType());
+        cellKey.append(cellDetail.getFontColor());
+        cellKey.append(cellDetail.getFontName());
+        cellKey.append(cellDetail.getFontSize());
+
+        Font fontStyle;
+        DataFormat dataFormat = workbook.createDataFormat(); // 此处设置数据格式
+        CellStyle cellStyle = cellStyleMap.get(cellKey.toString());
+        if (cellStyle == null) {
+            // 创建字体样式
+            fontStyle = workbook.createFont();
+            fontStyle.setFontName(cellDetail.getFontName());
+            fontStyle.setBold(false);
+            fontStyle.setFontHeightInPoints(cellDetail.getFontSize());
+            fontStyle.setColor(cellDetail.getFontColor());
+
+            // 创建单元格样式
+            cellStyle = workbook.createCellStyle();
+            cellStyle.setAlignment(HorizontalAlignment.CENTER);
+            cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+            cellStyle.setFillForegroundColor(IndexedColors.WHITE.index);
+            cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+            // 设置边框
+            cellStyle.setBottomBorderColor(IndexedColors.BLACK.index);
+            cellStyle.setBorderBottom(BorderStyle.THIN);
+            cellStyle.setBorderLeft(BorderStyle.THIN);
+            cellStyle.setBorderRight(BorderStyle.THIN);
+            cellStyle.setBorderTop(BorderStyle.THIN);
+            cellStyle.setFont(fontStyle);
+            if ("integer".equals(cellDetail.getDataType())) {
+                cellStyle.setDataFormat(dataFormat.getFormat("#,##0"));
+            } else if ("double".equals(cellDetail.getDataType())) {
+                cellStyle.setDataFormat(dataFormat.getFormat("#,##0.00"));
+            } else if ("percent".equals(cellDetail.getDataType())) {
+                cellStyle.setDataFormat(dataFormat.getFormat("0.00%"));
+            }
+
+            cellStyleMap.put(cellKey.toString(), cellStyle);
+        }
+        return cellStyle;
+    }
+
+    private static Map<String, CellStyle> formCellStyleMap(SXSSFWorkbook workbook){
+        Font fontStyle;
+        CellStyle cellStyle;
+        DataFormat dataFormat = workbook.createDataFormat(); // 此处设置数据格式
+
+        // 创建字体样式
+        fontStyle = workbook.createFont();
+        fontStyle.setFontName("微软雅黑");
+        fontStyle.setBold(false);
+        fontStyle.setFontHeightInPoints((short) 9);
+        fontStyle.setColor(IndexedColors.BLACK.index);
+
+        // 创建单元格样式的缓存
+        Map<String, CellStyle> cellStyleMap = new HashMap<>();
+        // 创建单元格样式
+        cellStyle = workbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setFillForegroundColor(IndexedColors.WHITE.index);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        // 设置边框
+        cellStyle.setBottomBorderColor(IndexedColors.BLACK.index);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setFont(fontStyle);
+        cellStyleMap.put("string", cellStyle);
+
+        // 创建单元格样式
+        cellStyle = workbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setFillForegroundColor(IndexedColors.WHITE.index);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        // 设置边框
+        cellStyle.setBottomBorderColor(IndexedColors.BLACK.index);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setFont(fontStyle);
+        cellStyle.setDataFormat(dataFormat.getFormat("#,##0"));
+        cellStyleMap.put("integer", cellStyle);
+
+        // 创建单元格样式
+        cellStyle = workbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setFillForegroundColor(IndexedColors.WHITE.index);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        // 设置边框
+        cellStyle.setBottomBorderColor(IndexedColors.BLACK.index);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setFont(fontStyle);
+        cellStyle.setDataFormat(dataFormat.getFormat("#,##0.00"));
+        cellStyleMap.put("double", cellStyle);
+
+        // 创建单元格样式
+        cellStyle = workbook.createCellStyle();
+        cellStyle.setAlignment(HorizontalAlignment.CENTER);
+        cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
+        cellStyle.setFillForegroundColor(IndexedColors.WHITE.index);
+        cellStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
+        // 设置边框
+        cellStyle.setBottomBorderColor(IndexedColors.BLACK.index);
+        cellStyle.setBorderBottom(BorderStyle.THIN);
+        cellStyle.setBorderLeft(BorderStyle.THIN);
+        cellStyle.setBorderRight(BorderStyle.THIN);
+        cellStyle.setBorderTop(BorderStyle.THIN);
+        cellStyle.setFont(fontStyle);
+        cellStyle.setDataFormat(dataFormat.getFormat("0.00%"));
+        cellStyleMap.put("percent", cellStyle);
+        return cellStyleMap;
+    }
 }

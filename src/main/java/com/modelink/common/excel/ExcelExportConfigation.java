@@ -11,23 +11,88 @@ import java.util.Map;
 public class ExcelExportConfigation {
 
     private String fileName;
-    private List<String> sheetNameList;
-    private Map<String, ExcelSheetItem> sheetContentMap;
+    private List<SheetDetail> sheetDetailList;
+    private Map<String, List<ExcelSheetItem>> sheetContentMap;
 
     public static ExcelExportConfigation newInstance(String fileName, List<String> columnNameList, List<List<String>> dataList){
         ExcelExportConfigation excelConfigation = new ExcelExportConfigation();
         excelConfigation.setFileName(fileName);
 
-        List<String> sheetNameList = new ArrayList<>();
-        sheetNameList.add("sheet_1");
-        excelConfigation.setSheetNameList(sheetNameList);
+        SheetDetail sheetDetail;
+        List<SheetDetail> sheetDetailList = new ArrayList<>();
+        sheetDetail = new SheetDetail();
+        sheetDetail.setName("sheet_1");
+        sheetDetail.setFreezePane("");
+        sheetDetailList.add(sheetDetail);
+        excelConfigation.setSheetDetailList(sheetDetailList);
+
+        ColumnDetail columnDetail;
+        List<ColumnDetail> columnDetailList = new ArrayList<>();
+        for (String columnName : columnNameList) {
+            columnDetail = new ColumnDetail();
+            columnDetail.setWidth(6000);
+            columnDetail.setName(columnName);
+            columnDetail.setDataType("string");
+            columnDetailList.add(columnDetail);
+        }
+
+        CellDetail cellDetail;
+        List<CellDetail> detailList;
+        List<List<CellDetail>> cellDetailList = new ArrayList<>();
+        for (List<String> dataItem : dataList) {
+            detailList = new ArrayList<>();
+            for (String value : dataItem) {
+                cellDetail = new CellDetail();
+                cellDetail.setValue(value);
+                detailList.add(cellDetail);
+            }
+            cellDetailList.add(detailList);
+        }
 
 
         ExcelSheetItem excelSheetItem = new ExcelSheetItem();
-        excelSheetItem.setColumnNameList(columnNameList);
-        excelSheetItem.setCellValueList(dataList);
-        Map<String, ExcelSheetItem> dataMap = new HashMap<>();
-        dataMap.put("sheet_1", excelSheetItem);
+        excelSheetItem.setColumnDetailList(columnDetailList);
+        excelSheetItem.setCellValueList(cellDetailList);
+        Map<String, List<ExcelSheetItem>> dataMap = new HashMap<>();
+        List<ExcelSheetItem> sheetItemList = new ArrayList<>();
+        sheetItemList.add(excelSheetItem);
+        dataMap.put("sheet_1", sheetItemList);
+        excelConfigation.setSheetContentMap(dataMap);
+
+        return excelConfigation;
+    }
+    public static ExcelExportConfigation newInstanceWithColumn(String fileName, List<ColumnDetail> columnDetailList, List<List<String>> dataList){
+        ExcelExportConfigation excelConfigation = new ExcelExportConfigation();
+        excelConfigation.setFileName(fileName);
+
+        SheetDetail sheetDetail;
+        List<SheetDetail> sheetDetailList = new ArrayList<>();
+        sheetDetail = new SheetDetail();
+        sheetDetail.setName("sheet_1");
+        sheetDetail.setFreezePane("");
+        sheetDetailList.add(sheetDetail);
+        excelConfigation.setSheetDetailList(sheetDetailList);
+
+        CellDetail cellDetail;
+        List<CellDetail> detailList;
+        List<List<CellDetail>> cellDetailList = new ArrayList<>();
+        for (List<String> dataItem : dataList) {
+            detailList = new ArrayList<>();
+            for (String value : dataItem) {
+                cellDetail = new CellDetail();
+                cellDetail.setValue(value);
+                detailList.add(cellDetail);
+            }
+            cellDetailList.add(detailList);
+        }
+
+        ExcelSheetItem excelSheetItem = new ExcelSheetItem();
+        excelSheetItem.setColumnDetailList(columnDetailList);
+        excelSheetItem.setCellValueList(cellDetailList);
+        Map<String, List<ExcelSheetItem>> dataMap = new HashMap<>();
+        List<ExcelSheetItem> sheetItemList = new ArrayList<>();
+        sheetItemList.add(excelSheetItem);
+        dataMap.put("sheet_1", sheetItemList);
         excelConfigation.setSheetContentMap(dataMap);
 
         return excelConfigation;
@@ -41,19 +106,19 @@ public class ExcelExportConfigation {
         this.fileName = fileName;
     }
 
-    public List<String> getSheetNameList() {
-        return sheetNameList;
+    public List<SheetDetail> getSheetDetailList() {
+        return sheetDetailList;
     }
 
-    public void setSheetNameList(List<String> sheetNameList) {
-        this.sheetNameList = sheetNameList;
+    public void setSheetDetailList(List<SheetDetail> sheetDetailList) {
+        this.sheetDetailList = sheetDetailList;
     }
 
-    public Map<String, ExcelSheetItem> getSheetContentMap() {
+    public Map<String, List<ExcelSheetItem>> getSheetContentMap() {
         return sheetContentMap;
     }
 
-    public void setSheetContentMap(Map<String, ExcelSheetItem> sheetContentMap) {
+    public void setSheetContentMap(Map<String, List<ExcelSheetItem>> sheetContentMap) {
         this.sheetContentMap = sheetContentMap;
     }
 }
