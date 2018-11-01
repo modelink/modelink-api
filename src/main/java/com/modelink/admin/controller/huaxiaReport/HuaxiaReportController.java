@@ -823,8 +823,51 @@ public class HuaxiaReportController {
                 BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
                 detailItemVoList = transformDetailItem2DownloadVoListByMonth(huaxiaReportParamVo, flowReportList);
 
+                directTransformCount = 0;
+                browseCount = 0;
+                clickCount = 0;
+                arriveCount = 0;
+                arriveUserCount = 0;
+                againCount = 0;
+                averageStayTime = 0;
+                mediaShowCount = 0;
+                mediaClickCount = 0;
+                consumeAmount = 0d;
+
                 dataList = new ArrayList<>();
                 for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
+
+                    if (detailItemVo.getDirectTransformCount() != null) {
+                        directTransformCount += detailItemVo.getDirectTransformCount();
+                    }
+                    if (detailItemVo.getBrowseCount() != null) {
+                        browseCount += detailItemVo.getBrowseCount();
+                    }
+                    if (detailItemVo.getClickCount() != null) {
+                        clickCount += detailItemVo.getClickCount();
+                    }
+                    if (detailItemVo.getArriveCount() != null) {
+                        arriveCount += detailItemVo.getArriveCount();
+                    }
+                    if (detailItemVo.getArriveUserCount() != null) {
+                        arriveUserCount += detailItemVo.getArriveUserCount();
+                    }
+                    if (detailItemVo.getAgainCount() != null) {
+                        againCount += detailItemVo.getAgainCount();
+                    }
+                    if (detailItemVo.getAverageStayTime() != null) {
+                        averageStayTime += detailItemVo.getAverageStayTime();
+                    }
+                    if (detailItemVo.getMediaShowCount() != null) {
+                        mediaShowCount += detailItemVo.getMediaShowCount();
+                    }
+                    if (detailItemVo.getMediaClickCount() != null) {
+                        mediaClickCount += detailItemVo.getMediaClickCount();
+                    }
+                    if (detailItemVo.getConsumeAmount() != null) {
+                        consumeAmount += Double.parseDouble(detailItemVo.getConsumeAmount());
+                    }
+
                     rowValueList = new ArrayList<>();
                     // to-do
                     rowValueList.add(new CellDetail(detailItemVo.getDate()));
@@ -852,6 +895,29 @@ public class HuaxiaReportController {
                     rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCost()));
                     dataList.add(rowValueList);
                 }
+                rowValueList = new ArrayList<>();
+                // to-do
+                rowValueList.add(new CellDetail("合计"));
+                rowValueList.add(new CellDetail(arrays[0]));
+                rowValueList.add(new CellDetail(arrays[1]));
+                rowValueList.add(new CellDetail(advertiseActive));
+                rowValueList.add(new CellDetail(directTransformCount + ""));
+                rowValueList.add(new CellDetail(browseCount + ""));
+                rowValueList.add(new CellDetail(clickCount + ""));
+                rowValueList.add(new CellDetail(arriveCount + ""));
+                rowValueList.add(new CellDetail(arriveUserCount + ""));
+                rowValueList.add(new CellDetail(clickCount == 0 ? "0" : arriveCount * 1d / clickCount + ""));
+                rowValueList.add(new CellDetail(againCount + ""));
+                rowValueList.add(new CellDetail(arriveCount == 0 ? "0" : againCount * 1d / arriveCount + ""));
+                rowValueList.add(new CellDetail(averageStayTime * 1d / detailItemVoList.size() + ""));
+                rowValueList.add(new CellDetail(mediaShowCount + ""));
+                rowValueList.add(new CellDetail(mediaClickCount + ""));
+                rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : mediaClickCount * 1d / mediaShowCount + ""));
+                rowValueList.add(new CellDetail(mediaClickCount == 0 ? "0" : consumeAmount * 1d / mediaClickCount + ""));
+                rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : consumeAmount * 1000d / mediaShowCount + ""));
+                rowValueList.add(new CellDetail(consumeAmount + ""));
+                rowValueList.add(new CellDetail(directTransformCount == 0 ? "0" : consumeAmount * 1d / directTransformCount + ""));
+                dataList.add(rowValueList);
 
                 excelSheetItem = new ExcelSheetItem();
                 excelSheetItem.setColumnDetailList(columnDetailList);
@@ -863,8 +929,51 @@ public class HuaxiaReportController {
                 BeanUtils.copyProperties(paramPagerVo, huaxiaReportParamVo);
                 detailItemVoList = transformDetailItem2DownloadVoListByDate(huaxiaReportParamVo, flowReportList);
 
+                directTransformCount = 0;
+                browseCount = 0;
+                clickCount = 0;
+                arriveCount = 0;
+                arriveUserCount = 0;
+                againCount = 0;
+                averageStayTime = 0;
+                mediaShowCount = 0;
+                mediaClickCount = 0;
+                consumeAmount = 0d;
+
                 dataList = new ArrayList<>();
                 for (HuaxiaReportDetailItemVo detailItemVo : detailItemVoList) {
+
+                    if (detailItemVo.getDirectTransformCount() != null) {
+                        directTransformCount += detailItemVo.getDirectTransformCount();
+                    }
+                    if (detailItemVo.getBrowseCount() != null) {
+                        browseCount += detailItemVo.getBrowseCount();
+                    }
+                    if (detailItemVo.getClickCount() != null) {
+                        clickCount += detailItemVo.getClickCount();
+                    }
+                    if (detailItemVo.getArriveCount() != null) {
+                        arriveCount += detailItemVo.getArriveCount();
+                    }
+                    if (detailItemVo.getArriveUserCount() != null) {
+                        arriveUserCount += detailItemVo.getArriveUserCount();
+                    }
+                    if (detailItemVo.getAgainCount() != null) {
+                        againCount += detailItemVo.getAgainCount();
+                    }
+                    if (detailItemVo.getAverageStayTime() != null) {
+                        averageStayTime += detailItemVo.getAverageStayTime();
+                    }
+                    if (detailItemVo.getMediaShowCount() != null) {
+                        mediaShowCount += detailItemVo.getMediaShowCount();
+                    }
+                    if (detailItemVo.getMediaClickCount() != null) {
+                        mediaClickCount += detailItemVo.getMediaClickCount();
+                    }
+                    if (detailItemVo.getConsumeAmount() != null) {
+                        consumeAmount += Double.parseDouble(detailItemVo.getConsumeAmount());
+                    }
+
                     rowValueList = new ArrayList<>();
                     // to-do
                     if ("星期六".equals(DateUtils.printWeekValue(detailItemVo.getDate(), "yyyy-MM-dd"))
@@ -897,6 +1006,29 @@ public class HuaxiaReportController {
                     rowValueList.add(new CellDetail(detailItemVo.getDirectTransformCost()));
                     dataList.add(rowValueList);
                 }
+                rowValueList = new ArrayList<>();
+                // to-do
+                rowValueList.add(new CellDetail("合计"));
+                rowValueList.add(new CellDetail(arrays[0]));
+                rowValueList.add(new CellDetail(arrays[1]));
+                rowValueList.add(new CellDetail(advertiseActive));
+                rowValueList.add(new CellDetail(directTransformCount + ""));
+                rowValueList.add(new CellDetail(browseCount + ""));
+                rowValueList.add(new CellDetail(clickCount + ""));
+                rowValueList.add(new CellDetail(arriveCount + ""));
+                rowValueList.add(new CellDetail(arriveUserCount + ""));
+                rowValueList.add(new CellDetail(clickCount == 0 ? "0" : arriveCount * 1d / clickCount + ""));
+                rowValueList.add(new CellDetail(againCount + ""));
+                rowValueList.add(new CellDetail(arriveCount == 0 ? "0" : againCount * 1d / arriveCount + ""));
+                rowValueList.add(new CellDetail(averageStayTime * 1d / detailItemVoList.size() + ""));
+                rowValueList.add(new CellDetail(mediaShowCount + ""));
+                rowValueList.add(new CellDetail(mediaClickCount + ""));
+                rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : mediaClickCount * 1d / mediaShowCount + ""));
+                rowValueList.add(new CellDetail(mediaClickCount == 0 ? "0" : consumeAmount * 1d / mediaClickCount + ""));
+                rowValueList.add(new CellDetail(mediaShowCount == 0 ? "0" : consumeAmount * 1000d / mediaShowCount + ""));
+                rowValueList.add(new CellDetail(consumeAmount + ""));
+                rowValueList.add(new CellDetail(directTransformCount == 0 ? "0" : consumeAmount * 1d / directTransformCount + ""));
+                dataList.add(rowValueList);
 
                 excelSheetItem = new ExcelSheetItem();
                 excelSheetItem.setColumnDetailList(columnDetailList);
