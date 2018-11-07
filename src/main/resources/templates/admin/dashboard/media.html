@@ -54,7 +54,12 @@
                     </select>
                 </div>
             </div>
-
+            <div class="layui-inline choose-date date">
+                <label class="layui-form-label">选择日期</label>
+                <div class="layui-input-inline">
+                    <input type="text" id="chooseDate" name="chooseDate" autocomplete="off" class="layui-input">
+                </div>
+            </div>
             <div class="layui-inline">
                 <label class="layui-form-label">渠道归属</label>
                 <div class="layui-input-inline">
@@ -95,18 +100,18 @@
     <div class="layui-row ml-row">
         <div class="layui-label reserve-count">
             <div style="float:left;">媒体渠道关键指标分析</div>
-            <div style="float:right;" class="layui-form layui-form-pane">
-                <div class="layui-inline">
-                    <label class="layui-form-label">选择日期</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="chooseDate" name="chooseDate" class="layui-input">
-                    </div>
-                </div>
-            </div>
+            <!--<div style="float:right;" class="layui-form layui-form-pane">-->
+                <!--<div class="layui-inline">-->
+                    <!--<label class="layui-form-label">选择日期</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<input type="text" id="chooseDate" name="chooseDate" class="layui-input">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="ml-card">
-                <div id="media-summary-echart" style="height: 600px;"></div>
+                <div id="media-summary-echart" style="height: 400px;"></div>
             </div>
         </div>
         <div class="layui-col-sm12 layui-col-md6">
@@ -115,12 +120,12 @@
                 <tr>
                     <th lay-data="{align: 'center', field: 'platformName'}">渠道归属</th>
                     <th lay-data="{align: 'center', field: 'advertiseActive'}">广告活动</th>
-                    <th lay-data="{align: 'center', field: 'clickRate'}">点击率（%）</th>
-                    <th lay-data="{align: 'center', field: 'reserveRate'}">预约率（%）</th>
-                    <th lay-data="{align: 'center', field: 'underwriteRate'}">承保率（%）</th>
-                    <th lay-data="{align: 'center', field: 'transformCycle'}">转化周期（天）</th>
-                    <th lay-data="{align: 'center', field: 'transformCost'}">转化成本（元）</th>
-                    <th lay-data="{align: 'center', field: 'transformRate'}">总转化率（%）</th>
+                    <th lay-data="{align: 'center', field: 'clickRate', sort: true}">点击率（%）</th>
+                    <th lay-data="{align: 'center', field: 'reserveRate', sort: true}">预约率（%）</th>
+                    <th lay-data="{align: 'center', field: 'underwriteRate', sort: true}">承保率（%）</th>
+                    <th lay-data="{align: 'center', field: 'transformCycle', sort: true}">转化周期（天）</th>
+                    <th lay-data="{align: 'center', field: 'transformCost', sort: true}">转化成本（元）</th>
+                    <!--<th lay-data="{align: 'center', field: 'transformRate'}">总转化率（%）</th>-->
                 </tr>
                 </thead>
                 <tbody id="media-summary-table-body">
@@ -131,15 +136,15 @@
     </div>
     <div class="layui-row ml-row">
         <div class="layui-label reserve-count">
-            <div style="float:left;">媒体渠道月度动作与保费的关系</div>
-            <div style="float:right;" class="layui-form layui-form-pane">
-                <div class="layui-inline">
-                    <label class="layui-form-label">选择年份</label>
-                    <div class="layui-input-inline">
-                        <input type="text" id="chooseYear" name="chooseYear" class="layui-input">
-                    </div>
-                </div>
-            </div>
+            <div style="float:left;">媒体渠道动作与保费的关系</div>
+            <!--<div style="float:right;" class="layui-form layui-form-pane">-->
+                <!--<div class="layui-inline">-->
+                    <!--<label class="layui-form-label">选择年份</label>-->
+                    <!--<div class="layui-input-inline">-->
+                        <!--<input type="text" id="chooseYear" name="chooseYear" class="layui-input">-->
+                    <!--</div>-->
+                <!--</div>-->
+            <!--</div>-->
         </div>
         <div class="layui-col-sm12 layui-col-md6">
             <div class="ml-card">
@@ -152,20 +157,8 @@
                     <tr>
                         <th lay-data="{align: 'center'}" colspan="13">媒体渠道策略调整分析</th>
                     </tr>
-                    <tr>
-                        <th lay-data="{align: 'center', field: 'operate', width: 150}">月份</th>
-                        <th lay-data="{align: 'center', field: 'month1', width: 100}">1月</th>
-                        <th lay-data="{align: 'center', field: 'month2', width: 100}">2月</th>
-                        <th lay-data="{align: 'center', field: 'month3', width: 100}">3月</th>
-                        <th lay-data="{align: 'center', field: 'month4', width: 100}">4月</th>
-                        <th lay-data="{align: 'center', field: 'month5', width: 100}">5月</th>
-                        <th lay-data="{align: 'center', field: 'month6', width: 100}">6月</th>
-                        <th lay-data="{align: 'center', field: 'month7', width: 100}">7月</th>
-                        <th lay-data="{align: 'center', field: 'month8', width: 100}">8月</th>
-                        <th lay-data="{align: 'center', field: 'month9', width: 100}">9月</th>
-                        <th lay-data="{align: 'center', field: 'month10', width: 100}">10月</th>
-                        <th lay-data="{align: 'center', field: 'month11', width: 100}">11月</th>
-                        <th lay-data="{align: 'center', field: 'month12', width: 100}">12月</th>
+                    <tr id="media-tactics-table-tr">
+
                     </tr>
                 </thead>
                 <tbody id="media-tactics-table-body">

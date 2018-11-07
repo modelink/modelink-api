@@ -13,48 +13,52 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload'], functi
         range: true
     });
 
+    insuranceEcharts.elementMap["consume-amount-echart"] = $("#consume-amount-echart");
     insuranceEcharts.elementMap["reserve-count-echart"] = $("#reserve-count-echart");
-    insuranceEcharts.elementMap["underwrite-count-echart"] = $("#underwrite-count-echart");
     insuranceEcharts.elementMap["underwrite-amount-echart"] = $("#underwrite-amount-echart");
-    insuranceEcharts.elementMap["repellent-amount-echart"] = $("#repellent-amount-echart");
+
     insuranceEcharts.elementMap["transform-cost-echart"] = $("#transform-cost-echart");
-    insuranceEcharts.elementMap["abnormal-count-echart"] = $("#abnormal-count-echart");
     insuranceEcharts.elementMap["transform-cycle-echart"] = $("#transform-cycle-echart");
     insuranceEcharts.elementMap["gender-age-echart"] = $("#gender-age-echart");
-    insuranceEcharts.elementMap["reserve-click-echart"] = $("#reserve-click-echart");
-    insuranceEcharts.elementMap["transform-rate-echart"] = $("#transform-rate-echart");
-    insuranceEcharts.elementMap["insurance-map-echart"] = $("#insurance-map-echart");
-    insuranceEcharts.elementMap["word-clouds-echart"] = $("#word-clouds-echart");
+    insuranceEcharts.elementMap["insurance-amount-echart"] = $("#insurance-amount-echart");
+    // insuranceEcharts.elementMap["repellent-amount-echart"] = $("#repellent-amount-echart");
+    // insuranceEcharts.elementMap["abnormal-count-echart"] = $("#abnormal-count-echart");
+    // insuranceEcharts.elementMap["reserve-click-echart"] = $("#reserve-click-echart");
+    // insuranceEcharts.elementMap["transform-rate-echart"] = $("#transform-rate-echart");
+    // insuranceEcharts.elementMap["word-clouds-echart"] = $("#word-clouds-echart");
 
+    insuranceEcharts.echartsMap["consume-amount-echart"] = echarts.init($("#consume-amount-echart")[0]);
     insuranceEcharts.echartsMap["reserve-count-echart"] = echarts.init($("#reserve-count-echart")[0]);
-    insuranceEcharts.echartsMap["underwrite-count-echart"] = echarts.init($("#underwrite-count-echart")[0]);
     insuranceEcharts.echartsMap["underwrite-amount-echart"] = echarts.init($("#underwrite-amount-echart")[0]);
-    insuranceEcharts.echartsMap["repellent-amount-echart"] = echarts.init($("#repellent-amount-echart")[0]);
+
     insuranceEcharts.echartsMap["transform-cost-echart"] = echarts.init($("#transform-cost-echart")[0]);
-    insuranceEcharts.echartsMap["abnormal-count-echart"] = echarts.init($("#abnormal-count-echart")[0]);
     insuranceEcharts.echartsMap["transform-cycle-echart"] = echarts.init($("#transform-cycle-echart")[0]);
     insuranceEcharts.echartsMap["gender-age-echart"] = echarts.init($("#gender-age-echart")[0]);
-    insuranceEcharts.echartsMap["reserve-click-echart"] = echarts.init($("#reserve-click-echart")[0]);
-    insuranceEcharts.echartsMap["transform-rate-echart"] = echarts.init($("#transform-rate-echart")[0]);
-    insuranceEcharts.echartsMap["insurance-map-echart"] = echarts.init($("#insurance-map-echart")[0]);
-    insuranceEcharts.echartsMap["word-clouds-echart"] = echarts.init($("#word-clouds-echart")[0]);
+    insuranceEcharts.echartsMap["insurance-amount-echart"] = echarts.init($("#insurance-amount-echart")[0]);
+    // insuranceEcharts.echartsMap["repellent-amount-echart"] = echarts.init($("#repellent-amount-echart")[0]);
+    // insuranceEcharts.echartsMap["abnormal-count-echart"] = echarts.init($("#abnormal-count-echart")[0]);
+    // insuranceEcharts.echartsMap["reserve-click-echart"] = echarts.init($("#reserve-click-echart")[0]);
+    // insuranceEcharts.echartsMap["transform-rate-echart"] = echarts.init($("#transform-rate-echart")[0]);
+    // insuranceEcharts.echartsMap["word-clouds-echart"] = echarts.init($("#word-clouds-echart")[0]);
 
 
     //搜索表单提交
     $("#search-btn").on("click", function () {
 
+        insuranceEcharts.getDataJson2DrawLine($, "consume-amount", "/admin/dashboard/getConsumeAmount");
         insuranceEcharts.getDataJson2DrawLine($, "reserve-count", "/admin/dashboard/getReserveCount");
-        insuranceEcharts.getDataJson2DrawLine($, "underwrite-count", "/admin/dashboard/getUnderwriteCount");
         insuranceEcharts.getDataJson2DrawLine($, "underwrite-amount", "/admin/dashboard/getUnderwriteAmount");
-        insuranceEcharts.getDataJson2DrawLine($, "repellent-amount", "/admin/dashboard/getRepellentAmount");
+
         insuranceEcharts.getDataJson2DrawLine($, "transform-cost", "/admin/dashboard/getTransformCost");
-        insuranceEcharts.getDataJson2DrawLine($, "abnormal-count", "/admin/dashboard/getAbnormalCount");
-        insuranceEcharts.getDataJson2DrawLine($, "transform-cycle", "/admin/dashboard/getTransformCycle");
-        insuranceEcharts.getDataJson2DrawLine($, "transform-rate", "/admin/dashboard/getTransformRate");
-        insuranceEcharts.getDataJson2DrawLine($, "reserve-click", "/admin/dashboard/getReserveClick");
+        insuranceEcharts.getDataJson2DrawTransformCycle($, "transform-cycle", "/admin/dashboard/getTransformCycle");
         insuranceEcharts.getDataJson2DrawAgeBar($, "gender-age", "/admin/dashboard/getGenderAge");
-        insuranceEcharts.getDataJson2WordCloudsMap($, "word-clouds", "/admin/dashboard/getWordClouds");
-        insuranceEcharts.getDataJson2DrawMap($, "insurance-map", "/admin/dashboard/getInsuranceMap");
+        insuranceEcharts.getDataJson2DrawPie($, "insurance-amount", "/admin/dashboard/getInsuranceFeeDistribution");
+        insuranceEcharts.getDataJson2FillData($, "/admin/dashboard/getReserveClick");
+        // insuranceEcharts.getDataJson2DrawLine($, "repellent-amount", "/admin/dashboard/getRepellentAmount");
+        // insuranceEcharts.getDataJson2DrawLine($, "abnormal-count", "/admin/dashboard/getAbnormalCount");
+        // insuranceEcharts.getDataJson2DrawLine($, "transform-rate", "/admin/dashboard/getTransformRate");
+        // insuranceEcharts.getDataJson2DrawLine($, "reserve-click", "/admin/dashboard/getReserveClick");
+        // insuranceEcharts.getDataJson2WordCloudsMap($, "word-clouds", "/admin/dashboard/getWordClouds");
 
     });
     $("#search-btn").trigger("click");
@@ -109,6 +113,25 @@ var insuranceEcharts = {
         window.parent.layui.element.tabChange('xbs_tab', id);
         event.stopPropagation();
     },
+
+    getDataJson2FillData: function ($, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    return;
+                }
+                $("#capacity").html(response.rtnData.capacity);
+                $("#reserveRate").html(response.rtnData.reserveRate);
+                $("#underwriteRate").html(response.rtnData.underwriteRate);
+            }
+        });
+    },
     // 获取后台JSON数据画折线图
     getDataJson2DrawLine: function ($, selectedPrefix, dataUrl) {
         $.ajax({
@@ -124,7 +147,12 @@ var insuranceEcharts = {
                     return;
                 }
                 insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", response.rtnData.titleList, response.rtnData.contentList);
-                $("#" + selectedPrefix + " label").html(response.rtnData.lastValue);
+                if (selectedPrefix == "transform-cost") {
+                    $("#" + selectedPrefix + " label").html(response.rtnData.totalTransformCost);
+                    return;
+                }
+
+                $("#" + selectedPrefix + " label").html(response.rtnData.totalValue);
                 $("#" + selectedPrefix + " em").html(response.rtnData.trendRate + "%");
                 if(response.rtnData.trendRate == 0){
                     $("#" + selectedPrefix + " i").removeClass().addClass("iconfont icon-arrow-equal").attr("style", "color:gray;")
@@ -149,13 +177,14 @@ var insuranceEcharts = {
                 if(!response || response.rtnCode != 200 || !response.rtnData){
                     insuranceEcharts.drawAgeBarEchart(selectedPrefix + "-echart",
                         ['0-5', '5-18', '18-25', '25-30', '30-35', '35-40', '40-50', '50-55', '55以上'],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]);
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0]);
                     return;
                 }
                 insuranceEcharts.drawAgeBarEchart(selectedPrefix + "-echart",
-                    ['0-5', '5-18', '18-25', '25-30', '30-35', '35-40', '40-50', '50-55', '55以上'],
-                    response.rtnData.manData, response.rtnData.womenData);
-                $("#" + selectedPrefix + " label").html(response.rtnData.labelValue);
+                    response.rtnData.titleList,
+                    response.rtnData.contentList);
+                $("#" + selectedPrefix + " #man p").html(response.rtnData.manValue);
+                $("#" + selectedPrefix + " #woman p").html(response.rtnData.womanValue);
             }
         });
     },
@@ -212,6 +241,58 @@ var insuranceEcharts = {
             }
         });
     },
+    getDataJson2DrawPie: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    insuranceEcharts.drawPieEchart("insurance-amount-echart", [
+                        {name: '北京市',value: 0 },
+                        {name: '天津市',value: 0 },
+                        {name: '上海市',value: 0 },
+                        {name: '重庆市',value: 0 },
+                        {name: '河北省',value: 0 },
+                        {name: '河南省',value: 0 },
+                        {name: '云南省',value: 0 },
+                        {name: '辽宁省',value: 0 },
+                        {name: '黑龙江省',value: 0 },
+                        {name: '湖南省',value: 0 },
+                        {name: '安徽省',value: 0 },
+                        {name: '山东省',value: 0 },
+                        {name: '新疆维吾尔自治区',value: 0 },
+                        {name: '江苏省',value: 0 },
+                        {name: '浙江省',value: 0 },
+                        {name: '江西省',value: 0 },
+                        {name: '湖北省',value: 0 },
+                        {name: '广西壮族自治区',value: 0 },
+                        {name: '甘肃省',value: 0 },
+                        {name: '山西省',value: 0 },
+                        {name: '内蒙古自治区',value: 0 },
+                        {name: '陕西省',value: 0 },
+                        {name: '吉林省',value: 0 },
+                        {name: '福建省',value: 0 },
+                        {name: '贵州省',value: 0 },
+                        {name: '广东省',value: 0 },
+                        {name: '青海省',value: 0 },
+                        {name: '西藏自治区',value: 0 },
+                        {name: '四川省',value: 0 },
+                        {name: '宁夏回族自治区',value: 0 },
+                        {name: '海南省',value: 0 },
+                        {name: '台湾省',value: 0 },
+                        {name: '香港特别行政区',value: 0 },
+                        {name: '澳门特别行政区',value: 0 }
+                    ]);
+                    return;
+                }
+                insuranceEcharts.drawPieEchart("insurance-amount-echart", response.rtnData);
+            }
+        });
+    },
     // 获取后台JSON数据画词云图
     getDataJson2WordCloudsMap: function ($, selectedPrefix, dataUrl) {
         $.ajax({
@@ -226,6 +307,24 @@ var insuranceEcharts = {
                     return;
                 }
                 insuranceEcharts.drawWordCloudsEchart(selectedPrefix + "-echart", response.rtnData);
+            }
+        });
+    },
+    getDataJson2DrawTransformCycle: function ($, selectedPrefix, dataUrl) {
+        $.ajax({
+            url: dataUrl,
+            data: {
+                merchantId: $("#merchant").val(),
+                chooseDate: $("#chooseDate").val(),
+                dateType: $("#dateType").val()
+            },
+            success: function (response) {
+                if(!response || response.rtnCode != 200 || !response.rtnData){
+                    return;
+                }
+                insuranceEcharts.drawTransformCycleEchart(selectedPrefix + "-echart",
+                    response.rtnData.titleList,
+                    response.rtnData.contentList);
             }
         });
     },
@@ -264,79 +363,56 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawAgeBarEchart: function (selectedId, labelData, leftData, rightData) {
+    drawAgeBarEchart: function (selectedId, titleList, contentList) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         selectedEchart.clear();
         var echartOption = {
-            grid: {
-                top: 10,
-                left: 10,
-                right: 10,
-                bottom: 10
-            },
             tooltip: {
                 trigger: 'axis',
                 axisPointer: {
                     type: 'shadow'
                 },
-                formatter: function (params) {
-                    var html = '<div><p>年龄：' + params[0].name + '</p></div>'
-                    for (var i = 0; i < params.length; i++) {
-                        html += '<p>' + params[i].seriesName + '：' + Math.abs(params[i].data) + '</p>'
-                    }
-                    return html;
-                },
+                formatter: function (selected) {
+                    return (selected[0].value * 100).toFixed(2) + "%";
+                }
             },
-            xAxis: [
-                {
-                    type: 'value',
-                    //max: 500,
-                    //min: -500,
-                    show: false,
-                    axisLabel: {
-                        formatter: function (data) {
-                            return (Math.abs(data));
-                        }
-                    }
-                }
-            ],
-            yAxis: [
-                {
-                    type: 'category',
-                    show: false,
-                    axisTick: {show: false},
-                    data: labelData
-                }
-            ],
+            grid: {
+                show: true,
+                top: 10,
+                left: 10,
+                right: 10,
+                bottom: 50,
+                borderWidth: 0  // 去掉外边框
+            },
+            xAxis: {
+                type: 'category',
+                splitLine: {
+                    show: false
+                },
+                axisLabel: {
+                    interval: 0,
+                    rotate: "45"
+                },
+                data: titleList
+            },
+            yAxis: {
+                show: false
+            },
             series: [
                 {
-                    name: '男性',
+                    data: contentList,
+                    barWidth: '50%',
+                    yAxisIndex: 0,
+                    barGap: '0',
                     type: 'bar',
-                    stack: '总量',
-                    label: {
+                    itemStyle: {
                         normal: {
-                            show: false,
-                            position: 'left'
-                        }
-                    },
-                    data: leftData
-                },
-                {
-                    name: '女性',
-                    type: 'bar',
-                    stack: '总量',
-                    label: {
-                        normal: {
-                            show: false,
-                            position: 'right',
-                            formatter: function (v) {
-                                return Math.abs(v.data)
+                            label: {
+                                formatter: function(selected){
+                                    return (selected.value * 100).toFixed(2) + "%";
+                                }
                             }
                         }
-                    },
-                    data: rightData,
-                    formatter: function (v) {
-                        return Math.abs(v)
                     }
                 }
             ]
@@ -386,6 +462,38 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
+    drawPieEchart: function (selectedId, tableItemList) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        // 指定图表的配置项和数据
+        selectedEchart.clear();
+        var echartOption = {
+            tooltip : {
+                trigger: 'item',
+                formatter: "{b} <br/>保费: {c}元<br/>占比: {d}%"
+            },
+            series : [
+                {
+                    type: 'pie',
+                    radius : '80%',
+                    center: ['50%', '50%'],
+                    data: tableItemList,
+                    label: {
+                        show: false
+                    },
+                    itemStyle: {
+                        emphasis: {
+                            shadowBlur: 10,
+                            shadowOffsetX: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    }
+                }
+            ]
+        };
+
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+    },
     drawWordCloudsEchart: function (selectedId, wordCloudsData) {
         var selectedEchart = insuranceEcharts.echartsMap[selectedId];
         // 指定图表的配置项和数据
@@ -417,6 +525,42 @@ var insuranceEcharts = {
             }]
         };
 
+        // 使用刚指定的配置项和数据显示图表。
+        selectedEchart.setOption(echartOption);
+    },
+    drawTransformCycleEchart: function (selectedId, titleList, contentList) {
+        var selectedEchart = insuranceEcharts.echartsMap[selectedId];
+        selectedEchart.clear();
+
+        var echartOption = {
+            tooltip : {
+                trigger: 'axis',
+                axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+                    type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            grid: {
+                top: '3%',
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis:  {
+                type: 'value',
+                splitLine: {
+                    show: false
+                },
+            },
+            yAxis: {
+                type: 'category',
+                data: titleList
+            },
+            series: [{
+                type: 'bar',
+                data: contentList
+            }]
+        };
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     }

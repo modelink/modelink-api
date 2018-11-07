@@ -3,7 +3,9 @@ package com.modelink.admin.controller.dashboard;
 import com.alibaba.fastjson.JSONObject;
 import com.modelink.admin.vo.dashboard.DashboardMediaParamVo;
 import com.modelink.admin.vo.dashboard.DashboardParamVo;
+import com.modelink.common.enums.DateTypeEnum;
 import com.modelink.common.enums.RetStatus;
+import com.modelink.common.utils.DataUtils;
 import com.modelink.common.utils.DateUtils;
 import com.modelink.common.vo.ResultVo;
 import com.modelink.reservation.bean.*;
@@ -143,8 +145,7 @@ public class DashboardMediaController {
         mediaItemParamPagerVo.setMerchantId(paramVo.getMerchantId());
         mediaItemParamPagerVo.setPlatformName(paramVo.getPlatformName());
         mediaItemParamPagerVo.setAdvertiseActive(paramVo.getAdvertiseActive());
-        mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,keyWord,clickCount,speedCost");
-        mediaItemParamPagerVo.setFeeType(FeeTypeEnum.FEE_TYPE_RESERVE.getText());
+        mediaItemParamPagerVo.setColumnFieldIds("date,merchantId,platformName,advertiseActive,keyWord,clickCount,showCount,speedCost");
         mediaItemParamPagerVo.setFeeType(paramVo.getFeeType());
         mediaItemParamPagerVo.setDateField("date");
         List<MediaItem> mediaItemList = mediaItemService.findListByParam(mediaItemParamPagerVo);
@@ -198,20 +199,20 @@ public class DashboardMediaController {
         int underwriteTotalCount = underwriteList.size();
         double transformTotalCycle = 0.00d;
         double transformTotalCost = 0.00d;
-        String underwriteTotalRate = "0";
-        String transformTotalRate = "0";
-        String reserveTotalRate = "0";
-        String clickTotalRate = "0";
+        double underwriteTotalRate = 0.00d;
+//        double transformTotalRate = 0.00d;
+        double reserveTotalRate = 0.00d;
+        double clickTotalRate = 0.00d;
         if(reserveTotalCount > 0) {
             transformTotalCost = consumeTotalAmount / reserveTotalCount;
-            underwriteTotalRate = decimalFormat.format(underwriteTotalCount * 100.0d / reserveTotalCount);
+            underwriteTotalRate = underwriteTotalCount * 100.0d / reserveTotalCount;
         }
         if(clickTotalCount > 0) {
-            transformTotalRate = decimalFormat.format(underwriteTotalCount * 100.00d / clickTotalCount);
-            reserveTotalRate = decimalFormat.format(reserveTotalCount * 100.0d / clickTotalCount);
+//            transformTotalRate = underwriteTotalCount * 100.00d / clickTotalCount;
+            reserveTotalRate = reserveTotalCount * 100.0d / clickTotalCount;
         }
         if(showTotalCount > 0) {
-            clickTotalRate = decimalFormat.format(clickTotalCount * 100.0d / showTotalCount);
+            clickTotalRate = clickTotalCount * 100.0d / showTotalCount;
         }
         if(underwriteTotalCount > 0) {
             transformTotalCycle = totalDifference / underwriteTotalCount;
@@ -303,15 +304,78 @@ public class DashboardMediaController {
         }else if(transformTotalCost > 0){
             transformTotalCost = 98;
         }
+        if(clickTotalRate > 90){
+            clickTotalRate = 98;
+        }else if(clickTotalRate > 60){
+            clickTotalRate = 90;
+        }else if(clickTotalRate > 40){
+            clickTotalRate = 80;
+        }else if(clickTotalRate > 30){
+            clickTotalRate = 70;
+        }else if(clickTotalRate > 10){
+            clickTotalRate = 60;
+        }else if(clickTotalRate > 5){
+            clickTotalRate = 50;
+        }else if(clickTotalRate > 3){
+            clickTotalRate = 40;
+        }else if(clickTotalRate > 1){
+            clickTotalRate = 30;
+        }else if(clickTotalRate > 0.01){
+            clickTotalRate = 20;
+        }else if(clickTotalRate > 0){
+            clickTotalRate = 10;
+        }
+        if(reserveTotalRate >= 4){
+            reserveTotalRate = 98;
+        }else if(reserveTotalRate > 3.5){
+            reserveTotalRate = 90;
+        }else if(reserveTotalRate > 3){
+            reserveTotalRate = 80;
+        }else if(reserveTotalRate > 2.5){
+            reserveTotalRate = 70;
+        }else if(reserveTotalRate > 2){
+            reserveTotalRate = 60;
+        }else if(reserveTotalRate > 1.5){
+            reserveTotalRate = 50;
+        }else if(reserveTotalRate > 1){
+            reserveTotalRate = 40;
+        }else if(reserveTotalRate > 0.5){
+            reserveTotalRate = 30;
+        }else if(reserveTotalRate > 0){
+            reserveTotalRate = 20;
+        }else if(reserveTotalRate == 0){
+            reserveTotalRate = 10;
+        }
+        if(underwriteTotalRate >= 4){
+            underwriteTotalRate = 98;
+        }else if(underwriteTotalRate > 3.5){
+            underwriteTotalRate = 90;
+        }else if(underwriteTotalRate > 3){
+            underwriteTotalRate = 80;
+        }else if(underwriteTotalRate > 2.5){
+            underwriteTotalRate = 70;
+        }else if(underwriteTotalRate > 2){
+            underwriteTotalRate = 60;
+        }else if(underwriteTotalRate > 1.5){
+            underwriteTotalRate = 50;
+        }else if(underwriteTotalRate > 1){
+            underwriteTotalRate = 40;
+        }else if(underwriteTotalRate > 0.5){
+            underwriteTotalRate = 30;
+        }else if(underwriteTotalRate > 0){
+            underwriteTotalRate = 20;
+        }else if(underwriteTotalRate == 0){
+            underwriteTotalRate = 10;
+        }
         endTime = System.currentTimeMillis();
         logger.info("[dashboardMediaController|getMediaSummary]查询 resultJson runtime = {}", (endTime - startTime));
         List<String> contentList = new ArrayList<>();
-        contentList.add(clickTotalRate);
-        contentList.add(reserveTotalRate);
-        contentList.add(underwriteTotalRate);
+        contentList.add(decimalFormat.format(clickTotalRate));
+        contentList.add(decimalFormat.format(reserveTotalRate));
+        contentList.add(decimalFormat.format(underwriteTotalRate));
         contentList.add(String.valueOf(transformTotalCycle));
         contentList.add(String.valueOf(transformTotalCost));
-        contentList.add(transformTotalRate);
+//        contentList.add(decimalFormat.format(transformTotalRate));
         /** 汇总结果 **/
         JSONObject resultJson = new JSONObject();
         resultJson.put("contentList", contentList);
@@ -345,15 +409,15 @@ public class DashboardMediaController {
             }
         }
         List<Underwrite> underwriteList = underwriteService.findListByParam(underwriteParamPagerVo);
-        if(underwriteList.size() <= 0){
+        if(underwriteList == null || underwriteList.size() <= 0){
             return resultVo;
         }
 
         String dateKey;
         Double underwriteAmount;
-        Map<String, Double> underwriteAmountMap = initYearResultMap();
+        Map<String, Double> underwriteAmountMap = new HashMap<>();
         for (Underwrite underwrite : underwriteList) {
-            dateKey = getDateKeyByDateType(underwrite.getReserveDate());
+            dateKey = underwrite.getReserveDate();
             underwriteAmount = 0.00d;
             if(underwriteAmountMap.get(dateKey) != null){
                 underwriteAmount = underwriteAmountMap.get(dateKey);
@@ -377,7 +441,7 @@ public class DashboardMediaController {
         Integer[] tacticsCount;
         Map<String, Integer[]> tacticsCountMap = new HashMap<>();
         for (MediaTactics mediaTactics : mediaTacticsList) {
-            dateKey = DateUtils.dateFormatTransform(mediaTactics.getMonth(), "yyyy-MM", "MM");
+            dateKey = mediaTactics.getMonth();
             tacticsCount = tacticsCountMap.get(dateKey);
             if(tacticsCount == null){
                 tacticsCount = new Integer[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
@@ -410,15 +474,6 @@ public class DashboardMediaController {
             tacticsCountMap.put(dateKey, tacticsCount);
         }
 
-        Set<String> keySet = underwriteAmountMap.keySet();
-        String[] keyArray = keySet.toArray(new String[keySet.size()]);
-        Arrays.sort(keyArray, new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                return o1.compareTo(o2);
-            }
-        });
-
         List<String> underwriteAmountList = new ArrayList<>(12);
         List<Integer> operateCountList = new ArrayList<>(12);
 
@@ -446,8 +501,8 @@ public class DashboardMediaController {
         List<Integer> flowPeopleCountList = new ArrayList<>(12);
         List<Integer> modifyKeyWordCountList = new ArrayList<>(12);
 
-
-        for (String key : keyArray) {
+        List<String> dateList = DataUtils.initDayList(paramVo.getChooseDate());
+        for (String key : dateList) {
             underwriteAmount = underwriteAmountMap.get(key);
             if(underwriteAmount == null){
                 underwriteAmount = 0.00d;
@@ -486,198 +541,175 @@ public class DashboardMediaController {
             modifyKeyWordCountList.add(tacticsCount[19]);
         }
 
-        int index;
         JSONObject tableItem;
         List<JSONObject> tableItemList = new ArrayList<>();
 
         // 组成表格数据
-        index = 1;
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "操作数（次）");
-        for(Integer count : operateCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<operateCountList.size(); i++){
+            tableItem.put(dateList.get(i), operateCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", true);
         tableItem.put("operate", "保费（元）");
-        for(String count : underwriteAmountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<underwriteAmountList.size(); i++){
+            tableItem.put(dateList.get(i), underwriteAmountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", true);
         tableItem.put("operate", "关键词优化（次）");
-        for(Integer count : operateCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<operateCountList.size(); i++){
+            tableItem.put(dateList.get(i), operateCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "增加出价（次）");
-        for(Integer count : addBidCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<addBidCountList.size(); i++){
+            tableItem.put(dateList.get(i), addBidCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "降低出价（次）");
-        for(Integer count : reduceBidCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<reduceBidCountList.size(); i++){
+            tableItem.put(dateList.get(i), reduceBidCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "调宽匹配模式（次）");
-        for(Integer count : addPattenCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<addPattenCountList.size(); i++){
+            tableItem.put(dateList.get(i), addPattenCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "调窄匹配模式（次）");
-        for(Integer count : reducePattenCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<reducePattenCountList.size(); i++){
+            tableItem.put(dateList.get(i), reducePattenCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "增加关键词（次）");
-        for(Integer count : addKeyWordCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<addKeyWordCountList.size(); i++){
+            tableItem.put(dateList.get(i), addKeyWordCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "删除关键词（次）");
-        for(Integer count : reduceKeyWordCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<reduceKeyWordCountList.size(); i++){
+            tableItem.put(dateList.get(i), reduceKeyWordCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "搜索词过滤（次）");
-        for(Integer count : filteKeyWordCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<filteKeyWordCountList.size(); i++){
+            tableItem.put(dateList.get(i), filteKeyWordCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", true);
         tableItem.put("operate", "文字创意优化（次）");
-        for(Integer count : wordIdeaCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<wordIdeaCountList.size(); i++){
+            tableItem.put(dateList.get(i), wordIdeaCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "增加图片等高级样式（次）");
-        for(Integer count : addStyleCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<addStyleCountList.size(); i++){
+            tableItem.put(dateList.get(i), addStyleCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "增加文字创意（次）");
-        for(Integer count : addWordIdeaCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<addWordIdeaCountList.size(); i++){
+            tableItem.put(dateList.get(i), addWordIdeaCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", true);
         tableItem.put("operate", "展示类图片创意优化（次）");
-        for(Integer count : imageIdeaCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<imageIdeaCountList.size(); i++){
+            tableItem.put(dateList.get(i), imageIdeaCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "增加图片创意（次）");
-        for(Integer count : addImageIdeaCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<addImageIdeaCountList.size(); i++){
+            tableItem.put(dateList.get(i), addImageIdeaCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "删除图片创意（次）");
-        for(Integer count : reduceImageIdeaCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<reduceImageIdeaCountList.size(); i++){
+            tableItem.put(dateList.get(i), reduceImageIdeaCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "调整图片出价（次）");
-        for(Integer count : modifyImageBidCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<modifyImageBidCountList.size(); i++){
+            tableItem.put(dateList.get(i), modifyImageBidCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", true);
         tableItem.put("operate", "信息流文字创意优化（次）");
-        for(Integer count : flowIdeaCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<flowIdeaCountList.size(); i++){
+            tableItem.put(dateList.get(i), flowIdeaCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "文案调整（次）");
-        for(Integer count : modifyCopywriteCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<modifyCopywriteCountList.size(); i++){
+            tableItem.put(dateList.get(i), modifyCopywriteCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", true);
         tableItem.put("operate", "信息流人群优化（次）");
-        for(Integer count : flowPeopleCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<flowPeopleCountList.size(); i++){
+            tableItem.put(dateList.get(i), flowPeopleCountList.get(i));
         }
         tableItemList.add(tableItem);
-        index = 1;
+
         tableItem = new JSONObject();
         tableItem.put("keyword", false);
         tableItem.put("operate", "修改定向关键词（次）");
-        for(Integer count : modifyKeyWordCountList){
-            tableItem.put("month" + index, count);
-            index ++;
+        for(int i=0; i<modifyKeyWordCountList.size(); i++){
+            tableItem.put(dateList.get(i), modifyKeyWordCountList.get(i));
         }
         tableItemList.add(tableItem);
 
@@ -686,7 +718,7 @@ public class DashboardMediaController {
         /** 汇总结果 **/
         resultVo.setRtnCode(RetStatus.Ok.getValue());
         resultJson.put("tableItemList", tableItemList);
-        resultJson.put("monthList", keyArray);
+        resultJson.put("tableTitleList", dateList);
         resultJson.put("operateCountList", operateCountList);
 
         resultJson.put("keywordCountList", keywordCountList);
@@ -719,50 +751,13 @@ public class DashboardMediaController {
         return resultVo;
     }
 
-
-
-    private String getDateKeyByDateType(String dateString){
-        Date date;
-        String resultDate;
-        String format = "yyyyMMdd";
-        try {
-            format = "MM";
-            date = DateUtils.formatDate(dateString, "yyyy-MM-dd");
-            resultDate = DateUtils.formatDate(date, format);
-        } catch (Exception e) {
-            resultDate = "";
-        }
-        return resultDate;
-    }
-    private Map<String, Double> initYearResultMap() {
-        Map<String, Double> rtnMap = new HashMap<>();
-        rtnMap.put("01", 0.00d);
-        rtnMap.put("02", 0.00d);
-        rtnMap.put("03", 0.00d);
-        rtnMap.put("04", 0.00d);
-        rtnMap.put("05", 0.00d);
-        rtnMap.put("06", 0.00d);
-        rtnMap.put("07", 0.00d);
-        rtnMap.put("08", 0.00d);
-        rtnMap.put("09", 0.00d);
-        rtnMap.put("10", 0.00d);
-        rtnMap.put("11", 0.00d);
-        rtnMap.put("12", 0.00d);
-        return rtnMap;
-    }
-
     private void initDashboardParam(DashboardParamVo dashboardParamVo){
         if(dashboardParamVo == null){
             dashboardParamVo = new DashboardParamVo();
         }
         if(StringUtils.isEmpty(dashboardParamVo.getChooseDate())){
-            String endDate = DateUtils.formatDate(new Date(), "yyyy") + "-12-31";
-            String startDate = DateUtils.formatDate(new Date(), "yyyy") + "-01-01";
-            dashboardParamVo.setChooseDate(startDate + " - " + endDate);
-        }else{
-            String[] dateArray = dashboardParamVo.getChooseDate().split(" - ");
-            String endDate = dateArray[1] + "-12-31";
-            String startDate = dateArray[0] + "-01-01";
+            String endDate = DateUtils.formatDate(new Date(), "yyyy-MM-dd");
+            String startDate = DateUtils.formatDate(new Date(), "yyyy-MM") + "-01";
             dashboardParamVo.setChooseDate(startDate + " - " + endDate);
         }
         if(StringUtils.hasText(dashboardParamVo.getPlatformName())){

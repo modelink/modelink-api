@@ -37,6 +37,12 @@
         .layui-card-body {
             background-color: white;
         }
+        .layui-label label {
+            height: 38px;
+            line-height: 38px;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
         .content-fixed {
             height: auto;
             overflow-x: hidden;
@@ -88,15 +94,15 @@
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <label id="underwrite-amount-label" style="cursor: pointer">总保费（元）</label>
+                    <label id="consume-amount-label" style="cursor: pointer">总花费（元）</label>
                 </div>
                 <div class="layui-card-body">
-                    <div id="underwrite-amount" class="echart-header">
+                    <div id="consume-amount" class="echart-header">
                         <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
+                        <!--<i class="iconfont icon-arrow-equal"></i>-->
+                        <!--<em></em>-->
                     </div>
-                    <div id="underwrite-amount-echart" style="height: 200px;"></div>
+                    <div id="consume-amount-echart" style="height: 200px;"></div>
                 </div>
             </div>
         </div>
@@ -108,8 +114,6 @@
                 <div class="layui-card-body">
                     <div id="reserve-count" class="echart-header">
                         <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
                     </div>
                     <div id="reserve-count-echart" style="height: 200px;"></div>
                 </div>
@@ -118,34 +122,30 @@
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <label id="underwrite-count-label" style="cursor: pointer">承保件数（件）</label>
+                    <label id="underwrite-amount-label" style="cursor: pointer">总保费（元）</label>
                 </div>
                 <div class="layui-card-body">
-                    <div id="underwrite-count" class="echart-header">
+                    <div id="underwrite-amount" class="echart-header">
                         <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
                     </div>
-                    <div id="underwrite-count-echart" style="height: 200px;"></div>
+                    <div id="underwrite-amount-echart" style="height: 200px;"></div>
                 </div>
             </div>
         </div>
         <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    <label id="repellent-amount-label" style="cursor: pointer">退保保费（元）</label>
-                </div>
-                <div class="layui-card-body">
-                    <div id="repellent-amount" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="repellent-amount-echart" style="height: 200px;"></div>
-                </div>
+            <div class="layui-label">
+                <label>产能（元）：</label>
+                <label id="capacity"></label>
+            </div>
+            <div class="layui-label">
+                <label>预约率（%）：</label>
+                <label id="reserveRate"></label>
+            </div>
+            <div class="layui-label">
+                <label>承保率（%）：</label>
+                <label id="underwriteRate"></label>
             </div>
         </div>
-
     </div>
     <div class="layui-row layui-col-space15">
         <div class="layui-col-sm6 layui-col-md3">
@@ -156,8 +156,6 @@
                 <div class="layui-card-body">
                     <div id="transform-cost" class="echart-header">
                         <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
                     </div>
                     <div id="transform-cost-echart" style="height: 200px;"></div>
                 </div>
@@ -169,54 +167,7 @@
                     <label id="transform-cycle-label" style="cursor: pointer">转化周期（天/个）</label>
                 </div>
                 <div class="layui-card-body">
-                    <div id="transform-cycle" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="transform-cycle-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    <label id="transform-rate-label" style="cursor: pointer">总转化率（‰）</label>
-                </div>
-                <div class="layui-card-body">
-                    <div id="transform-rate" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="transform-rate-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    <label id="reserve-click-label" style="cursor: pointer">产能（元）</label>
-                </div>
-                <div class="layui-card-body">
-                    <div id="reserve-click" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="reserve-click-echart" style="height: 200px;"></div>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="layui-row layui-col-space15">
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    <label id="insurance-map-label" style="cursor: pointer">全国保费分布图（%）</label>
-                </div>
-                <div class="layui-card-body">
-                    <div id="insurance-map-echart" style="height: 249px;"></div>
+                    <div id="transform-cycle-echart" style="height: 249px;"></div>
                 </div>
             </div>
         </div>
@@ -226,8 +177,18 @@
                     <label id="gender-age-label" style="cursor: pointer">性别年龄保费分布图（元）</label>
                 </div>
                 <div class="layui-card-body">
-                    <div id="gender-age" class="echart-header">
-                        <label></label>
+                    <div id="gender-age" class="layui-row" align="center">
+                        <div id="man" class="layui-col-sm4 layui-col-md4">
+                            <img th:src="@{/static/image/common/man.png}" style="height: 24px; width: 24px">
+                            <p></p>
+                        </div>
+                        <div class="layui-col-sm4 layui-col-md4" align="center">
+                            <p style="line-height: 50px;">vs</p>
+                        </div>
+                        <div id="woman" class="layui-col-sm4 layui-col-md4" align="center">
+                            <img th:src="@{/static/image/common/woman.png}" style="height: 24px; width: 24px">
+                            <p></p>
+                        </div>
                     </div>
                     <div id="gender-age-echart" style="height: 200px;"></div>
                 </div>
@@ -236,25 +197,10 @@
         <div class="layui-col-sm6 layui-col-md3">
             <div class="layui-card">
                 <div class="layui-card-header">
-                    <label id="word-clouds-label" style="cursor: pointer">词云分析（预约个数）</label>
+                    <label id="insurance-amount-label" style="cursor: pointer">全国保费分布图TOP10（%）</label>
                 </div>
                 <div class="layui-card-body">
-                    <div id="word-clouds-echart" style="height: 249px;"></div>
-                </div>
-            </div>
-        </div>
-        <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-card">
-                <div class="layui-card-header">
-                    <label id="abnormal-count-label" style="cursor: pointer">异常数量（个）</label>
-                </div>
-                <div class="layui-card-body">
-                    <div id="abnormal-count" class="echart-header">
-                        <label></label>
-                        <i class="iconfont icon-arrow-equal"></i>
-                        <em></em>
-                    </div>
-                    <div id="abnormal-count-echart" style="height: 200px;"></div>
+                    <div id="insurance-amount-echart" style="height: 249px;"></div>
                 </div>
             </div>
         </div>

@@ -42,6 +42,31 @@ public class DataUtils {
         return second;
     }
 
+    public static List<String> initDayList(String chooseDate) {
+        List<String> dateList = new ArrayList<>();
+
+        String[] dateArray = chooseDate.split(" - ");
+        dateList.add(dateArray[0]);
+
+        if(dateArray[0].equals(dateArray[1])){
+            return dateList;
+        }
+        Date startDate = DateUtils.formatDate(dateArray[0], "yyyy-MM-dd");
+        String nextDate = DateUtils.calculateDate(startDate, Calendar.DAY_OF_YEAR, 1, "yyyy-MM-dd");
+        while(!dateArray[1].equals(nextDate)){
+            if (!dateList.contains(nextDate)) {
+                dateList.add(nextDate);
+            }
+            startDate = DateUtils.formatDate(nextDate, "yyyy-MM-dd");
+            nextDate = DateUtils.calculateDate(startDate, Calendar.DAY_OF_YEAR, 1, "yyyy-MM-dd");
+        }
+        if (!dateList.contains(nextDate)) {
+            dateList.add(nextDate);
+        }
+
+        return dateList;
+    }
+
     /**
      * 根据选择的日期初始化顺序日期列表
      * @param chooseDate

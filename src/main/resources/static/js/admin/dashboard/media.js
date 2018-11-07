@@ -28,19 +28,7 @@ layui.define(['form', 'table', 'element', 'laydate', 'jquery', 'upload', 'formSe
     //时间选择器
     laydate.render({
         range: true,
-        elem: '#chooseDate',
-        done: function(value, date, endDate){
-            insuranceEcharts.getDataJson2DrawRadar($, table, "media-summary", "/admin/dashboard/media/getMediaSummary");
-        }
-    });
-    //年份选择器
-    laydate.render({
-        range: true,
-        type: 'year',
-        elem: '#chooseYear',
-        done: function(value, date, endDate){
-            insuranceEcharts.getDataJson2DrawLine($, table, "media-tactics", "/admin/dashboard/media/getMediaTactics");
-        }
+        elem: '#chooseDate'
     });
 
     insuranceEcharts.echartsMap["media-summary-echart"] = echarts.init($("#media-summary-echart")[0]);
@@ -90,7 +78,7 @@ var insuranceEcharts = {
             url: dataUrl,
             data: {
                 merchantId: $("#merchant").val(),
-                chooseDate: $("#chooseYear").val(),
+                chooseDate: $("#chooseDate").val(),
                 platformName: $("#platformName").val(),
                 advertiseActive: $("#advertiseActive").val()
             },
@@ -99,7 +87,7 @@ var insuranceEcharts = {
                     insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", [0, 0, 0, 0, 0, 0]);
                     return;
                 }
-                insuranceEcharts.drawLineTable($, table, selectedPrefix, response.rtnData.tableItemList);
+                insuranceEcharts.drawLineTable($, table, selectedPrefix, response.rtnData.tableTitleList, response.rtnData.tableItemList);
                 insuranceEcharts.drawLineEchart(selectedPrefix + "-echart", response.rtnData);
             }
         });
@@ -115,8 +103,7 @@ var insuranceEcharts = {
             { name: '预约率（预约数量/点击量）', max: 100},
             { name: '承保率（承保件数/预约数量）', max: 100},
             { name: '转化周期（转化时间/承保件数）', max: 100},
-            { name: '转化成本（总花费/承保件数）', max: 100},
-            { name: '总转化率（承保件数/总花费）', max: 100}
+            { name: '转化成本（总花费/承保件数）', max: 100}
         ];
         var echartOption = {
             tooltip: {
@@ -168,14 +155,16 @@ var insuranceEcharts = {
             tableHtml += "<td>" + tableItem.underwriteRate + "</td>";
             tableHtml += "<td>" + tableItem.transformCycle + "</td>";
             tableHtml += "<td>" + tableItem.transformCost + "</td>";
-            tableHtml += "<td>" + tableItem.transformRate + "</td>";
+            // tableHtml += "<td>" + tableItem.transformRate + "</td>";
             tableHtml += "</tr>";
         }
 
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
-            height: 600
+            limit: tableItemList.length,
+            page: false,
+            height: 400
         });
     },
     drawLineEchart: function (selectedId, response) {
@@ -192,8 +181,8 @@ var insuranceEcharts = {
             },
             grid: {
                 top: '10%',
-                bottom: '10%',
-                right: '20%',
+                bottom: '20%',
+                right: '30%',
                 left: '10%'
             },
             legend: {
@@ -215,14 +204,18 @@ var insuranceEcharts = {
             },
             xAxis: {
                 type: 'category',
-                data: response.monthList
+                axisLabel: {
+                    interval: 0,
+                    rotate: "45"
+                },
+                data: response.tableTitleList
             },
             yAxis: {
                 type: 'value'
             },
             series: [
                 {
-                    data: [120, 200, 150, 80, 70, 110, 130, 130, 130, 130, 130, 130],
+                    data: response.underwriteAmountList,
                     name: '保费',
                     type: 'line',
                     symbol: 'circle',
@@ -235,7 +228,7 @@ var insuranceEcharts = {
                     }
                 },
                 {
-                    data: [110, 220, 140, 81, 75, 100, 123, 130, 130, 130, 130, 130],
+                    data: response.operateCountList,
                     name: '操作数（次）',
                     type: 'line',
                     symbol: 'circle',
@@ -248,7 +241,7 @@ var insuranceEcharts = {
                     }
                 },
                 {
-                    data: [110, 220, 140, 81, 75, 100, 123, 130, 130, 130, 130, 130],
+                    data: response.keywordCountList,
                     name: '关键词优化（次）',
                     type: 'line',
                     symbol: 'circle',
@@ -260,7 +253,7 @@ var insuranceEcharts = {
                     }
                 },
                 {
-                    data: [110, 220, 140, 81, 75, 100, 123, 130, 130, 130, 130, 130],
+                    data: response.wordIdeaCountList,
                     name: '文字创意优化（次）',
                     type: 'line',
                     symbol: 'circle',
@@ -272,7 +265,7 @@ var insuranceEcharts = {
                     }
                 },
                 {
-                    data: [110, 220, 140, 81, 75, 100, 123, 130, 130, 130, 130, 130],
+                    data: response.imageIdeaCountList,
                     name: '展示类图片创意优化（次）',
                     type: 'line',
                     symbol: 'circle',
@@ -284,7 +277,7 @@ var insuranceEcharts = {
                     }
                 },
                 {
-                    data: [110, 220, 140, 81, 75, 100, 123, 130, 130, 130, 130, 130],
+                    data: response.flowIdeaCountList,
                     name: '信息流文字创意优化（次）',
                     type: 'line',
                     symbol: 'circle',
@@ -296,7 +289,7 @@ var insuranceEcharts = {
                     }
                 },
                 {
-                    data: [110, 220, 140, 81, 75, 100, 123, 130, 130, 130, 130, 130],
+                    data: response.flowPeopleCountList,
                     name: '信息流人群优化（次）',
                     type: 'line',
                     symbol: 'circle',
@@ -313,11 +306,19 @@ var insuranceEcharts = {
         // 使用刚指定的配置项和数据显示图表。
         selectedEchart.setOption(echartOption);
     },
-    drawLineTable: function ($, table, selectedId, tableItemList) {
+    drawLineTable: function ($, table, selectedId, tableTitleList, tableItemList) {
         var tableItem;
-        var tableHtml = "";
+        var tableHtml;
 
+        tableHtml += "<tr><th lay-data=\"{align: 'center'}\" colspan=\"" + (tableTitleList.length + 1) + "\">媒体渠道策略调整分析</th></tr>";
+        tableHtml += "<tr><th lay-data=\"{align: 'center', field: 'operate', width: 150}\">日期</th>";
+        for(var idx in tableTitleList){
+            tableHtml += "<th lay-data=\"{align: 'center', field: '" + tableTitleList[idx] + "', width: 100}\">" + tableTitleList[idx] + "</th>";
+        }
+        tableHtml += "</tr>";
+        $("#" + selectedId + "-table-head").html(tableHtml);
         // 月份
+        tableHtml = "";
         for(var index in tableItemList){
             tableItem = tableItemList[index];
             if(tableItem.keyword){
@@ -326,21 +327,11 @@ var insuranceEcharts = {
                 tableHtml += "<tr>";
             }
             tableHtml += "<td>" + tableItem.operate + "</td>";
-            tableHtml += "<td>" + tableItem.month1 + "</td>";
-            tableHtml += "<td>" + tableItem.month2 + "</td>";
-            tableHtml += "<td>" + tableItem.month3 + "</td>";
-            tableHtml += "<td>" + tableItem.month4 + "</td>";
-            tableHtml += "<td>" + tableItem.month5 + "</td>";
-            tableHtml += "<td>" + tableItem.month6 + "</td>";
-            tableHtml += "<td>" + tableItem.month7 + "</td>";
-            tableHtml += "<td>" + tableItem.month8 + "</td>";
-            tableHtml += "<td>" + tableItem.month9 + "</td>";
-            tableHtml += "<td>" + tableItem.month10 + "</td>";
-            tableHtml += "<td>" + tableItem.month11 + "</td>";
-            tableHtml += "<td>" + tableItem.month12 + "</td>";
+            for(var idx in tableTitleList){
+                tableHtml += "<td>" + tableItem[tableTitleList[idx]] + "</td>";
+            }
             tableHtml += "</tr>";
         }
-
         $("#" + selectedId + "-table-body").html(tableHtml);
 
         table.init(selectedId + "-table", {
