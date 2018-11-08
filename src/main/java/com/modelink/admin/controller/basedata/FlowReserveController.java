@@ -92,7 +92,7 @@ public class FlowReserveController {
         if (StringUtils.isEmpty(advertiseListCache)) {
             List<String> advertiseList = flowReserveService.findAdvertiseActiveList();
             advertiseListCache = JSON.toJSONString(advertiseList);
-            redisService.setString(REDIS_KEY_ADVERTISE_ACTIVE_LIST, advertiseListCache);
+            redisService.setString(REDIS_KEY_ADVERTISE_ACTIVE_LIST, advertiseListCache, 24 * 3600 * 1000);
         }
 
         String value;

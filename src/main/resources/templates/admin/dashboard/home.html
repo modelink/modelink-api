@@ -50,6 +50,19 @@
             border: solid 1px #E6E6E6;
             padding: 15px 15px 15px 15px;
         }
+
+        .mk-flex {
+            display: flex;
+            display: -webkit-flex;
+            flex-flow: column nowrap;
+            justify-content: space-between;
+            align-items: stretch;
+            height: 310px;
+            border: solid 1px #E6E6E6;
+        }
+        .mk-flex-item {
+
+        }
     </style>
 </head>
 <body>
@@ -133,17 +146,19 @@
             </div>
         </div>
         <div class="layui-col-sm6 layui-col-md3">
-            <div class="layui-label">
-                <label>产能（元）：</label>
-                <label id="capacity"></label>
-            </div>
-            <div class="layui-label">
-                <label>预约率（%）：</label>
-                <label id="reserveRate"></label>
-            </div>
-            <div class="layui-label">
-                <label>承保率（%）：</label>
-                <label id="underwriteRate"></label>
+            <div class="mk-flex">
+                <div class="layui-label">
+                    <label>产能（元）：</label>
+                    <label id="capacity"></label>
+                </div>
+                <div class="layui-label">
+                    <label>预约率（%）：</label>
+                    <label id="reserveRate"></label>
+                </div>
+                <div class="layui-label">
+                    <label>承保率（%）：</label>
+                    <label id="underwriteRate"></label>
+                </div>
             </div>
         </div>
     </div>
