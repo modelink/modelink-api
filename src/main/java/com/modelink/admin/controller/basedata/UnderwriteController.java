@@ -169,7 +169,7 @@ public class UnderwriteController {
         StringBuilder messageBuilder = new StringBuilder();
         int rowIndex = configation.getStartRowNum();
         for(List<String> dataItem : dataList){
-            if(dataItem.size() < 20){
+            if(dataItem.size() < 18){
                 messageBuilder.append("第").append(rowIndex).append("行：数据不足").append(";");
             }
             isFullNull = true;
@@ -194,7 +194,6 @@ public class UnderwriteController {
         Area area;
         boolean exist;
         Underwrite underwrite;
-        Set<String> mobileSet;
         List<FlowReserve> flowReserveList;
         Merchant merchant;
         String sourceDate;
@@ -218,14 +217,14 @@ public class UnderwriteController {
                 continue;
             }
             try {
-                area = areaService.findByNameAndType(dataItem.get(18), AreaTypeEnum.省.getValue());
+                area = areaService.findByNameAndType(dataItem.get(16), AreaTypeEnum.省.getValue());
                 if(area == null){
                     continue;
                 }
                 provinceId = area.getAreaId();
-                area = areaService.findByNameAndType(dataItem.get(19), AreaTypeEnum.市.getValue());
+                area = areaService.findByNameAndType(dataItem.get(17), AreaTypeEnum.市.getValue());
                 if(area == null){
-                    area = areaService.findByNameAndType(dataItem.get(19), AreaTypeEnum.区.getValue());
+                    area = areaService.findByNameAndType(dataItem.get(17), AreaTypeEnum.区.getValue());
                     if(area == null){
                         continue;
                     }
@@ -234,14 +233,14 @@ public class UnderwriteController {
                 // 重复数据校验
                 underwrite = new Underwrite();
 
-                sourceDate = dataItem.get(9);
+                sourceDate = dataItem.get(7);
                 underwrite.setSourceDate(sourceDate);
                 merchant = merchantService.findByName(dataItem.get(1));
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
-                underwrite.setInsuranceNo(dataItem.get(6));
-                underwrite.setReserveMobile(dataItem.get(7));
-                underwrite.setInsuranceAmount(dataItem.get(12));
-                underwrite.setInsuranceFee(dataItem.get(13));
+                underwrite.setInsuranceNo(dataItem.get(4));
+                underwrite.setReserveMobile(dataItem.get(5));
+                underwrite.setInsuranceAmount(dataItem.get(10));
+                underwrite.setInsuranceFee(dataItem.get(11));
                 underwrite = underwriteService.findOneByParam(underwrite);
                 if(underwrite == null){
                     exist = false;
@@ -257,39 +256,34 @@ public class UnderwriteController {
                 }
 
                 underwrite.setMerchantId(merchant == null ? 0L : merchant.getId());
-                // 渠道归属
-                underwrite.setPlatformName(dataItem.get(2).toUpperCase());
-                // 渠道明细
-                underwrite.setAdvertiseActive(dataItem.get(3).toUpperCase());
+                underwrite.setProductName(dataItem.get(2));
 
-                underwrite.setProductName(dataItem.get(4));
-
-                underwrite.setOrgName(dataItem.get(5));
-                underwrite.setInsuranceNo(dataItem.get(6));
-                underwrite.setReserveMobile(dataItem.get(7));
-                underwrite.setSource(dataItem.get(8));
-                if (dataItem.get(9).contains("/")) {
-                    underwrite.setSourceDate(DateUtils.dateFormatTransform(dataItem.get(9), "yyyy/M/d", "yyyy-MM-dd"));
+                underwrite.setOrgName(dataItem.get(3));
+                underwrite.setInsuranceNo(dataItem.get(4));
+                underwrite.setReserveMobile(dataItem.get(5));
+                underwrite.setSource(dataItem.get(6));
+                if (dataItem.get(7).contains("/")) {
+                    underwrite.setSourceDate(DateUtils.dateFormatTransform(dataItem.get(7), "yyyy/M/d", "yyyy-MM-dd"));
                 } else {
-                    underwrite.setSourceDate(dataItem.get(9));
+                    underwrite.setSourceDate(dataItem.get(7));
                 }
-                if (dataItem.get(10).contains("/")) {
-                    underwrite.setFinishDate(DateUtils.dateFormatTransform(dataItem.get(10), "yyyy/M/d", "yyyy-MM-dd"));
+                if (dataItem.get(8).contains("/")) {
+                    underwrite.setFinishDate(DateUtils.dateFormatTransform(dataItem.get(8), "yyyy/M/d", "yyyy-MM-dd"));
                 } else {
-                    underwrite.setFinishDate(dataItem.get(10));
+                    underwrite.setFinishDate(dataItem.get(8));
                 }
-                underwrite.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(11)));
-                underwrite.setInsuranceAmount(dataItem.get(12));
-                underwrite.setInsuranceFee(dataItem.get(13));
-                underwrite.setGender(dataItem.get(14));
-                underwrite.setBirthday(dataItem.get(15));
-                if(StringUtils.hasText(dataItem.get(16)) && dataItem.get(16).contains(".")) {
-                    index = dataItem.get(16).indexOf(".");
-                    underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(16).substring(0, index)));
-                }else if(StringUtils.hasText(dataItem.get(16))){
-                    underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(16)));
+                underwrite.setPayType(InsurancePayTypeEnum.getValueByText(dataItem.get(9)));
+                underwrite.setInsuranceAmount(dataItem.get(10));
+                underwrite.setInsuranceFee(dataItem.get(11));
+                underwrite.setGender(dataItem.get(12));
+                underwrite.setBirthday(dataItem.get(13));
+                if(StringUtils.hasText(dataItem.get(14)) && dataItem.get(14).contains(".")) {
+                    index = dataItem.get(14).indexOf(".");
+                    underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(14).substring(0, index)));
+                }else if(StringUtils.hasText(dataItem.get(14))){
+                    underwrite.setAge(DataUtils.tranform2Integer(dataItem.get(14)));
                 }
-                underwrite.setAddress(dataItem.get(17));
+                underwrite.setAddress(dataItem.get(15));
                 // 查找省份数据
                 underwrite.setProvinceId(provinceId);
                 // 查找城市数据
@@ -303,6 +297,8 @@ public class UnderwriteController {
 
                 underwrite.setReserveDate("");
                 underwrite.setKeyword("");
+                underwrite.setPlatformName("-");
+                underwrite.setAdvertiseActive("-");
                 if(flowReserveList.size() > 0) {
                     for(FlowReserve flowReserve : flowReserveList){
                         reserveDate = flowReserve.getDate();
@@ -319,6 +315,8 @@ public class UnderwriteController {
                             underwrite.setReserveDate(reserveDate);
                             underwrite.setKeyword(flowReserve.getAdvertiseDesc());
                             underwrite.setAdvertiseSeries(flowReserve.getAdvertiseSeries());
+                            underwrite.setPlatformName(flowReserve.getPlatformName());
+                            underwrite.setAdvertiseActive(flowReserve.getAdvertiseActive());
                             break;
                         }
                     }
